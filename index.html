@@ -478,7 +478,7 @@ const BLOOD_CONFIG = Object.freeze({
 
 /* ===== Utilidades ===== */
 const $=s=>document.querySelector(s);
-const LS={get:(k,d)=>{try{const v=JSON.parse(localStorage.getItem(k));return v??d}catch{return d}},set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch{}}};
+const LS={get:(k,d)=>{if(k==='ciclo_quick_profiles'){try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}}return d},set:(k,v)=>{if(k==='ciclo_quick_profiles')try{localStorage.setItem(k,JSON.stringify(v))}catch{}}};
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const pad=n=>String(n).padStart(2,'0');
 const iso=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
@@ -506,7 +506,7 @@ window.addEventListener('storage',e=>{if(e.key==='ciclo_posts'||e.key==='ciclo_u
 window.addEventListener('focus',()=>{if(me)refreshFromCloud()});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&me)refreshFromCloud()});
 function broadcastCommunity(){communityBus?.postMessage({kind:'community'});}
-function persistChat(){if(me)LS.set('ciclo_chat_'+me.id,chat.slice(-100))}
+function persistChat(){if(me)queuePrivateSave()}
 
 const av=(u,s=40)=>u&&u.avatar?`<img class="av" src="${u.avatar}" alt="" style="width:${s}px;height:${s}px">`:`<span class="av" style="width:${s}px;height:${s}px;font-size:${Math.round(s*.42)}px">${esc((u?.username||'?')[0].toUpperCase())}</span>`;
 const whoHTML=()=>`<div style="display:flex;gap:.6rem;align-items:center">${av(me,38)}<div><strong>${me.pub&&me.name?esc(me.name):'@'+esc(me.username)}</strong><br><span class="muted">@${esc(me.username)}</span></div></div>`;
@@ -612,7 +612,7 @@ function bindQuickLogin(){const f=$('#quick-login-form');if(!f)return;f.onsubmit
  try{const digest=await pinDigest(pin,q.salt);
  if(digest!==q.digest){q.failed=(q.failed||0)+1;if(q.failed>=5){q.failed=0;q.blockedUntil=Date.now()+300000};entries[id]=q;LS.set(QUICK_STORE,entries);err.textContent=q.blockedUntil>Date.now()?'PIN bloqueado 5 minutos.':'PIN incorrecto.';return}
  q.failed=0;q.blockedUntil=0;entries[id]=q;LS.set(QUICK_STORE,entries);
- const account=users.find(u=>u.id===id);if(!account)throw Error('No se encontró la cuenta guardada.');login(account);
+ const {data:{user}}=await sb.auth.getUser();if(!user||user.id!==id)throw Error('La sesión ha terminado. Inicia sesión con correo y contraseña.');await bootCloud(user);
  }catch(ex){err.textContent=ex.message||'Error al comprobar el PIN.'}finally{if(b.isConnected){b.disabled=false;b.textContent='Entrar con PIN'}}
  }
 }
@@ -651,8 +651,8 @@ function showAuth(mode='in'){
  finally{if(button.isConnected)button.disabled=false}
  };
 }
-function login(u){me=u;guestLanguage=u.lang||guestLanguage;chat=LS.get('ciclo_chat_'+u.id,[]);if(!u.created){u.created=today();saveU()}LS.set('ciclo_session',u.id);applyTheme();$('#auth').classList.add('hide');$('#app').classList.remove('hide');view='cal';cur=new Date();sel=today();counterAnimDone=false;shell()}
-async function logout(){persistChat();await sb.auth.signOut();me=null;chat=[];users=[];posts=[];stopRealtime();LS.set('ciclo_session',null);applyTheme();showAuth()}
+function login(u){me=u;guestLanguage=u.lang||guestLanguage;if(!u.created){u.created=today();saveU()}applyTheme();$('#auth').classList.add('hide');$('#app').classList.remove('hide');view='cal';cur=new Date();sel=today();counterAnimDone=false;shell()}
+async function logout(){persistChat();await flushPrivateSave();await sb.auth.signOut();me=null;chat=[];users=[];posts=[];stopRealtime();applyTheme();showAuth()}
 
 /* ===== Estructura ===== */
 function shell(){
@@ -707,9 +707,9 @@ function vDiary(){
  $('#main').querySelectorAll('[data-day]').forEach(b=>b.onclick=()=>{sel=b.dataset.day;vDiary()})
 }
 function dailyStats(){const M=model(),entries=Object.entries(diaryData()).sort(([a],[b])=>b.localeCompare(a)),counts={};for(const [,r]of entries)for(const symptom of (r.symptoms||[]))counts[symptom]=(counts[symptom]||0)+1;return{M,entries,counts}}
-const REMINDER_STORAGE='womens_period_reminders_';
-function getReminders(){return LS.get(REMINDER_STORAGE+me.id,{water:false,waterHours:3,pill:false,pillTime:'20:00',period:true,lastWater:'',lastPill:''})}
-function reminderSave(r){LS.set(REMINDER_STORAGE+me.id,r);queuePrivateSave()}
+const REMINDER_DEFAULT={water:false,waterHours:3,pill:false,pillTime:'20:00',period:true,lastWater:'',lastPill:''};
+function getReminders(){return me?.reminders||{...REMINDER_DEFAULT}}
+function reminderSave(r){me.reminders=r;queuePrivateSave()}
 function vWell(){
  const {M,entries,counts}=dailyStats(),r=getReminders(),sym=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,6);
  main(`<div class="top"><div><h2>Mi bienestar</h2><p class="muted">Tendencias de tu ciclo, alertas opcionales y respaldo de tus datos.</p></div></div>
@@ -889,9 +889,9 @@ async function askGemini(key){
  }catch(e){err='No se pudo conectar con Gemini ('+(e.message||'red')+'). Revisa tu internet.'}}
  return[false,'No pude responder: '+err+' — Si el problema es la clave, revisa tu clave en Google AI Studio y vuelve a introducirla en el asistente.']}
 function vAI(){
- const key=LS.get('ciclo_key','')||DEFAULT_KEY;
- if(!key){main(`<div class="top"><div><h2>Asistente</h2><p class="muted">Una guía de salud menstrual, disponible cuando quieras.</p></div></div><div class="card" style="max-width:520px"><h3>Conecta tu clave de Gemini</h3><p class="muted" style="margin:.5rem 0">Es gratis. Créala en <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener" style="color:var(--accent)">aistudio.google.com/apikey</a> y pégala aquí. Se guarda solo en este navegador.</p><form id="kf"><input id="kv" required placeholder="AIza…" type="password" aria-label="Clave API"><button class="btn" style="margin-top:.8rem">Guardar y empezar</button></form></div>`);
-  $('#kf').onsubmit=e=>{e.preventDefault();LS.set('ciclo_key',$('#kv').value.trim());vAI()};return}
+ const key=geminiRuntimeKey||DEFAULT_KEY;
+ if(!key){main(`<div class="top"><div><h2>Asistente</h2><p class="muted">Una guía de salud menstrual, disponible cuando quieras.</p></div></div><div class="card" style="max-width:520px"><h3>Conecta tu clave de Gemini</h3><p class="muted" style="margin:.5rem 0">Es gratis. Créala en <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener" style="color:var(--accent)">aistudio.google.com/apikey</a> y pégala aquí. Se usa durante esta sesión y no se guarda en el navegador.</p><form id="kf"><input id="kv" required placeholder="AIza…" type="password" aria-label="Clave API"><button class="btn" style="margin-top:.8rem">Guardar y empezar</button></form></div>`);
+  $('#kf').onsubmit=e=>{e.preventDefault();geminiRuntimeKey=$('#kv').value.trim();vAI()};return}
  const S=['¿Cómo calmo los cólicos?','¿Qué es la ventana fértil?','¿Cuándo debo ir al médico?','¿Copa o disco menstrual?'];
  main(`<div class="top"><div><h2>Asistente</h2><p class="muted">Información educativa; no reemplaza una consulta ginecológica.</p></div></div>
  <div class="card chatbox"><div class="msgs" id="ms" aria-live="polite">${chat.length?'':`<div class="m a">Hola ${esc(me.name.split(' ')[0])}, soy tu asistente de salud menstrual. ¿Qué quieres saber?</div>`}${chat.map(c=>`<div class="m ${c.role==='user'?'u':'a'}">${c.role==='user'?esc(c.text):md(c.text)}</div>`).join('')}</div>
@@ -1084,10 +1084,12 @@ function heartBurst(btn){
 
 
 /* Supabase blood — autenticación, historial protegido y comunidad compartida. */
-const sb=window.supabase.createClient(BLOOD_CONFIG.url,BLOOD_CONFIG.publishableKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+let geminiRuntimeKey='';
+const sb=window.supabase.createClient(BLOOD_CONFIG.url,BLOOD_CONFIG.publishableKey,{auth:{persistSession:true,storage:window.sessionStorage,autoRefreshToken:true,detectSessionInUrl:true}});
 let cloudChannel=null,privateTimer=null,profileTimer=null,cloudLoading=false;
 const privateFields=['periods','plen','cycle','theme','diary','goal','dueDate'];
-function privatePayload(){const data={};for(const k of privateFields)data[k]=me[k];data.name=me.name;data.reminders=getReminders();return data}
+async function flushPrivateSave(){if(!me)return;clearTimeout(privateTimer);const {error}=await sb.from('wp_private').upsert({user_id:me.id,data:privatePayload(),updated_at:new Date().toISOString()});if(error)toast('No se guardaron todos tus cambios: '+error.message)}
+function privatePayload(){const data={};for(const k of privateFields)data[k]=me[k];data.name=me.name;data.reminders=getReminders();data.chat=chat.slice(-100);return data}
 function queuePrivateSave(){if(!me||cloudLoading)return;clearTimeout(privateTimer);const id=me.id;privateTimer=setTimeout(async()=>{if(!me||me.id!==id)return;const {error}=await sb.from('wp_private').upsert({user_id:id,data:privatePayload(),updated_at:new Date().toISOString()});if(error)toast('Error al guardar historial: '+error.message)},350)}
 function queueProfileSave(){if(!me||cloudLoading)return;clearTimeout(profileTimer);const id=me.id;profileTimer=setTimeout(async()=>{if(!me||me.id!==id)return;const row={id,username:me.username,display_name:me.pub?me.name:me.username,country:me.country||'EC',language:me.lang||'es',name_public:!!me.pub,avatar_url:me.avatar?.startsWith('data:')?null:(me.avatar||null)};const {error}=await sb.from('wp_profiles').upsert(row);if(error)toast('Error al guardar perfil: '+error.message);if(me.avatar?.startsWith('data:'))await uploadAvatar(me.avatar)},420)}
 async function uploadAvatar(dataUrl){if(!me||!dataUrl?.startsWith('data:image/avif;'))return;try{const blob=await(await fetch(dataUrl)).blob(),path=me.id+'/avatar.avif';const {error}=await sb.storage.from('wp_avatars').upload(path,blob,{contentType:'image/avif',upsert:true});if(error)throw error;const {data}=sb.storage.from('wp_avatars').getPublicUrl(path);me.avatar=data.publicUrl+'?v='+Date.now();await sb.from('wp_profiles').update({avatar_url:data.publicUrl}).eq('id',me.id)}catch(e){toast('Error al subir avatar: '+e.message)}}
@@ -1096,7 +1098,7 @@ async function bootCloud(user){if(!user)return showAuth();cloudLoading=true;try{
  let {data:profile,error}=await sb.from('wp_profiles').select('*').eq('id',user.id).maybeSingle();if(error)throw error;if(!profile){await initCloudAccount(user);({data:profile,error}=await sb.from('wp_profiles').select('*').eq('id',user.id).single());if(error)throw error}
  const {data:priv,error:pe}=await sb.from('wp_private').select('data').eq('user_id',user.id).maybeSingle();if(pe)throw pe;const d=priv?.data||{};
  const u={id:user.id,username:profile.username,name:d.name||user.user_metadata?.display_name||profile.display_name||profile.username,country:profile.country,lang:profile.language,pub:profile.name_public,avatar:profile.avatar_url||'',created:profile.created_at.slice(0,10),periods:d.periods||[],plen:d.plen||5,cycle:d.cycle||28,theme:d.theme||{mode:'light'},diary:d.diary||{},goal:d.goal||'cycle',dueDate:d.dueDate||''};
- users=[u];me=u;if(d.reminders)LS.set(REMINDER_STORAGE+u.id,d.reminders);chat=LS.get('ciclo_chat_'+u.id,[]);login(u);await refreshFromCloud();startRealtime();if(pendAv){const avatar=pendAv;pendAv='';await uploadAvatar(avatar)}
+ u.reminders=d.reminders||{...REMINDER_DEFAULT};users=[u];me=u;chat=Array.isArray(d.chat)?d.chat:[];login(u);await refreshFromCloud();startRealtime();if(pendAv){const avatar=pendAv;pendAv='';await uploadAvatar(avatar)}
  }catch(e){console.error(e);toast('Error de conexión: '+e.message);await sb.auth.signOut();showAuth()}finally{cloudLoading=false}}
 async function refreshFromCloud(){if(!me)return;const [pr,rr,lr,ur]=await Promise.all([sb.from('wp_posts').select('*').order('created_at',{ascending:false}).limit(200),sb.from('wp_replies').select('*').order('created_at',{ascending:true}).limit(500),sb.from('wp_likes').select('*').limit(2000),sb.from('wp_profiles').select('id,username,display_name,country,language,name_public,avatar_url,created_at').limit(500)]);
  for(const result of [pr,rr,lr,ur])if(result.error){console.error(result.error);return}
