@@ -478,6 +478,8 @@ const BLOOD_CONFIG = Object.freeze({
 
 /* ===== Utilidades ===== */
 const $=s=>document.querySelector(s);
+/* El único dato persistente del navegador es el verificador de PIN. Borrar restos anteriores de esta aplicación. */
+try{for(let i=localStorage.length-1;i>=0;i--){const k=localStorage.key(i);if(k&&k!=='ciclo_quick_profiles'&&(k.startsWith('ciclo_')||k.startsWith('womens_period_')||k==='sb-ijpvdezhakwflydbjchb-auth-token'))localStorage.removeItem(k)}}catch{}
 const LS={get:(k,d)=>{if(k==='ciclo_quick_profiles'){try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}}return d},set:(k,v)=>{if(k==='ciclo_quick_profiles')try{localStorage.setItem(k,JSON.stringify(v))}catch{}}};
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const pad=n=>String(n).padStart(2,'0');
@@ -602,7 +604,7 @@ function quickHTML(){
  const profiles=quickProfiles(), entries=Object.keys(profiles).filter(id=>users.some(u=>u.id===id));
  if(!entries.length)return '';
  const opts=entries.map(id=>{const u=users.find(x=>x.id===id);return `<option value="${esc(id)}">@${esc(u.username)}</option>`}).join('');
- return `<div class="quick-card"><h3>🔐 Inicio de sesión rápido</h3><p class="muted">Accede con tu PIN de 6 dígitos, sin escribir tu contraseña.</p><form id="quick-login-form"><label for="quick-account">Cuenta guardada</label><select id="quick-account">${opts}</select><label for="quick-login-pin">PIN personal</label><div class="quick-row"><input type="password" id="quick-login-pin" inputmode="numeric" autocomplete="off" pattern="[0-9]{6}" maxlength="6" minlength="6" required placeholder="••••••"><button class="btn sm" type="submit">Entrar con PIN</button></div><div class="quick-error" id="quick-login-error" role="status"></div></form><p class="quick-muted">Solo en este navegador. No compartas tu PIN ni uses esta función en dispositivos ajenos.</p></div>`;
+ return `<div class="quick-card"><h3>🔐 Inicio de sesión rápido</h3><p class="muted">Accede con tu PIN de 6 dígitos, mientras esta sesión permanezca abierta.</p><form id="quick-login-form"><label for="quick-account">Cuenta guardada</label><select id="quick-account">${opts}</select><label for="quick-login-pin">PIN personal</label><div class="quick-row"><input type="password" id="quick-login-pin" inputmode="numeric" autocomplete="off" pattern="[0-9]{6}" maxlength="6" minlength="6" required placeholder="••••••"><button class="btn sm" type="submit">Entrar con PIN</button></div><div class="quick-error" id="quick-login-error" role="status"></div></form><p class="quick-muted">El PIN permanece en este dispositivo. Si cierras el navegador, deberás iniciar sesión con contraseña.</p></div>`;
 }
 function bindQuickLogin(){const f=$('#quick-login-form');if(!f)return;f.onsubmit=async e=>{
  e.preventDefault();const id=$('#quick-account').value,pin=$('#quick-login-pin').value,err=$('#quick-login-error');
@@ -619,19 +621,19 @@ function bindQuickLogin(){const f=$('#quick-login-form');if(!f)return;f.onsubmit
 /* ===== Auth ===== */
 function showAuth(mode='in'){
  $('#app').classList.add('hide');const a=$('#auth');a.classList.remove('hide');
- a.innerHTML=`<div class="hero"><div class="blob b1"></div><div class="blob b2"></div><h1>Women's Period</h1><p>Calendario, comunidad y una asistente de salud menstrual. Tu calendario se guarda de forma privada en la nube y las conversaciones con el asistente permanecen en tu dispositivo.</p></div>
+ a.innerHTML=`<div class="hero"><div class="blob b1"></div><div class="blob b2"></div><h1>Women's Period</h1><p>Calendario, comunidad y una asistente de salud menstrual. Tu calendario se guarda de forma privada en la nube y las conversaciones con el asistente se guardan en tu cuenta privada.</p></div>
  <div class="authbox"><div class="card"><h2>${mode==='in'?'Iniciar sesión':'Crear cuenta'}</h2>
  <div class="tabs"><button class="${mode==='in'?'on':''}" data-m="in">Entrar</button><button class="${mode==='up'?'on':''}" data-m="up">Registrarme</button></div>
  <form id="af" autocomplete="off">
- ${mode==='up'?'<div class="avrow"><span id="pv"></span><div><label class="btn ghost sm" for="ph" style="display:inline-block;margin:0;cursor:pointer">Subir foto de perfil</label><input id="ph" type="file" accept="image/*,.heic,.heif,.tiff,.tif,.bmp,.gif,.svg,.avif,.webp,.png,.jpg,.jpeg,.ico" class="hide"><div class="note" style="margin:.3rem 0 0">Opcional · convierte la imagen a AVIF y la guarda localmente</div></div></div><label for="nm">Nombre</label><input id="nm" required maxlength="40" autocomplete="given-name">':''}
+ ${mode==='up'?'<div class="avrow"><span id="pv"></span><div><label class="btn ghost sm" for="ph" style="display:inline-block;margin:0;cursor:pointer">Subir foto de perfil</label><input id="ph" type="file" accept="image/*,.heic,.heif,.tiff,.tif,.bmp,.gif,.svg,.avif,.webp,.png,.jpg,.jpeg,.ico" class="hide"><div class="note" style="margin:.3rem 0 0">Opcional · convierte la imagen a AVIF y la sube a tu cuenta</div></div></div><label for="nm">Nombre</label><input id="nm" required maxlength="40" autocomplete="given-name">':''}
  ${mode==='up'?`<label for="country">País</label><select id="country" required>${countryOptions()}</select>`:''}
  <label for="reglang">Idioma / Language</label><select id="reglang">${langOptions()}</select>
  ${mode==='up'?'<label for="un">Nombre de usuario</label><input id="un" required maxlength="20" autocapitalize="off" autocomplete="username">':''}<label for="email">Correo electrónico</label><input id="email" required type="email" maxlength="254" autocomplete="email">
  <label for="pw">Contraseña</label><input id="pw" type="password" required autocomplete="${mode==='in'?'current-password':'new-password'}">
  <div class="err" id="er"></div><button class="btn" style="width:100%;margin-top:.5rem">${mode==='in'?'Entrar':'Crear mi cuenta'}</button>
  ${mode==='up'?'<label class="chk"><input type="checkbox" id="tc" required><span>Acepto los <a href="#" class="lk" data-legal="terms">Términos y condiciones</a> y la <a href="#" class="lk" data-legal="privacy">Política de privacidad</a>.</span></label><p class="note">Tu correo no será público. Tu nombre es privado por defecto; solo tu usuario es visible en la comunidad.</p>':'<p class="note">Inicia sesión con tu correo y contraseña. Si acabas de registrarte, confirma tu correo primero.</p>'}</form>
- <p class="note" style="text-align:center"><a href="#" class="lk" data-legal="terms">Términos</a> · <a href="#" class="lk" data-legal="privacy">Privacidad</a></p></div></div>`;
- a.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>showAuth(b.dataset.m));$('#reglang').onchange=e=>setLanguage(e.target.value);requestAnimationFrame(translateUI);
+ <p class="note" style="text-align:center"><a href="#" class="lk" data-legal="terms">Términos</a> · <a href="#" class="lk" data-legal="privacy">Privacidad</a></p>${mode==='in'?quickHTML():''}</div></div>`;
+ bindQuickLogin();a.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>showAuth(b.dataset.m));$('#reglang').onchange=e=>setLanguage(e.target.value);requestAnimationFrame(translateUI);
  const pv=()=>{const e=$('#pv');if(e)e.innerHTML=pendAv?`<img class="av" src="${pendAv}" alt="" style="width:64px;height:64px">`:'<span class="av" style="width:64px;height:64px;font-size:26px">+</span>'};pv();
  if($('#ph'))$('#ph').onchange=async e=>{try{pendAv=await pickImg(e.target.files[0]);pv()}catch(err){toast(err.message||'Esa imagen no es válida')}};
  $('#af').onsubmit=async e=>{
@@ -651,6 +653,7 @@ function showAuth(mode='in'){
  finally{if(button.isConnected)button.disabled=false}
  };
 }
+function lockWithPin(){if(!me||!quickProfiles()[me.id]){toast('Configura primero el PIN desde Ajustes.');return}persistChat();$('#app').classList.add('hide');showAuth('in');}
 function login(u){me=u;guestLanguage=u.lang||guestLanguage;if(!u.created){u.created=today();saveU()}applyTheme();$('#auth').classList.add('hide');$('#app').classList.remove('hide');view='cal';cur=new Date();sel=today();counterAnimDone=false;shell()}
 async function logout(){persistChat();await flushPrivateSave();await sb.auth.signOut();me=null;chat=[];users=[];posts=[];stopRealtime();applyTheme();showAuth()}
 
@@ -663,7 +666,7 @@ function shell(){
    if(view!==b.dataset.v){view=b.dataset.v;counterAnimDone=false}
    shell();
  });
- $('#who').innerHTML=whoHTML()+`<button class="account-exit" id="sidebar-logout" type="button">↪ Cerrar sesión</button>`;$('#sidebar-logout').onclick=logout;
+ $('#who').innerHTML=whoHTML()+`<button class="account-exit" id="sidebar-lock" type="button">🔒 Bloquear con PIN</button><button class="account-exit" id="sidebar-logout" type="button">↪ Cerrar sesión</button>`;$('#sidebar-logout').onclick=logout;$('#sidebar-lock').onclick=lockWithPin;
  ({cal:vCal,diary:vDiary,well:vWell,forum:vForum,ai:vAI,set:vSet})[view]();requestAnimationFrame(translateUI);window.scrollTo({top:0});if(topBar){requestAnimationFrame(()=>{topBar.classList.add('finishing');topBar.classList.remove('active');setTimeout(()=>{topBar.style.transform='scaleX(0)';topBar.classList.remove('finishing')},650)})}
 }
 const main=h=>{
@@ -915,7 +918,7 @@ function vSet(){
  <div class="stats" style="margin:.2rem 0 .4rem"><div class="card stat"><small>Días desde el registro</small><strong>${diff(today(),me.created)}</strong></div><div class="card stat"><small>Periodos registrados</small><strong>${me.periods.length}</strong></div></div><label for="sn">Nombre</label><input id="sn" value="${esc(me.name)}" maxlength="40">
  <div class="line"><div><strong>Mostrar mi nombre en la comunidad</strong><div class="muted">Privado por defecto. Tu usuario (@${esc(me.username)}) siempre es visible.</div></div><button class="tg ${me.pub?'on':''}" id="tp" role="switch" aria-checked="${me.pub}" aria-label="Nombre público"></button></div>
  <button class="btn sm" id="sv">Guardar nombre</button></div>
- <div class="card hide"><h3>🔐 Inicio de sesión rápido</h3><p class="muted">Configura un PIN de 6 números para entrar más rápido desde este navegador al cerrar sesión. No reemplaza la contraseña de tu cuenta.</p><form id="quick-pin-form"><label for="pin-new">Nuevo PIN (6 dígitos)</label><input id="pin-new" type="password" inputmode="numeric" autocomplete="new-password" maxlength="6" minlength="6" pattern="[0-9]{6}" placeholder="••••••" required><label for="pin-repeat">Repite el PIN</label><input id="pin-repeat" type="password" inputmode="numeric" autocomplete="new-password" maxlength="6" minlength="6" pattern="[0-9]{6}" placeholder="••••••" required><div class="row"><button class="btn sm" type="submit">Activar inicio rápido</button><button class="btn ghost sm" type="button" id="quick-pin-remove">Desactivar PIN</button></div><p class="note" id="pin-status" role="status"></p></form></div><div class="card"><h3>País e idioma</h3><label for="set-country">País</label><select id="set-country">${countryOptions(me.country||'')}</select><label for="set-lang">Idioma / Language</label><select id="set-lang">${langOptions()}</select><button class="btn sm" id="save-locale" style="margin-top:.7rem">Guardar</button></div>
+ <div class="card"><h3>🔐 Inicio de sesión rápido</h3><p class="muted">Establece un PIN de 6 dígitos para bloquear y desbloquear esta sesión. Al cerrar el navegador o cerrar sesión necesitarás tu correo y contraseña.</p><form id="quick-pin-form"><label for="pin-new">Nuevo PIN (6 dígitos)</label><input id="pin-new" type="password" inputmode="numeric" autocomplete="new-password" maxlength="6" minlength="6" pattern="[0-9]{6}" placeholder="••••••" required><label for="pin-repeat">Repite el PIN</label><input id="pin-repeat" type="password" inputmode="numeric" autocomplete="new-password" maxlength="6" minlength="6" pattern="[0-9]{6}" placeholder="••••••" required><div class="row"><button class="btn sm" type="submit">Activar inicio rápido</button><button class="btn ghost sm" type="button" id="quick-pin-remove">Desactivar PIN</button></div><p class="note" id="pin-status" role="status"></p></form></div><div class="card"><h3>País e idioma</h3><label for="set-country">País</label><select id="set-country">${countryOptions(me.country||'')}</select><label for="set-lang">Idioma / Language</label><select id="set-lang">${langOptions()}</select><button class="btn sm" id="save-locale" style="margin-top:.7rem">Guardar</button></div>
  <div class="card"><h3>Apariencia</h3>
  <div class="line"><strong>Modo oscuro</strong><button class="tg ${mode==='dark'?'on':''}" id="tm" role="switch" aria-checked="${mode==='dark'}" aria-label="Modo oscuro"></button></div>
  <label>Color principal</label><div class="sw">${PRESETS.map(c=>`<button style="background:${c}" data-ac="${c}" aria-label="Color ${c}"></button>`).join('')}</div>
