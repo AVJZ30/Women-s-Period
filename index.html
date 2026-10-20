@@ -448,6 +448,16 @@ button,input,select,textarea{touch-action:manipulation}
 @media(max-width:760px){nav{overflow-x:auto;justify-content:space-between;gap:2px}nav button{flex:0 0 auto;min-width:52px;padding:.42rem .25rem;font-size:.60rem}nav svg{width:19px;height:19px}.diary-fields{grid-template-columns:1fr}main{min-width:0}body{overflow-x:clip}}
 @media(max-width:365px){nav button{min-width:48px;font-size:.57rem}}
 @media(prefers-reduced-motion:reduce){.pattern-track i{animation:none}}
+
+/* Confirmación de correo tras volver desde Supabase */
+#verified-screen{position:fixed;inset:0;z-index:130;display:grid;place-items:center;padding:22px;background:color-mix(in srgb,var(--bg) 94%,var(--accent));animation:verifiedIn .4s both}
+#verified-screen .verified-card{width:min(420px,100%);border-radius:28px;background:var(--card);padding:42px 28px;text-align:center;box-shadow:0 24px 90px #0002;border:1px solid var(--line)}
+#verified-screen .verified-icon{width:86px;height:86px;border-radius:50%;background:var(--soft2);color:var(--accent);font-size:46px;display:grid;place-items:center;margin:0 auto 24px;animation:verifiedBounce .7s both}
+#verified-screen h2{font-size:1.8rem;margin-bottom:12px}#verified-screen p{line-height:1.5;color:var(--mute)}
+#verified-screen .verified-bar{height:5px;background:var(--gray);border-radius:10px;overflow:hidden;margin-top:24px}#verified-screen .verified-bar span{display:block;height:100%;background:var(--accent);animation:verifiedProgress 3s linear forwards}
+#verified-screen.leaving{opacity:0;transition:opacity .45s}
+@keyframes verifiedIn{from{opacity:0}to{opacity:1}}@keyframes verifiedBounce{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:scale(1)}}@keyframes verifiedProgress{from{width:0}to{width:100%}}
+@media(prefers-reduced-motion:reduce){#verified-screen,#verified-screen .verified-icon,#verified-screen .verified-bar span{animation:none!important}#verified-screen .verified-bar span{width:100%}}
 </style>
 </head>
 <body>
@@ -1122,7 +1132,9 @@ async function refreshFromCloud(){if(!me)return;const [pr,rr,lr,ur]=await Promis
 async function saveLikeCloud(p,kind,i,liked){const row={user_id:me.id};if(kind==='post')row.post_id=p.id;else row.reply_id=p.r[i]?.id;if(!row.post_id&&!row.reply_id)return;const q=sb.from('wp_likes');const res=liked?await q.insert(row):await q.delete().eq('user_id',me.id).eq(kind==='post'?'post_id':'reply_id',row.post_id||row.reply_id);if(res.error){await refreshFromCloud();throw res.error}}
 function stopRealtime(){if(cloudChannel){sb.removeChannel(cloudChannel);cloudChannel=null}}
 function startRealtime(){stopRealtime();cloudChannel=sb.channel('wp-forum').on('postgres_changes',{event:'*',schema:'public',table:'wp_posts'},()=>refreshFromCloud()).on('postgres_changes',{event:'*',schema:'public',table:'wp_replies'},()=>refreshFromCloud()).on('postgres_changes',{event:'*',schema:'public',table:'wp_likes'},()=>refreshFromCloud()).subscribe()}
-async function startCloud(){try{const {data:{user}}=await sb.auth.getUser();if(user)await bootCloud(user);else showAuth()}catch(e){console.error(e);showAuth();toast('Sin conexión a Supabase')}}
+function isSignupReturn(){const hash=new URLSearchParams(location.hash.replace(/^#/,'')),query=new URLSearchParams(location.search);return hash.get('type')==='signup'||hash.get('type')==='email'||(query.get('type')==='signup'&&!!query.get('code'))||((hash.has('access_token')||query.has('code'))&&!sessionStorage.getItem('wp_auth_welcome_shown'))}
+function showVerifiedWelcome(){sessionStorage.setItem('wp_auth_welcome_shown','1');const el=document.createElement('div');el.id='verified-screen';el.setAttribute('role','status');el.innerHTML='<div class="verified-card"><div class="verified-icon">✓</div><h2>¡Correo verificado!</h2><p>Tu cuenta de Women\'s Period está lista. Te llevaremos a tu espacio en unos segundos.</p><div class="verified-bar"><span></span></div></div>';document.body.appendChild(el);setTimeout(()=>{el.classList.add('leaving');setTimeout(()=>el.remove(),460)},3000)}
+async function startCloud(){const cameFromEmail=isSignupReturn();try{const {data:{user},error}=await sb.auth.getUser();if(error)throw error;if(user){await bootCloud(user);if(cameFromEmail&&me?.id===user.id)showVerifiedWelcome()}else showAuth()}catch(e){console.error(e);showAuth();toast('No fue posible completar el acceso. Intenta iniciar sesión.')}}
 
 /* ===== Inicio ===== */
 applyTheme();
