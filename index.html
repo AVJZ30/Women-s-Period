@@ -467,13 +467,13 @@ const SYSTEM = KB + "\n\n## REGLAS ADICIONALES\nResponde SIEMPRE en español, de
 const DEFAULT_KEY = ""; // Nunca incrustar claves privadas en GitHub.
 const MODEL = "gemini-3.8-flash";
 
-/* Preparación para Supabase blood (sin conexión automática durante la prueba local).
-   SQL seguro en el archivo adjunto; NO activar antes de habilitar Auth y políticas RLS.
+/* Conexión a Supabase blood con autenticación y RLS.
+   Auth y políticas RLS habilitadas en blood.
    La clave publishable es pública; jamás incluir service_role aquí. */
 const BLOOD_CONFIG = Object.freeze({
   url: 'https://ijpvdezhakwflydbjchb.supabase.co',
   publishableKey: 'sb_publishable_W62apV8zQIQuWwm-IBkk4g_IZduW9Aa',
-  enabled: false
+  enabled: true
 });
 
 /* ===== Utilidades ===== */
@@ -619,7 +619,7 @@ function bindQuickLogin(){const f=$('#quick-login-form');if(!f)return;f.onsubmit
 /* ===== Auth ===== */
 function showAuth(mode='in'){
  $('#app').classList.add('hide');const a=$('#auth');a.classList.remove('hide');
- a.innerHTML=`<div class="hero"><div class="blob b1"></div><div class="blob b2"></div><h1>Women's Period</h1><p>Calendario, comunidad y una asistente de salud menstrual. Todo se guarda en tu dispositivo.</p></div>
+ a.innerHTML=`<div class="hero"><div class="blob b1"></div><div class="blob b2"></div><h1>Women's Period</h1><p>Calendario, comunidad y una asistente de salud menstrual. Tu calendario se guarda de forma privada en la nube y las conversaciones con el asistente permanecen en tu dispositivo.</p></div>
  <div class="authbox"><div class="card"><h2>${mode==='in'?'Iniciar sesión':'Crear cuenta'}</h2>
  <div class="tabs"><button class="${mode==='in'?'on':''}" data-m="in">Entrar</button><button class="${mode==='up'?'on':''}" data-m="up">Registrarme</button></div>
  <form id="af" autocomplete="off">
@@ -1084,7 +1084,7 @@ function heartBurst(btn){
 
 
 /* Supabase blood — autenticación, historial protegido y comunidad compartida. */
-const sb=window.supabase.createClient(BLOOD_CONFIG.url,BLOOD_CONFIG.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+const sb=window.supabase.createClient(BLOOD_CONFIG.url,BLOOD_CONFIG.publishableKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 let cloudChannel=null,privateTimer=null,profileTimer=null,cloudLoading=false;
 const privateFields=['periods','plen','cycle','theme','diary','goal','dueDate'];
 function privatePayload(){const data={};for(const k of privateFields)data[k]=me[k];data.name=me.name;data.reminders=getReminders();return data}
