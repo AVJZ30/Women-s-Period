@@ -655,7 +655,7 @@ function showAuth(mode='in'){
    if(!/^[a-z0-9_]{3,20}$/.test(username))throw Error('Usuario inválido: 3–20 letras, números o guion bajo.');
    if(password.length<8)throw Error('La contraseña necesita al menos 8 caracteres.');
    const meta={username,display_name:$('#nm').value.trim(),country:$('#country').value,language:$('#reglang').value};
-   const {data,error}=await sb.auth.signUp({email,password,options:{data:meta}});if(error)throw error;
+   const {data,error}=await sb.auth.signUp({email,password,options:{data:meta,emailRedirectTo:'https://women-s-period.netlify.app/'}});if(error)throw error;
    if(data.session){await initCloudAccount(data.user,meta);await bootCloud(data.user);}
    else{pendAv='';toast('Cuenta creada. Confirma el correo y luego inicia sesión.');showAuth('in')}
   }else{const {data,error}=await sb.auth.signInWithPassword({email,password});if(error)throw error;await bootCloud(data.user);}
