@@ -639,6 +639,46 @@ function bindQuickLogin(){const f=$('#quick-login-form');if(!f)return;f.onsubmit
  }
 }
 /* ===== Auth ===== */
+function mailNotice(email,purpose='signup'){
+ const wrap=document.createElement('div');wrap.id='mail-notice';wrap.style.cssText='position:fixed;inset:0;z-index:150;background:#1a1517a8;display:grid;place-items:center;padding:20px';
+ wrap.innerHTML='<div class="card" style="max-width:440px;width:100%;padding:30px;text-align:center;box-shadow:0 24px 70px #0003"><div style="font-size:48px;margin-bottom:10px">💌</div><h2>¡Revisa tu correo!</h2><p class="muted" style="margin:14px 0">Te enviamos un mensaje a <strong id="mail-address"></strong>. Revisa también la carpeta de <strong>spam o correo no deseado</strong>.</p><div style="display:grid;gap:9px;margin-top:18px"><a class="btn" href="https://mail.google.com/mail/u/0/#inbox" target="_blank" rel="noopener noreferrer" style="text-decoration:none">Abrir Gmail ↗</a><button class="btn ghost" id="notice-code">Ingresar código de 6 dígitos</button><button class="btn ghost" id="notice-close">Cerrar</button></div></div>';
+ document.body.appendChild(wrap);wrap.querySelector('#mail-address').textContent=email;
+ wrap.querySelector('#notice-close').onclick=()=>wrap.remove();
+ wrap.querySelector('#notice-code').onclick=()=>{wrap.remove();showEmailCode(email,purpose)};
+}
+function showEmailCode(email,purpose='signup'){
+ $('#app').classList.add('hide');const a=$('#auth');a.classList.remove('hide');
+ const title=purpose==='signup'?'Verificar mi correo':purpose==='recovery'?'Recuperar mi contraseña':'Entrar con código';
+ a.innerHTML='<div class="authbox" style="padding-top:8vh"><div class="card"><h2>'+title+'</h2><p class="muted" style="margin:12px 0">Escribe el código de 6 dígitos enviado a <strong id="otp-address"></strong>. Revisa también spam.</p><form id="otp-form"><label for="otp-value">Código recibido</label><input id="otp-value" type="text" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" placeholder="000000" required><div id="otp-error" class="err"></div><button class="btn" style="width:100%;margin-top:14px">Verificar código</button></form><button id="otp-resend" class="btn ghost" style="width:100%;margin-top:10px">Reenviar código</button><button id="otp-back" class="btn ghost" style="width:100%;margin-top:10px">Volver a iniciar sesión</button></div></div>';
+ a.querySelector('#otp-address').textContent=email;
+ a.querySelector('#otp-back').onclick=()=>showAuth('in');
+ a.querySelector('#otp-resend').onclick=async()=>{const b=a.querySelector('#otp-resend'),err=a.querySelector('#otp-error');b.disabled=true;try{
+ let result;if(purpose==='signup')result=await sb.auth.resend({type:'signup',email,emailRedirectTo:'https://women-s-period.netlify.app/'});
+ else if(purpose==='recovery')result=await sb.auth.resetPasswordForEmail(email,{redirectTo:'https://women-s-period.netlify.app/'});
+ else result=await sb.auth.signInWithOtp({email,options:{shouldCreateUser:false,emailRedirectTo:'https://women-s-period.netlify.app/'}});
+ if(result.error)throw result.error;mailNotice(email,purpose);
+ }catch(ex){err.textContent=ex.message||'No se pudo reenviar el código.'}finally{b.disabled=false}};
+ a.querySelector('#otp-form').onsubmit=async ev=>{ev.preventDefault();const b=a.querySelector('#otp-form button'),err=a.querySelector('#otp-error'),token=a.querySelector('#otp-value').value.trim();b.disabled=true;err.textContent='';
+ try{const type=purpose==='signup'?'signup':purpose==='recovery'?'recovery':'email';const {data,error}=await sb.auth.verifyOtp({email,token,type});if(error)throw error;
+ if(purpose==='recovery'){showNewPassword();return}
+ if(!data.user)throw Error('No se pudo iniciar sesión.');await bootCloud(data.user);if(purpose==='signup')showVerifiedWelcome();
+ }catch(ex){err.textContent=ex.message||'Código incorrecto o vencido.'}finally{if(b.isConnected)b.disabled=false}};
+}
+function showNewPassword(){
+ const a=$('#auth');a.classList.remove('hide');$('#app').classList.add('hide');
+ a.innerHTML='<div class="authbox" style="padding-top:8vh"><div class="card"><h2>Crear nueva contraseña</h2><p class="muted" style="margin:12px 0">Ya verificamos tu correo. Establece una contraseña segura para tu cuenta.</p><form id="new-pass-form"><label for="new-pass">Nueva contraseña</label><input id="new-pass" type="password" minlength="8" required autocomplete="new-password"><label for="new-pass-confirm">Confirmar contraseña</label><input id="new-pass-confirm" type="password" minlength="8" required autocomplete="new-password"><div id="new-pass-error" class="err"></div><button class="btn" style="width:100%;margin-top:14px">Cambiar contraseña</button></form></div></div>';
+ $('#new-pass-form').onsubmit=async e=>{e.preventDefault();const err=$('#new-pass-error'),p=$('#new-pass').value;if(p!==$('#new-pass-confirm').value){err.textContent='Las contraseñas no coinciden.';return}const {error}=await sb.auth.updateUser({password:p});if(error){err.textContent=error.message;return}const {data:{user}}=await sb.auth.getUser();if(user){await bootCloud(user);toast('Tu contraseña se actualizó correctamente.')}else showAuth('in')};
+}
+function showMailAccess(mode='otp'){
+ const a=$('#auth');$('#app').classList.add('hide');a.classList.remove('hide');
+ const isRecovery=mode==='recovery';
+ a.innerHTML='<div class="authbox" style="padding-top:8vh"><div class="card"><h2>'+(isRecovery?'¿Olvidaste tu contraseña?':'Entrar con un código')+'</h2><p class="muted" style="margin:12px 0">'+(isRecovery?'Te enviaremos un código para verificar tu identidad y cambiar la contraseña.':'Recibirás un código temporal para entrar sin contraseña.')+'</p><form id="mail-access"><label for="access-email">Correo electrónico</label><input id="access-email" type="email" autocomplete="email" required><div class="err" id="access-error"></div><button class="btn" style="width:100%;margin-top:14px">Enviar código</button></form><button id="access-back" class="btn ghost" style="width:100%;margin-top:12px">Volver</button></div></div>';
+ $('#access-back').onclick=()=>showAuth('in');
+ $('#mail-access').onsubmit=async e=>{e.preventDefault();const email=$('#access-email').value.trim().toLowerCase(),btn=$('#mail-access button'),err=$('#access-error');btn.disabled=true;err.textContent='';
+ try{const res=isRecovery?await sb.auth.resetPasswordForEmail(email,{redirectTo:'https://women-s-period.netlify.app/'}):await sb.auth.signInWithOtp({email,options:{shouldCreateUser:false,emailRedirectTo:'https://women-s-period.netlify.app/'}});
+ if(res.error)throw res.error;mailNotice(email,mode==='recovery'?'recovery':'login');
+ }catch(ex){err.textContent=ex.message||'No se pudo enviar el código.'}finally{btn.disabled=false}};
+}
 function showAuth(mode='in'){
  $('#app').classList.add('hide');const a=$('#auth');a.classList.remove('hide');
  a.innerHTML=`<div class="hero"><div class="blob b1"></div><div class="blob b2"></div><h1>Women's Period</h1><p>Calendario, comunidad y una asistente de salud menstrual. Tu calendario se guarda de forma privada en la nube y las conversaciones con el asistente se guardan en tu cuenta privada.</p></div>
@@ -652,7 +692,9 @@ function showAuth(mode='in'){
  <label for="pw">Contraseña</label><input id="pw" type="password" required autocomplete="${mode==='in'?'current-password':'new-password'}">
  <div class="err" id="er"></div><button class="btn" style="width:100%;margin-top:.5rem">${mode==='in'?'Entrar':'Crear mi cuenta'}</button>
  ${mode==='up'?'<label class="chk"><input type="checkbox" id="tc" required><span>Acepto los <a href="#" class="lk" data-legal="terms">Términos y condiciones</a> y la <a href="#" class="lk" data-legal="privacy">Política de privacidad</a>.</span></label><p class="note">Tu correo no será público. Tu nombre es privado por defecto; solo tu usuario es visible en la comunidad.</p>':'<p class="note">Inicia sesión con tu correo y contraseña. Si acabas de registrarte, confirma tu correo primero.</p>'}</form>
+ ${mode==='in'?'<div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:14px 0"><button id="login-code" class="btn ghost sm" type="button">Entrar con código</button><button id="forgot-pass" class="btn ghost sm" type="button">Olvidé mi contraseña</button></div>':''}
  <p class="note" style="text-align:center"><a href="#" class="lk" data-legal="terms">Términos</a> · <a href="#" class="lk" data-legal="privacy">Privacidad</a></p>${mode==='in'?quickHTML():''}</div></div>`;
+ if(mode==='in'){$('#login-code').onclick=()=>showMailAccess('otp');$('#forgot-pass').onclick=()=>showMailAccess('recovery')}
  bindQuickLogin();a.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>showAuth(b.dataset.m));$('#reglang').onchange=e=>setLanguage(e.target.value);requestAnimationFrame(translateUI);
  const pv=()=>{const e=$('#pv');if(e)e.innerHTML=pendAv?`<img class="av" src="${pendAv}" alt="" style="width:64px;height:64px">`:'<label for="ph" class="av" style="width:64px;height:64px;font-size:26px;cursor:pointer" title="Elegir una foto">+</label>'};pv();
  if($('#ph'))$('#ph').onchange=async e=>{try{pendAv=await pickImg(e.target.files[0]);pv()}catch(err){toast(err.message||'Esa imagen no es válida')}finally{e.target.value=''}};
@@ -667,7 +709,7 @@ function showAuth(mode='in'){
    const meta={username,display_name:$('#nm').value.trim(),country:$('#country').value,language:$('#reglang').value};
    const {data,error}=await sb.auth.signUp({email,password,options:{data:meta,emailRedirectTo:'https://women-s-period.netlify.app/'}});if(error)throw error;
    if(data.session){await initCloudAccount(data.user,meta);await bootCloud(data.user);}
-   else{pendAv='';toast('Cuenta creada. Confirma el correo y luego inicia sesión.');showAuth('in')}
+   else{pendAv='';showAuth('in');mailNotice(email,'signup')}
   }else{const {data,error}=await sb.auth.signInWithPassword({email,password});if(error)throw error;await bootCloud(data.user);}
  }catch(ex){er.textContent=ex.message||'No se pudo iniciar sesión.'}
  finally{if(button.isConnected)button.disabled=false}
