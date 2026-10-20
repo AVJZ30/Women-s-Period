@@ -454,11 +454,12 @@ button,input,select,textarea{touch-action:manipulation}
 <div id="loader"><div class="lw"><div class="rings"><i></i><i></i><i></i><div class="drop"></div></div><div class="brand" style="justify-content:center">Women's Period</div><p class="muted">Preparando tu espacio…</p></div></div>
 <div id="auth" class="hide"></div>
 <div id="app" class="hide"><aside><div class="brand"><b></b>Women's Period</div><nav id="nav"></nav><div class="who" id="who"></div></aside><main id="main"></main></div>
-<div class="demo-banner">✦ PRUEBA LOCAL · Sin Supabase</div>
+<div class="demo-banner">✦ Women’s Period · Conectado a blood</div>
 <div id="toast"></div><div id="top-loading-bar" aria-hidden="true"></div>
 <div id="modal" class="hide" role="dialog" aria-modal="true"></div>
 <button id="scroll-top" type="button" aria-label="Volver arriba"><svg viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></svg></button>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.min.js"></script>
 <script>
 /* ===== Conocimiento del asistente (archivo .md inyectado) ===== */
 const KB = "# BASE DE CONOCIMIENTO Y SYSTEM PROMPT: SALUD MENSTRUAL Y CICLO FEMENINO\n\n## 1. ROL Y DIRECTRICES DE LA IA\nActúa como una asistente experta en salud menstrual, educación ginecológica y bienestar femenino. Tu tono debe ser empático, claro, científico, libre de tabúes y directo. \n- **Límite médico (Disclaimer):** Siempre aclara que la información es educativa y no reemplaza una consulta ginecológica presencial.\n- **Triage de urgencias:** Si la usuaria reporta señales de alerta (sección 8), prioriza recomendar atención médica inmediata antes de dar consejos caseros.\n\n---\n\n## 2. PARÁMETROS CLÍNICOS NORMALES (VALORES DE REFERENCIA)\nUsa estos rangos para evaluar si lo que describe una usuaria está dentro de los parámetros habituales:\n- **Duración del ciclo completo:** 21 a 35 días en adultas (promedio 28 días); en adolescentes puede variar de 21 a 45 días durante los primeros 2 a 3 años tras la menarquia (primera menstruación).\n- **Duración del sangrado:** 2 a 7 días (promedio 4 a 5 días).\n- **Volumen total de sangre perdida por ciclo:** 30 ml a 80 ml. Menos de 30 ml se considera hipomenorrea; más de 80 ml se considera menorragia (sangrado menstrual abundante).\n- **Variabilidad normal entre ciclos:** Una variación de +/- 2 a 7 días entre un mes y otro se considera regular.\n- **pH vaginal normal (edad reproductiva):** Entre 3.8 y 4.5 (ácido, mantenido por lactobacilos). Durante la menstruación sube temporalmente porque el pH de la sangre es de 7.4.\n\n---\n\n## 3. FISIOLOGÍA PROFUNDA: EJE HPO Y LAS 4 FASES\nEl ciclo está regulado por el **Eje Hipotálamo-Pituitaria-Ovario (HPO)**:\n\n1. **Fase Menstrual (Días 1-5):**\n   - *Hormonas:* Estrógeno y progesterona en sus niveles basales más bajos.\n   - *Útero:* Descamación funcional del endometrio inducida por vasoconstricción de las arterias espirales y liberación de prostaglandinas ($PGF_{2\\alpha}$ y $PGE_2$).\n   - *Estado sistémico:* Fatiga leve, menor energía física, posible retención de líquidos residual.\n\n2. **Fase Folicular (Días 1-13):**\n   - *Hormonas:* El hipotálamo secreta GnRH en pulsos lentos, estimulando a la hipófisis a liberar FSH (Hormona Foliculoestimulante). Crecen entre 10 y 20 folículos antrales, pero por selección folicular solo uno (el folículo dominante) madura y secreta **estradiol (estrógeno)** en aumento exponencial.\n   - *Útero:* Fase proliferativa; el endometrio se regenera y engrosa (de 2 mm hasta 8-10 mm).\n   - *Estado sistémico:* Aumento de serotonina y dopamina. Mayor energía física, mejor sensibilidad a la insulina, mayor tolerancia al dolor y agudeza cognitiva.\n\n3. **Fase Ovulatoria (Días 13-15 en un ciclo de 28 días):**\n   - *Hormonas:* El nivel alto y sostenido de estradiol por más de 48 horas cambia la retroalimentación negativa a positiva en la hipófisis, disparando el **pico de LH (Hormona Luteinizante)** y un pico menor de FSH. La ovulación ocurre 24 a 36 horas después del inicio del pico de LH (y 10 a 12 horas después de su punto máximo).\n   - *Óvulo y ventana fértil:* El ovocito vive de 12 a 24 horas. Como los espermatozoides viven hasta 5 días en el moco cervical fértil, la **ventana fértil total es de unos 6 días** (los 5 días previos a la ovulación más el día de la ovulación).\n   - *Signos físicos:* Moco cervical tipo clara de huevo (elástico, transparente, alcalino para proteger espermatozoides), cérvix alto, blando y abierto. Posible *Mittelschmerz* (dolor pélvico unilateral leve al romperse el folículo).\n\n4. **Fase Lútea (Días 15-28):**\n   - *Hormonas:* La duración de esta fase es la más constante (casi siempre dura **12 a 14 días**; si un ciclo se retrasa, casi siempre se retrasó la ovulación, no la fase lútea). El folículo roto se transforma en el **cuerpo lúteo**, que secreta **progesterona** y cantidades moderadas de estrógeno.\n   - *Útero:* Fase secretora; el endometrio se vasculariza y acumula glucógeno (llega a 12-16 mm).\n   - *Efecto termogénico:* La progesterona actúa en el hipotálamo elevando la **Temperatura Corporal Basal (TCB)** entre 0.2 °C y 0.5 °C hasta el día antes del siguiente periodo.\n   - *Luteólisis:* Si no hay implantación ni hormona hCG a los 10-12 días post-ovulación, el cuerpo lúteo degenera (corpus albicans), caen la progesterona y el estrógeno, y se desencadena el Síndrome Premenstrual (SPM) y el nuevo sangrado.\n\n---\n\n## 4. CLASIFICACIÓN DEL FLUJO VAGINAL Y SANGRE MENSTRUAL\n\n### Evolución del flujo cervical durante el mes (No menstrual)\n- **Post-menstrual (Días 6-8):** Seco o flujo escaso y pegajoso.\n- **Pre-ovulatorio (Días 9-11):** Cremoso, blanco o ligeramente amarillento al secarse en la ropa interior (tipo loción).\n- **Ovulatorio (Días 12-15):** Acuoso, transparente, muy elástico (filancia mayor a 5 cm).\n- **Lúteo (Días 16-28):** Espeso, blanco, opaco o seco por efecto de la progesterona.\n\n### Interpretación del sangrado\n- **Rojo vivo:** Flujo activo y reciente.\n- **Marrón/Cafés/Negro:** Sangre oxidada de flujo lento (inicio/final del ciclo). Normal.\n- **Rosado:** Mezcla con fluido cervical (inicio del ciclo, manchado ovulatorio o niveles bajos de estrógeno).\n- **Anaranjado o Grisáceo:** Alerta de infección (vaginosis bacteriana o tricomoniasis).\n\n---\n\n## 5. MANEJO DEL DOLOR Y SÍNTOMAS ASOCIADOS\n\n### Mecanismo de las Prostaglandinas\nLa caída de progesterona rompe los lisosomas celulares del endometrio, liberando ácido araquidónico que se convierte en prostaglandinas ($PGF_{2\\alpha}$) vía la enzima ciclooxigenasa (COX). Esto causa hipercontractilidad uterina, isquemia (falta temporal de oxígeno en el músculo uterino, lo que duele) y, si pasan al torrente sanguíneo, causan **diarrea menstrual, náuseas, dolor de cabeza y mareos**.\n\n### Protocolo de alivio\n1. **Farmacológico (Inhibidores de COX / AINEs):** Ibuprofeno, naproxeno o ácido mefenámico. Funcionan mejor si se toman **24 horas antes del sangrado** o al primer síntoma, antes de que la cascada de prostaglandinas se instale. (Contraindicado en úlceras gástricas o alergias). Para quienes no toleran AINEs, el paracetamol ayuda con el umbral del dolor pero no frena las prostaglandinas.\n2. **Termoterapia:** Calor local a 40 °C en hipogastrio (vientre bajo) provoca vasodilatación y reduce la isquemia muscular.\n3. **Suplementación con evidencia:** Magnesio (glicinato o citrato, 200-300 mg/día), Ácidos grasos Omega-3 (EPA/DHA), Vitamina B1 (tiamina, 100 mg/día), Vitamina E y extracto de jengibre en polvo (250-500 mg cada 6-8 horas durante los primeros 3 días).\n\n---\n\n## 6. HIGIENE ÍNTIMA Y PRODUCTOS DE GESTIÓN MENSTRUAL\n\n### Reglas anatómicas y microbiológicas\n- **Vagina (canal interno):** Autolimpiante mediante secreciones cervicales y flora de *Lactobacillus crispatus, gasseri y jensenii* (producen ácido láctico y peróxido de hidrógeno). Prohibido el uso de duchas vaginales, óvulos caseros (ajo, yogur, aceites), vapores vaginales o jabones internos.\n- **Vulva (genitales externos):** Lavar 1 vez al día solo con agua tibia o limpiador syndet de pH ácido (3.8 - 4.5) sin fragancias. Lavar pliegues entre labios mayores y menores, pero no dentro del introito vaginal.\n- **Dirección de limpieza:** Siempre de adelante (uretra/vulva) hacia atrás (ano) para prevenir infecciones urinarias por *Escherichia coli*.\n\n### Tabla técnica de productos menstruales\n- **Toallas desechables / Tela:** Uso externo. Cambio cada 4-6 horas.\n- **Tampones:** Uso interno (absorben flujo y humedad vaginal). Cambio cada 4-6 horas (máximo absoluto 8 horas). Riesgo bajo pero real de Síndrome de Choque Tóxico (SCT) por toxina TSST-1 de *Staphylococcus aureus*.\n- **Copa menstrual:** Uso interno (recolecta, no absorbe; hecha de silicona médica o TPE). Sello por vacío ligero. Duración: hasta 12 horas. Esterilización: hervir de 5 a 10 minutos entre ciclos.\n- **Disco menstrual:** Uso interno (se coloca en el fórnix vaginal, detrás del hueso púbico; no hace vacío). Permite relaciones sexuales con penetración durante el sangrado. Duración: hasta 12 horas. Compatible con DIU (menor riesgo de desplazarlo por succión).\n- **Calzones menstruales:** Uso externo absorbente. Duración: 8 a 12 horas según flujo. Lavar con agua fría primero, sin suavizante de telas (el suavizante impermeabiliza las fibras y daña la absorción).\n\n---\n\n## 7. PATOLOGÍAS Y CONDICIONES FRECUENTES (DIFERENCIACIÓN)\n- **Dismenorrea Primaria vs. Secundaria:** La primaria es dolor menstrual común por prostaglandinas sin enfermedad pélvica subyacente (inicia poco después de la menarquia). La secundaria es dolor causado por una patología (endometriosis, adenomiosis, miomas, enfermedad pélvica inflamatoria) y suele empeorar con los años.\n- **Endometriosis:** Tejido similar al endometrio crece fuera del útero (ovarios, peritoneo, intestino). Síntomas: dismenorrea severa, dispareunia profunda (dolor al tener relaciones), disquecia (dolor al defecar en la regla) e infertilidad.\n- **Síndrome de Ovario Poliquístico (SOP / PCOS):** Trastorno endocrino-metabólico. Criterios de Rotterdam (se necesitan 2 de 3): 1) Oligo o anovulación (ciclos mayores a 35 días o ausentes), 2) Hiperandrogenismo clínico o bioquímico (acné severo, hirsutismo/vello facial, alopecia androgénica), 3) Ovarios de aspecto poliquístico en ecografía. Frecuentemente asociado a resistencia a la insulina.\n- **Trastorno Disfórico Premenstrual (TDPM / PMDD):** Forma severa y psiquiátrica del SPM (afecta al 3-8% de mujeres). Ocurre en la fase lútea tardía y desaparece al iniciar el sangrado: depresión profunda, ataques de pánico, irritabilidad extrema o ideación suicida por hipersensibilidad cerebral a las fluctuaciones normales de alopregnanolona (metabolito de la progesterona).\n\n---\n\n## 8. BANDERAS ROJAS (CUÁNDO DERIVAR AL MÉDICO DE INMEDIATO)\n1. Empapar una toalla o tampón de máxima absorción cada hora durante 2 o más horas seguidas.\n2. Sangrado que dura más de 8 días continuos.\n3. Coágulos frecuentes mayores a 2.5 cm.\n4. Dolor pélvico súbito e intenso en un solo lado (riesgo de torsión ovárica, quiste hemorrágico roto o embarazo ectópico).\n5. Fiebre mayor a 38.9 °C, vómitos, diarrea, mareo al ponerse de pie y sarpullido tipo quemadura solar mientras se usa tampón o copa (sospecha de Síndrome de Choque Tóxico).\n6. Sangrado vaginal después de la menopausia (siempre debe investigarse).\n7. Ausencia de menstruación por más de 90 días (sin embarazo ni lactancia).";
@@ -495,14 +496,15 @@ const LOCAL_BUS = 'ciclo_local_demo_events';
 const communityBus = typeof BroadcastChannel!=='undefined' ? new BroadcastChannel(LOCAL_BUS) : null;
 let forumUpdatePending=false;
 function syncCommunity(){
+ if(me)return refreshFromCloud();
  posts=LS.get('ciclo_posts',[]);users=LS.get('ciclo_users',[]);
  if(me){const fresh=users.find(u=>u.id===me.id);if(fresh)me=fresh;}
  if(me&&view==='forum') refreshForumPosts();
 }
-if(communityBus)communityBus.onmessage=e=>{if(e.data?.kind==='community')syncCommunity()};
+if(communityBus)communityBus.onmessage=e=>{if(e.data?.kind==='community')refreshFromCloud()};
 window.addEventListener('storage',e=>{if(e.key==='ciclo_posts'||e.key==='ciclo_users')syncCommunity()});
-window.addEventListener('focus',syncCommunity);
-document.addEventListener('visibilitychange',()=>{if(!document.hidden)syncCommunity()});
+window.addEventListener('focus',()=>{if(me)refreshFromCloud()});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&me)refreshFromCloud()});
 function broadcastCommunity(){communityBus?.postMessage({kind:'community'});}
 function persistChat(){if(me)LS.set('ciclo_chat_'+me.id,chat.slice(-100))}
 
@@ -521,7 +523,7 @@ async function pickImg(file){
   return await new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=()=>reject(Error('No se pudo guardar AVIF.'));r.readAsDataURL(result)});
  }finally{bitmap.close?.()}
 }
-const saveU=()=>{LS.set('ciclo_users',users);broadcastCommunity()},saveP=()=>{LS.set('ciclo_posts',posts);broadcastCommunity()};
+const saveU=()=>{if(!me)return;queuePrivateSave();queueProfileSave();broadcastCommunity()},saveP=()=>{broadcastCommunity()};
 function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('show'),2200)}
 async function hash(p,salt){const d=salt+p;if(window.crypto?.subtle){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(d));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}let h=5381;for(const c of d)h=(h*33)^c.charCodeAt(0);return String(h>>>0)}
 const IC={diary:'<svg viewBox="0 0 24 24"><path d="M5 3h14v18H5zM8 8h8M8 12h8M8 16h5"/></svg>',well:'<svg viewBox="0 0 24 24"><path d="M12 21s-9-5.5-9-12a5 5 0 0 1 9-3 5 5 0 0 1 9 3c0 6.5-9 12-9 12z"/></svg>',cal:'<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>',forum:'<svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></svg>',ai:'<svg viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/></svg>',set:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg>'};
@@ -624,25 +626,33 @@ function showAuth(mode='in'){
  ${mode==='up'?'<div class="avrow"><span id="pv"></span><div><label class="btn ghost sm" for="ph" style="display:inline-block;margin:0;cursor:pointer">Subir foto de perfil</label><input id="ph" type="file" accept="image/*,.heic,.heif,.tiff,.tif,.bmp,.gif,.svg,.avif,.webp,.png,.jpg,.jpeg,.ico" class="hide"><div class="note" style="margin:.3rem 0 0">Opcional · convierte la imagen a AVIF y la guarda localmente</div></div></div><label for="nm">Nombre</label><input id="nm" required maxlength="40" autocomplete="given-name">':''}
  ${mode==='up'?`<label for="country">País</label><select id="country" required>${countryOptions()}</select>`:''}
  <label for="reglang">Idioma / Language</label><select id="reglang">${langOptions()}</select>
- <label for="un">Nombre de usuario</label><input id="un" required maxlength="20" autocapitalize="off" autocomplete="username">
+ ${mode==='up'?'<label for="un">Nombre de usuario</label><input id="un" required maxlength="20" autocapitalize="off" autocomplete="username">':''}<label for="email">Correo electrónico</label><input id="email" required type="email" maxlength="254" autocomplete="email">
  <label for="pw">Contraseña</label><input id="pw" type="password" required autocomplete="${mode==='in'?'current-password':'new-password'}">
  <div class="err" id="er"></div><button class="btn" style="width:100%;margin-top:.5rem">${mode==='in'?'Entrar':'Crear mi cuenta'}</button>
- ${mode==='up'?'<label class="chk"><input type="checkbox" id="tc" required><span>Acepto los <a href="#" class="lk" data-legal="terms">Términos y condiciones</a> y la <a href="#" class="lk" data-legal="privacy">Política de privacidad</a>.</span></label><p class="note">Sin correo. Tu nombre es privado por defecto; solo tu usuario es visible en la comunidad.</p>':'<div class="demo"><b>Cuenta de prueba</b><br>Usuario: <code>admin</code> · Contraseña: <code>admin</code></div>'}</form>
- ${mode==='in'?quickHTML():''}<p class="note" style="text-align:center"><a href="#" class="lk" data-legal="terms">Términos</a> · <a href="#" class="lk" data-legal="privacy">Privacidad</a></p></div></div>`;
- bindQuickLogin();a.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>showAuth(b.dataset.m));$('#reglang').onchange=e=>setLanguage(e.target.value);requestAnimationFrame(translateUI);
+ ${mode==='up'?'<label class="chk"><input type="checkbox" id="tc" required><span>Acepto los <a href="#" class="lk" data-legal="terms">Términos y condiciones</a> y la <a href="#" class="lk" data-legal="privacy">Política de privacidad</a>.</span></label><p class="note">Tu correo no será público. Tu nombre es privado por defecto; solo tu usuario es visible en la comunidad.</p>':'<p class="note">Inicia sesión con tu correo y contraseña. Si acabas de registrarte, confirma tu correo primero.</p>'}</form>
+ <p class="note" style="text-align:center"><a href="#" class="lk" data-legal="terms">Términos</a> · <a href="#" class="lk" data-legal="privacy">Privacidad</a></p></div></div>`;
+ a.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>showAuth(b.dataset.m));$('#reglang').onchange=e=>setLanguage(e.target.value);requestAnimationFrame(translateUI);
  const pv=()=>{const e=$('#pv');if(e)e.innerHTML=pendAv?`<img class="av" src="${pendAv}" alt="" style="width:64px;height:64px">`:'<span class="av" style="width:64px;height:64px;font-size:26px">+</span>'};pv();
  if($('#ph'))$('#ph').onchange=async e=>{try{pendAv=await pickImg(e.target.files[0]);pv()}catch(err){toast(err.message||'Esa imagen no es válida')}};
- $('#af').onsubmit=async e=>{e.preventDefault();const er=$('#er'),un=$('#un').value.trim().toLowerCase(),pw=$('#pw').value;
+ $('#af').onsubmit=async e=>{
+ e.preventDefault();const er=$('#er'),button=$('#af button.btn'),email=$('#email').value.trim().toLowerCase(),password=$('#pw').value;
+ button.disabled=true;er.textContent='';
+ try{
   if(mode==='up'){
-   if(pw.length<6)return er.textContent='La contraseña necesita al menos 6 caracteres.';
-   if(!/^[a-z0-9_]{3,20}$/.test(un))return er.textContent='El usuario usa 3–20 letras, números o guion bajo.';
-   if(users.some(u=>u.username===un))return er.textContent='Ese usuario ya existe. Prueba con otro.';
-   const salt=uid(),u={id:uid(),name:$('#nm').value.trim(),username:un,salt,hash:await hash(pw,salt),pub:false,theme:{mode:document.documentElement.dataset.theme||'light'},periods:[],cycle:28,plen:5,avatar:pendAv,created:today(),country:$("#country").value,lang:$("#reglang").value};
-   pendAv='';users.push(u);saveU();login(u)}
-  else{const u=users.find(x=>x.username===un);if(!u||u.hash!==await hash(pw,u.salt))return er.textContent='Usuario o contraseña incorrectos.';login(u)}}
+   const username=$('#un').value.trim().toLowerCase();
+   if(!/^[a-z0-9_]{3,20}$/.test(username))throw Error('Usuario inválido: 3–20 letras, números o guion bajo.');
+   if(password.length<8)throw Error('La contraseña necesita al menos 8 caracteres.');
+   const meta={username,display_name:$('#nm').value.trim(),country:$('#country').value,language:$('#reglang').value};
+   const {data,error}=await sb.auth.signUp({email,password,options:{data:meta}});if(error)throw error;
+   if(data.session){await initCloudAccount(data.user,meta);await bootCloud(data.user);}
+   else{pendAv='';toast('Cuenta creada. Confirma el correo y luego inicia sesión.');showAuth('in')}
+  }else{const {data,error}=await sb.auth.signInWithPassword({email,password});if(error)throw error;await bootCloud(data.user);}
+ }catch(ex){er.textContent=ex.message||'No se pudo iniciar sesión.'}
+ finally{if(button.isConnected)button.disabled=false}
+ };
 }
 function login(u){me=u;guestLanguage=u.lang||guestLanguage;chat=LS.get('ciclo_chat_'+u.id,[]);if(!u.created){u.created=today();saveU()}LS.set('ciclo_session',u.id);applyTheme();$('#auth').classList.add('hide');$('#app').classList.remove('hide');view='cal';cur=new Date();sel=today();counterAnimDone=false;shell()}
-function logout(){persistChat();LS.set('ciclo_session',null);me=null;chat=[];applyTheme();showAuth()}
+async function logout(){persistChat();await sb.auth.signOut();me=null;chat=[];users=[];posts=[];stopRealtime();LS.set('ciclo_session',null);applyTheme();showAuth()}
 
 /* ===== Estructura ===== */
 function shell(){
@@ -699,7 +709,7 @@ function vDiary(){
 function dailyStats(){const M=model(),entries=Object.entries(diaryData()).sort(([a],[b])=>b.localeCompare(a)),counts={};for(const [,r]of entries)for(const symptom of (r.symptoms||[]))counts[symptom]=(counts[symptom]||0)+1;return{M,entries,counts}}
 const REMINDER_STORAGE='womens_period_reminders_';
 function getReminders(){return LS.get(REMINDER_STORAGE+me.id,{water:false,waterHours:3,pill:false,pillTime:'20:00',period:true,lastWater:'',lastPill:''})}
-function reminderSave(r){LS.set(REMINDER_STORAGE+me.id,r)}
+function reminderSave(r){LS.set(REMINDER_STORAGE+me.id,r);queuePrivateSave()}
 function vWell(){
  const {M,entries,counts}=dailyStats(),r=getReminders(),sym=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,6);
  main(`<div class="top"><div><h2>Mi bienestar</h2><p class="muted">Tendencias de tu ciclo, alertas opcionales y respaldo de tus datos.</p></div></div>
@@ -805,6 +815,7 @@ function bindForumCards(){
   const target=b.dataset.like==='post'?p:p.r[Number(b.dataset.id)];if(!target)return;
   if(!Array.isArray(target.likes))target.likes=[];
   const i=target.likes.indexOf(me.id);if(i>=0)target.likes.splice(i,1);else target.likes.push(me.id);
+  saveLikeCloud(p,b.dataset.like,b.dataset.like==='reply'?Number(b.dataset.id):null,i<0).catch(err=>toast(err.message));
   const liked=i<0;b.setAttribute('aria-pressed',String(liked));b.setAttribute('aria-label',liked?'Quitar corazón':'Dar corazón');
   b.querySelector('span').textContent=target.likes.length;
   b.classList.remove('heart-pop');void b.offsetWidth;b.classList.add('heart-pop');
@@ -812,8 +823,8 @@ function bindForumCards(){
   saveP();
   if(openedPost)refreshForumPosts();
  });
- $('#forum-feed')?.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{posts=posts.filter(p=>p.id!==b.dataset.del);saveP();refreshForumPosts()});
- $('#forum-feed')?.querySelectorAll('.rform').forEach(f=>f.onsubmit=e=>{e.preventDefault();const p=posts.find(x=>x.id===f.dataset.p);if(!p)return;p.r.push({uid:me.id,t:f.querySelector('input').value.trim()});saveP();document.activeElement.blur();refreshForumPosts()});
+ $('#forum-feed')?.querySelectorAll('[data-del]').forEach(b=>b.onclick=async()=>{const {error}=await sb.from('wp_posts').delete().eq('id',b.dataset.del);if(error)return toast(error.message);await refreshFromCloud()});
+ $('#forum-feed')?.querySelectorAll('.rform').forEach(f=>f.onsubmit=async e=>{e.preventDefault();const t=f.querySelector('input').value.trim();if(!t)return;const {error}=await sb.from('wp_replies').insert({post_id:f.dataset.p,user_id:me.id,body:t});if(error)return toast(error.message);document.activeElement.blur();await refreshFromCloud()});
 }
 document.addEventListener('focusout',()=>{if(forumUpdatePending)queueMicrotask(()=>{if(!document.activeElement?.closest?.('#forum-feed'))refreshForumPosts()})});
 let composerOpen=false,lastComposerFocus=null;
@@ -827,10 +838,10 @@ function setComposer(open){
 function vForum(){
  composerOpen=false;openedPost=null;document.body.classList.remove('detail-open');
  const list=posts.filter(p=>cat==='Todos'||p.cat===cat).sort((a,b)=>b.ts-a.ts);
- main(`<div class="top"><div><h2>Comunidad</h2><p class="muted">Comparte consejos, responde y agradece los tips que te ayudan con un corazón. Sincronización entre pestañas.</p></div></div>
+ main(`<div class="top"><div><h2>Comunidad</h2><p class="muted">Comparte consejos, responde y agradece los tips que te ayudan con un corazón. Actualizaciones entre dispositivos.</p></div></div>
  <div class="chips">${['Todos',...CATS].map(c=>`<button class="chip ${c===cat?'on':''}" data-c="${c}">${c}</button>`).join('')}</div>
  <div id="forum-feed">${forumCards(list)}</div>
- <p class="note">Prueba local: actualización entre pestañas, sin recargar toda la página. Distintos dispositivos requieren conexión posterior a un servidor.</p>
+ <p class="note">Comunidad sincronizada mediante Supabase entre dispositivos.</p>
  <div id="composer" class="composer-wrap" aria-hidden="true"><div class="composer-backdrop" id="composer-backdrop"></div>
  <div class="composer-panel" role="dialog" aria-modal="true" aria-labelledby="composer-title">
  <div class="composer-head"><h3 id="composer-title">Comparte un consejo 💗</h3><button type="button" class="composer-close" id="composer-close" aria-label="Cerrar">×</button></div>
@@ -853,7 +864,7 @@ function vForum(){
   if(!title||!body){const fld=!title?$('#pt'):$('#pb');fld.classList.add('field-error');fld.focus();setTimeout(()=>fld.classList.remove('field-error'),400);return}
   const b=$('#publish-btn');b.disabled=true;b.innerHTML='<span class="submit-spinner"></span>Publicando…';
   const rect=b.getBoundingClientRect();
-  posts.push({id:uid(),uid:me.id,title,body,cat:$('#pc').value,ts:Date.now(),likes:[],r:[]});saveP();
+  const {error}=await sb.from('wp_posts').insert({user_id:me.id,title,body,category:$('#pc').value});if(error){toast(error.message);b.disabled=false;b.textContent='Publicar';return;}await refreshFromCloud();
   $('#pf').reset();setComposer(false);refreshForumPosts();
   confettiAt(rect.left+rect.width/2,rect.top+rect.height/2);
   toast('¡Publicado con éxito! 💗');
@@ -904,7 +915,7 @@ function vSet(){
  <div class="stats" style="margin:.2rem 0 .4rem"><div class="card stat"><small>Días desde el registro</small><strong>${diff(today(),me.created)}</strong></div><div class="card stat"><small>Periodos registrados</small><strong>${me.periods.length}</strong></div></div><label for="sn">Nombre</label><input id="sn" value="${esc(me.name)}" maxlength="40">
  <div class="line"><div><strong>Mostrar mi nombre en la comunidad</strong><div class="muted">Privado por defecto. Tu usuario (@${esc(me.username)}) siempre es visible.</div></div><button class="tg ${me.pub?'on':''}" id="tp" role="switch" aria-checked="${me.pub}" aria-label="Nombre público"></button></div>
  <button class="btn sm" id="sv">Guardar nombre</button></div>
- <div class="card"><h3>🔐 Inicio de sesión rápido</h3><p class="muted">Configura un PIN de 6 números para entrar más rápido desde este navegador al cerrar sesión. No reemplaza la contraseña de tu cuenta.</p><form id="quick-pin-form"><label for="pin-new">Nuevo PIN (6 dígitos)</label><input id="pin-new" type="password" inputmode="numeric" autocomplete="new-password" maxlength="6" minlength="6" pattern="[0-9]{6}" placeholder="••••••" required><label for="pin-repeat">Repite el PIN</label><input id="pin-repeat" type="password" inputmode="numeric" autocomplete="new-password" maxlength="6" minlength="6" pattern="[0-9]{6}" placeholder="••••••" required><div class="row"><button class="btn sm" type="submit">Activar inicio rápido</button><button class="btn ghost sm" type="button" id="quick-pin-remove">Desactivar PIN</button></div><p class="note" id="pin-status" role="status"></p></form></div><div class="card"><h3>País e idioma</h3><label for="set-country">País</label><select id="set-country">${countryOptions(me.country||'')}</select><label for="set-lang">Idioma / Language</label><select id="set-lang">${langOptions()}</select><button class="btn sm" id="save-locale" style="margin-top:.7rem">Guardar</button></div>
+ <div class="card hide"><h3>🔐 Inicio de sesión rápido</h3><p class="muted">Configura un PIN de 6 números para entrar más rápido desde este navegador al cerrar sesión. No reemplaza la contraseña de tu cuenta.</p><form id="quick-pin-form"><label for="pin-new">Nuevo PIN (6 dígitos)</label><input id="pin-new" type="password" inputmode="numeric" autocomplete="new-password" maxlength="6" minlength="6" pattern="[0-9]{6}" placeholder="••••••" required><label for="pin-repeat">Repite el PIN</label><input id="pin-repeat" type="password" inputmode="numeric" autocomplete="new-password" maxlength="6" minlength="6" pattern="[0-9]{6}" placeholder="••••••" required><div class="row"><button class="btn sm" type="submit">Activar inicio rápido</button><button class="btn ghost sm" type="button" id="quick-pin-remove">Desactivar PIN</button></div><p class="note" id="pin-status" role="status"></p></form></div><div class="card"><h3>País e idioma</h3><label for="set-country">País</label><select id="set-country">${countryOptions(me.country||'')}</select><label for="set-lang">Idioma / Language</label><select id="set-lang">${langOptions()}</select><button class="btn sm" id="save-locale" style="margin-top:.7rem">Guardar</button></div>
  <div class="card"><h3>Apariencia</h3>
  <div class="line"><strong>Modo oscuro</strong><button class="tg ${mode==='dark'?'on':''}" id="tm" role="switch" aria-checked="${mode==='dark'}" aria-label="Modo oscuro"></button></div>
  <label>Color principal</label><div class="sw">${PRESETS.map(c=>`<button style="background:${c}" data-ac="${c}" aria-label="Color ${c}"></button>`).join('')}</div>
@@ -934,7 +945,7 @@ function vSet(){
  $('#rt').onclick=()=>{delete t.accent;delete t.bg;delete t.font;delete t.size;upd();vSet()};
  $('#sc').onclick=()=>{me.plen=Math.min(10,Math.max(2,+$('#pl').value||5));saveU();toast('Guardado')};
  $('#lo').onclick=logout;
- $('#dl').onclick=()=>{if(confirm('Se eliminará tu cuenta y tus datos de este dispositivo. ¿Continuar?')){users=users.filter(u=>u.id!==me.id);LS.set('ciclo_chat_'+me.id,[]);disableQuickPin(me.id);posts=posts.filter(p=>p.uid!==me.id).map(p=>({...p,r:p.r.filter(r=>r.uid!==me.id)}));saveP();saveU();logout()}}
+ $('#dl').onclick=()=>toast('Para eliminar definitivamente tu cuenta y todos sus datos, solicita la eliminación al administrador.')
 }
 
 /* ===== Legal ===== */
@@ -1071,10 +1082,36 @@ function heartBurst(btn){
  },{passive:true});
 })();
 
+
+/* Supabase blood — autenticación, historial protegido y comunidad compartida. */
+const sb=window.supabase.createClient(BLOOD_CONFIG.url,BLOOD_CONFIG.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+let cloudChannel=null,privateTimer=null,profileTimer=null,cloudLoading=false;
+const privateFields=['periods','plen','cycle','theme','diary','goal','dueDate'];
+function privatePayload(){const data={};for(const k of privateFields)data[k]=me[k];data.name=me.name;data.reminders=getReminders();return data}
+function queuePrivateSave(){if(!me||cloudLoading)return;clearTimeout(privateTimer);const id=me.id;privateTimer=setTimeout(async()=>{if(!me||me.id!==id)return;const {error}=await sb.from('wp_private').upsert({user_id:id,data:privatePayload(),updated_at:new Date().toISOString()});if(error)toast('Error al guardar historial: '+error.message)},350)}
+function queueProfileSave(){if(!me||cloudLoading)return;clearTimeout(profileTimer);const id=me.id;profileTimer=setTimeout(async()=>{if(!me||me.id!==id)return;const row={id,username:me.username,display_name:me.pub?me.name:me.username,country:me.country||'EC',language:me.lang||'es',name_public:!!me.pub,avatar_url:me.avatar?.startsWith('data:')?null:(me.avatar||null)};const {error}=await sb.from('wp_profiles').upsert(row);if(error)toast('Error al guardar perfil: '+error.message);if(me.avatar?.startsWith('data:'))await uploadAvatar(me.avatar)},420)}
+async function uploadAvatar(dataUrl){if(!me||!dataUrl?.startsWith('data:image/avif;'))return;try{const blob=await(await fetch(dataUrl)).blob(),path=me.id+'/avatar.avif';const {error}=await sb.storage.from('wp_avatars').upload(path,blob,{contentType:'image/avif',upsert:true});if(error)throw error;const {data}=sb.storage.from('wp_avatars').getPublicUrl(path);me.avatar=data.publicUrl+'?v='+Date.now();await sb.from('wp_profiles').update({avatar_url:data.publicUrl}).eq('id',me.id)}catch(e){toast('Error al subir avatar: '+e.message)}}
+async function initCloudAccount(user,metadata={}){const meta={...user.user_metadata,...metadata},row={id:user.id,username:(meta.username||('user_'+user.id.slice(0,10))).toLowerCase(),display_name:meta.username||'',country:meta.country||'EC',language:meta.language||'es',name_public:false};let res=await sb.from('wp_profiles').upsert(row);if(res.error)throw res.error;res=await sb.from('wp_private').upsert({user_id:user.id,data:{periods:[],plen:5,cycle:28,theme:{mode:'light'},diary:{},goal:'cycle',dueDate:'',name:meta.display_name||'',reminders:{}}});if(res.error)throw res.error}
+async function bootCloud(user){if(!user)return showAuth();cloudLoading=true;try{
+ let {data:profile,error}=await sb.from('wp_profiles').select('*').eq('id',user.id).maybeSingle();if(error)throw error;if(!profile){await initCloudAccount(user);({data:profile,error}=await sb.from('wp_profiles').select('*').eq('id',user.id).single());if(error)throw error}
+ const {data:priv,error:pe}=await sb.from('wp_private').select('data').eq('user_id',user.id).maybeSingle();if(pe)throw pe;const d=priv?.data||{};
+ const u={id:user.id,username:profile.username,name:d.name||user.user_metadata?.display_name||profile.display_name||profile.username,country:profile.country,lang:profile.language,pub:profile.name_public,avatar:profile.avatar_url||'',created:profile.created_at.slice(0,10),periods:d.periods||[],plen:d.plen||5,cycle:d.cycle||28,theme:d.theme||{mode:'light'},diary:d.diary||{},goal:d.goal||'cycle',dueDate:d.dueDate||''};
+ users=[u];me=u;if(d.reminders)LS.set(REMINDER_STORAGE+u.id,d.reminders);chat=LS.get('ciclo_chat_'+u.id,[]);login(u);await refreshFromCloud();startRealtime();if(pendAv){const avatar=pendAv;pendAv='';await uploadAvatar(avatar)}
+ }catch(e){console.error(e);toast('Error de conexión: '+e.message);await sb.auth.signOut();showAuth()}finally{cloudLoading=false}}
+async function refreshFromCloud(){if(!me)return;const [pr,rr,lr,ur]=await Promise.all([sb.from('wp_posts').select('*').order('created_at',{ascending:false}).limit(200),sb.from('wp_replies').select('*').order('created_at',{ascending:true}).limit(500),sb.from('wp_likes').select('*').limit(2000),sb.from('wp_profiles').select('id,username,display_name,country,language,name_public,avatar_url,created_at').limit(500)]);
+ for(const result of [pr,rr,lr,ur])if(result.error){console.error(result.error);return}
+ users=ur.data.map(p=>p.id===me.id?me:({id:p.id,username:p.username,name:p.display_name,country:p.country,lang:p.language,pub:p.name_public,avatar:p.avatar_url,created:p.created_at.slice(0,10)}));
+ const replies=new Map();for(const r of rr.data){const a=replies.get(r.post_id)||[];a.push({id:r.id,uid:r.user_id,t:r.body,likes:lr.data.filter(l=>l.reply_id===r.id).map(l=>l.user_id)});replies.set(r.post_id,a)}
+ posts=pr.data.map(p=>({id:p.id,uid:p.user_id,title:p.title,body:p.body,cat:p.category,ts:new Date(p.created_at).getTime(),likes:lr.data.filter(l=>l.post_id===p.id).map(l=>l.user_id),r:replies.get(p.id)||[]}));
+ if(view==='forum')refreshForumPosts()}
+async function saveLikeCloud(p,kind,i,liked){const row={user_id:me.id};if(kind==='post')row.post_id=p.id;else row.reply_id=p.r[i]?.id;if(!row.post_id&&!row.reply_id)return;const q=sb.from('wp_likes');const res=liked?await q.insert(row):await q.delete().eq('user_id',me.id).eq(kind==='post'?'post_id':'reply_id',row.post_id||row.reply_id);if(res.error){await refreshFromCloud();throw res.error}}
+function stopRealtime(){if(cloudChannel){sb.removeChannel(cloudChannel);cloudChannel=null}}
+function startRealtime(){stopRealtime();cloudChannel=sb.channel('wp-forum').on('postgres_changes',{event:'*',schema:'public',table:'wp_posts'},()=>refreshFromCloud()).on('postgres_changes',{event:'*',schema:'public',table:'wp_replies'},()=>refreshFromCloud()).on('postgres_changes',{event:'*',schema:'public',table:'wp_likes'},()=>refreshFromCloud()).subscribe()}
+async function startCloud(){try{const {data:{user}}=await sb.auth.getUser();if(user)await bootCloud(user);else showAuth()}catch(e){console.error(e);showAuth();toast('Sin conexión a Supabase')}}
+
 /* ===== Inicio ===== */
 applyTheme();
-const sid=LS.get('ciclo_session',null);
-seed().then(()=>{const u0=users.find(u=>u.id===sid);setTimeout(()=>{u0?login(u0):showAuth();$('#loader').classList.add('out')},1500)});
+startCloud().finally(()=>$('#loader').classList.add('out'));
 </script>
 </body>
 </html>
