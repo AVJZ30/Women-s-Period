@@ -514,16 +514,26 @@ const av=(u,s=40)=>u&&u.avatar?`<img class="av" src="${u.avatar}" alt="" style="
 const whoHTML=()=>`<div style="display:flex;gap:.6rem;align-items:center">${av(me,38)}<div><strong>${me.pub&&me.name?esc(me.name):'@'+esc(me.username)}</strong><br><span class="muted">@${esc(me.username)}</span></div></div>`;
 async function pickImg(file){
  if(!file)throw Error('Selecciona una imagen.');
- if(file.size>12*1024*1024)throw Error('La imagen supera los 12 MB.');
- const bitmap=await createImageBitmap(file).catch(()=>{throw Error('El navegador no puede leer este formato de imagen.');});
+ if(file.size>20*1024*1024)throw Error('La imagen supera los 20 MB.');
+ let bitmap;
  try{
+  try{bitmap=await createImageBitmap(file)}catch{
+   if(/\.(heic|heif)$/i.test(file.name)||/heic|heif/i.test(file.type)){
+    try{const mod=await import('https://cdn.jsdelivr.net/npm/heic2any@0.0.4/+esm');
+    const converted=await mod.default({blob:file,toType:'image/jpeg',quality:.9});
+    bitmap=await createImageBitmap(Array.isArray(converted)?converted[0]:converted)}
+    catch{throw Error('El formato HEIC/HEIF no se pudo leer. Convierte esta foto a JPG o PNG.')}
+   }else throw Error('Tu navegador no puede leer esta imagen. Prueba con JPG, PNG o WebP.');
+  }
   const canvas=document.createElement('canvas');canvas.width=canvas.height=256;
-  const ctx=canvas.getContext('2d');const side=Math.min(bitmap.width,bitmap.height);
+  const ctx=canvas.getContext('2d'),side=Math.min(bitmap.width,bitmap.height);
   ctx.drawImage(bitmap,(bitmap.width-side)/2,(bitmap.height-side)/2,side,side,0,0,256,256);
-  const result=await new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(Error('Tu navegador no puede codificar AVIF.')),'image/avif',.7));
-  if(result.type!=='image/avif')throw Error('Este navegador no permite exportar AVIF. Prueba una versión compatible.');
-  return await new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=()=>reject(Error('No se pudo guardar AVIF.'));r.readAsDataURL(result)});
- }finally{bitmap.close?.()}
+  const make=(type,quality)=>new Promise((ok,no)=>canvas.toBlob(x=>x?ok(x):no(Error('No se pudo convertir la foto.')),type,quality));
+  let blob=await make('image/avif',.72);
+  if(blob.type!=='image/avif')blob=await make('image/webp',.78);
+  if(blob.type!=='image/webp'&&blob.type!=='image/avif')blob=await make('image/jpeg',.82);
+  return await new Promise((ok,no)=>{const reader=new FileReader();reader.onload=()=>ok(reader.result);reader.onerror=()=>no(Error('Error al leer la imagen.'));reader.readAsDataURL(blob)});
+ }finally{bitmap?.close?.()}
 }
 const saveU=()=>{if(!me)return;queuePrivateSave();queueProfileSave();broadcastCommunity()},saveP=()=>{broadcastCommunity()};
 function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('show'),2200)}
@@ -625,7 +635,7 @@ function showAuth(mode='in'){
  <div class="authbox"><div class="card"><h2>${mode==='in'?'Iniciar sesión':'Crear cuenta'}</h2>
  <div class="tabs"><button class="${mode==='in'?'on':''}" data-m="in">Entrar</button><button class="${mode==='up'?'on':''}" data-m="up">Registrarme</button></div>
  <form id="af" autocomplete="off">
- ${mode==='up'?'<div class="avrow"><span id="pv"></span><div><label class="btn ghost sm" for="ph" style="display:inline-block;margin:0;cursor:pointer">Subir foto de perfil</label><input id="ph" type="file" accept="image/*,.heic,.heif,.tiff,.tif,.bmp,.gif,.svg,.avif,.webp,.png,.jpg,.jpeg,.ico" class="hide"><div class="note" style="margin:.3rem 0 0">Opcional · convierte la imagen a AVIF y la sube a tu cuenta</div></div></div><label for="nm">Nombre</label><input id="nm" required maxlength="40" autocomplete="given-name">':''}
+ ${mode==='up'?'<div class="avrow"><span id="pv"></span><div><label class="btn ghost sm" for="ph" style="display:inline-block;margin:0;cursor:pointer">Subir foto de perfil</label><input id="ph" type="file" accept="image/*,.heic,.heif,.tiff,.tif,.bmp,.gif,.svg,.avif,.webp,.png,.jpg,.jpeg,.ico" class="hide"><div class="note" style="margin:.3rem 0 0">Opcional · acepta varios formatos, optimiza la imagen y la sube a tu cuenta</div></div></div><label for="nm">Nombre</label><input id="nm" required maxlength="40" autocomplete="given-name">':''}
  ${mode==='up'?`<label for="country">País</label><select id="country" required>${countryOptions()}</select>`:''}
  <label for="reglang">Idioma / Language</label><select id="reglang">${langOptions()}</select>
  ${mode==='up'?'<label for="un">Nombre de usuario</label><input id="un" required maxlength="20" autocapitalize="off" autocomplete="username">':''}<label for="email">Correo electrónico</label><input id="email" required type="email" maxlength="254" autocomplete="email">
@@ -634,8 +644,8 @@ function showAuth(mode='in'){
  ${mode==='up'?'<label class="chk"><input type="checkbox" id="tc" required><span>Acepto los <a href="#" class="lk" data-legal="terms">Términos y condiciones</a> y la <a href="#" class="lk" data-legal="privacy">Política de privacidad</a>.</span></label><p class="note">Tu correo no será público. Tu nombre es privado por defecto; solo tu usuario es visible en la comunidad.</p>':'<p class="note">Inicia sesión con tu correo y contraseña. Si acabas de registrarte, confirma tu correo primero.</p>'}</form>
  <p class="note" style="text-align:center"><a href="#" class="lk" data-legal="terms">Términos</a> · <a href="#" class="lk" data-legal="privacy">Privacidad</a></p>${mode==='in'?quickHTML():''}</div></div>`;
  bindQuickLogin();a.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>showAuth(b.dataset.m));$('#reglang').onchange=e=>setLanguage(e.target.value);requestAnimationFrame(translateUI);
- const pv=()=>{const e=$('#pv');if(e)e.innerHTML=pendAv?`<img class="av" src="${pendAv}" alt="" style="width:64px;height:64px">`:'<span class="av" style="width:64px;height:64px;font-size:26px">+</span>'};pv();
- if($('#ph'))$('#ph').onchange=async e=>{try{pendAv=await pickImg(e.target.files[0]);pv()}catch(err){toast(err.message||'Esa imagen no es válida')}};
+ const pv=()=>{const e=$('#pv');if(e)e.innerHTML=pendAv?`<img class="av" src="${pendAv}" alt="" style="width:64px;height:64px">`:'<label for="ph" class="av" style="width:64px;height:64px;font-size:26px;cursor:pointer" title="Elegir una foto">+</label>'};pv();
+ if($('#ph'))$('#ph').onchange=async e=>{try{pendAv=await pickImg(e.target.files[0]);pv()}catch(err){toast(err.message||'Esa imagen no es válida')}finally{e.target.value=''}};
  $('#af').onsubmit=async e=>{
  e.preventDefault();const er=$('#er'),button=$('#af button.btn'),email=$('#email').value.trim().toLowerCase(),password=$('#pw').value;
  button.disabled=true;er.textContent='';
@@ -935,7 +945,7 @@ function vSet(){
  const upd=()=>{saveU();applyTheme()};
  $('#quick-pin-form').onsubmit=async e=>{e.preventDefault();const a=$('#pin-new').value,b=$('#pin-repeat').value,status=$('#pin-status');if(a!==b){status.textContent='Los dos PIN no coinciden.';return}const btn=e.submitter;btn.disabled=true;try{await enableQuickPin(a);status.textContent='✓ Inicio rápido activado en este navegador.';$('#quick-pin-form').reset()}catch(err){status.textContent=err.message}finally{btn.disabled=false}};
  $('#quick-pin-remove').onclick=()=>{disableQuickPin(me.id);$('#pin-status').textContent='PIN desactivado.'};
- $('#ph2').onchange=async e=>{try{me.avatar=await pickImg(e.target.files[0]);saveU();shell();toast('Foto AVIF actualizada')}catch(err){toast(err.message||'Esa imagen no es válida')}};
+ $('#ph2').onchange=async e=>{try{me.avatar=await pickImg(e.target.files[0]);saveU();shell();toast('Foto actualizada')}catch(err){toast(err.message||'Esa imagen no es válida')}};
  if($('#rp'))$('#rp').onclick=()=>{me.avatar='';saveU();shell()};
  $('#sv').onclick=()=>{me.name=$('#sn').value.trim()||me.name;saveU();shell();toast('Perfil guardado')};
  $('#tp').onclick=e=>{me.pub=!me.pub;saveU();e.target.classList.toggle('on',me.pub);e.target.setAttribute('aria-checked',me.pub);$('#who').innerHTML=whoHTML();toast(me.pub?'Tu nombre ahora es público':'Tu nombre es privado')};
@@ -1095,7 +1105,7 @@ async function flushPrivateSave(){if(!me)return;clearTimeout(privateTimer);const
 function privatePayload(){const data={};for(const k of privateFields)data[k]=me[k];data.name=me.name;data.reminders=getReminders();data.chat=chat.slice(-100);return data}
 function queuePrivateSave(){if(!me||cloudLoading)return;clearTimeout(privateTimer);const id=me.id;privateTimer=setTimeout(async()=>{if(!me||me.id!==id)return;const {error}=await sb.from('wp_private').upsert({user_id:id,data:privatePayload(),updated_at:new Date().toISOString()});if(error)toast('Error al guardar historial: '+error.message)},350)}
 function queueProfileSave(){if(!me||cloudLoading)return;clearTimeout(profileTimer);const id=me.id;profileTimer=setTimeout(async()=>{if(!me||me.id!==id)return;const row={id,username:me.username,display_name:me.pub?me.name:me.username,country:me.country||'EC',language:me.lang||'es',name_public:!!me.pub,avatar_url:me.avatar?.startsWith('data:')?null:(me.avatar||null)};const {error}=await sb.from('wp_profiles').upsert(row);if(error)toast('Error al guardar perfil: '+error.message);if(me.avatar?.startsWith('data:'))await uploadAvatar(me.avatar)},420)}
-async function uploadAvatar(dataUrl){if(!me||!dataUrl?.startsWith('data:image/avif;'))return;try{const blob=await(await fetch(dataUrl)).blob(),path=me.id+'/avatar.avif';const {error}=await sb.storage.from('wp_avatars').upload(path,blob,{contentType:'image/avif',upsert:true});if(error)throw error;const {data}=sb.storage.from('wp_avatars').getPublicUrl(path);me.avatar=data.publicUrl+'?v='+Date.now();await sb.from('wp_profiles').update({avatar_url:data.publicUrl}).eq('id',me.id)}catch(e){toast('Error al subir avatar: '+e.message)}}
+async function uploadAvatar(dataUrl){if(!me||!/^data:image\/(avif|webp|jpeg);/i.test(dataUrl))return;try{const blob=await(await fetch(dataUrl)).blob(),ext=blob.type==='image/avif'?'avif':blob.type==='image/webp'?'webp':'jpg',path=me.id+'/avatar.'+ext;const {error}=await sb.storage.from('wp_avatars').upload(path,blob,{contentType:blob.type,upsert:true});if(error)throw error;const {data}=sb.storage.from('wp_avatars').getPublicUrl(path);me.avatar=data.publicUrl+'?v='+Date.now();await sb.from('wp_profiles').update({avatar_url:data.publicUrl}).eq('id',me.id)}catch(e){toast('Error al subir avatar: '+e.message)}}
 async function initCloudAccount(user,metadata={}){const meta={...user.user_metadata,...metadata},row={id:user.id,username:(meta.username||('user_'+user.id.slice(0,10))).toLowerCase(),display_name:meta.username||'',country:meta.country||'EC',language:meta.language||'es',name_public:false};let res=await sb.from('wp_profiles').upsert(row);if(res.error)throw res.error;res=await sb.from('wp_private').upsert({user_id:user.id,data:{periods:[],plen:5,cycle:28,theme:{mode:'light'},diary:{},goal:'cycle',dueDate:'',name:meta.display_name||'',reminders:{}}});if(res.error)throw res.error}
 async function bootCloud(user){if(!user)return showAuth();cloudLoading=true;try{
  let {data:profile,error}=await sb.from('wp_profiles').select('*').eq('id',user.id).maybeSingle();if(error)throw error;if(!profile){await initCloudAccount(user);({data:profile,error}=await sb.from('wp_profiles').select('*').eq('id',user.id).single());if(error)throw error}
