@@ -898,23 +898,20 @@ function vForum(){
 
 /* ===== Asistente IA (Gemini) ===== */
 const md=t=>{let h=esc(t).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');const L=h.split('\n');let o='',ul=false;for(const l of L){const m=l.match(/^\s*[\*\-]\s+(.*)/);if(m){if(!ul){o+='<ul>';ul=true}o+=`<li>${m[1]}</li>`}else{if(ul){o+='</ul>';ul=false}o+=l?l+'<br>':''}}return o+(ul?'</ul>':'')};
-async function askGemini(key){
- const body=JSON.stringify({systemInstruction:{parts:[{text:SYSTEM}]},contents:chat.slice(-12).map(c=>({role:c.role,parts:[{text:c.text}]})),generationConfig:{temperature:.5,maxOutputTokens:2048,thinkingConfig:{thinkingLevel:"low"}}});
- const gl=`https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`;
- const vertex=`https://aiplatform.googleapis.com/v1/publishers/google/models/${MODEL}:generateContent`;
- const urls=key.startsWith('AQ.')?[vertex,gl]:[gl];let err='';
- for(const u of urls){try{
-  const r=await fetch(u,{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':key},body});
+async function askGemini(){
+ const {data:{session},error:authError}=await sb.auth.getSession();
+ if(authError||!session)return[false,'Tu sesión expiró. Vuelve a iniciar sesión.'];
+ try{
+  const r=await fetch(BLOOD_CONFIG.url+'/functions/v1/womens-period-assistant',{
+   method:'POST',headers:{'Content-Type':'application/json','apikey':BLOOD_CONFIG.publishableKey,'Authorization':'Bearer '+session.access_token},
+   body:JSON.stringify({messages:chat.slice(-12)})
+  });
   const j=await r.json().catch(()=>({}));
-  if(r.ok){const c=j.candidates?.[0],t=(c?.content?.parts||[]).map(p=>p.text||'').join('').trim();if(t)return[true,t];err=j.promptFeedback?.blockReason?'La consulta fue bloqueada por seguridad. Reformúlala.':'Gemini no devolvió texto ('+(c?.finishReason||'sin motivo')+').';continue}
-  if(r.status===429)return[false,'Se alcanzó el límite de solicitudes o la cuota de tu clave. Revisa el consumo y los límites en Google AI Studio.'];
-  err=(j.error?.message||'Error '+r.status).slice(0,220)
- }catch(e){err='No se pudo conectar con Gemini ('+(e.message||'red')+'). Revisa tu internet.'}}
- return[false,'No pude responder: '+err+' — Si el problema es la clave, revisa tu clave en Google AI Studio y vuelve a introducirla en el asistente.']}
+  if(r.ok&&typeof j.answer==='string')return[true,j.answer];
+  return[false,j.error||'El asistente no pudo responder. Intenta nuevamente.'];
+ }catch(e){return[false,'No se pudo conectar con el asistente. Revisa tu internet.']}
+}
 function vAI(){
- const key=geminiRuntimeKey||DEFAULT_KEY;
- if(!key){main(`<div class="top"><div><h2>Asistente</h2><p class="muted">Una guía de salud menstrual, disponible cuando quieras.</p></div></div><div class="card" style="max-width:520px"><h3>Conecta tu clave de Gemini</h3><p class="muted" style="margin:.5rem 0">Es gratis. Créala en <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener" style="color:var(--accent)">aistudio.google.com/apikey</a> y pégala aquí. Se usa durante esta sesión y no se guarda en el navegador.</p><form id="kf"><input id="kv" required placeholder="AIza…" type="password" aria-label="Clave API"><button class="btn" style="margin-top:.8rem">Guardar y empezar</button></form></div>`);
-  $('#kf').onsubmit=e=>{e.preventDefault();geminiRuntimeKey=$('#kv').value.trim();vAI()};return}
  const S=['¿Cómo calmo los cólicos?','¿Qué es la ventana fértil?','¿Cuándo debo ir al médico?','¿Copa o disco menstrual?'];
  main(`<div class="top"><div><h2>Asistente</h2><p class="muted">Información educativa; no reemplaza una consulta ginecológica.</p></div></div>
  <div class="card chatbox"><div class="msgs" id="ms" aria-live="polite">${chat.length?'':`<div class="m a">Hola ${esc(me.name.split(' ')[0])}, soy tu asistente de salud menstrual. ¿Qué quieres saber?</div>`}${chat.map(c=>`<div class="m ${c.role==='user'?'u':'a'}">${c.role==='user'?esc(c.text):md(c.text)}</div>`).join('')}</div>
@@ -923,7 +920,7 @@ function vAI(){
  const ms=$('#ms');ms.scrollTop=ms.scrollHeight;
  const send=async text=>{if(busy)return;busy=true;chat.push({role:'user',text});persistChat();
   ms.insertAdjacentHTML('beforeend',`<div class="m u">${esc(text)}</div><div class="m a" id="ty"><span class="dots"><span></span><span></span><span></span></span></div>`);ms.scrollTop=ms.scrollHeight;$('#ci').value='';
-  const[ok,out]=await askGemini(key);
+  const[ok,out]=await askGemini();
   if(ok)chat.push({role:'model',text:out});else chat.pop();persistChat();busy=false;$('#ty').outerHTML=`<div class="m a">${md(out)}</div>`;ms.scrollTop=ms.scrollHeight};
  $('#cf').onsubmit=e=>{e.preventDefault();send($('#ci').value.trim())};
  $('#main').querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>send(b.dataset.s))
