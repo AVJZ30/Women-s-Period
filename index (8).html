@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Women's Period · Calendario y bienestar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Figtree:wght@400;500;600&family=Nunito:wght@500;700&family=Lora:wght@500;700&family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{--accent:#e4457f;--on:#fff;--ink:#1a1517;--mute:#6f6569;--bg:#faf7f8;--line:#e7e0e3;--mixc:#fff;--mixp:70%;--r:16px;--hf:'Fraunces',Georgia,serif;--bf:'Figtree',system-ui,sans-serif;color-scheme:light}
+[data-theme=dark]{--ink:#f4eef1;--mute:#a99ea3;--bg:#141113;--line:#2e272b;--mixc:#fff;--mixp:6%;color-scheme:dark}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%}
+body{font-family:var(--bf);background:var(--bg);color:var(--ink);transition:background .4s,color .4s;-webkit-font-smoothing:antialiased}
+:root{--card:color-mix(in srgb,var(--bg),var(--mixc) var(--mixp));--soft:color-mix(in srgb,var(--accent) 13%,var(--bg));--soft2:color-mix(in srgb,var(--accent) 26%,var(--bg));--gray:color-mix(in srgb,var(--ink) 7%,var(--bg))}
+h1,h2,h3{font-family:var(--hf);font-weight:700;letter-spacing:-.01em}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.btn{background:var(--accent);color:var(--on);padding:.7rem 1.2rem;border-radius:99px;font-weight:600;transition:transform .15s,filter .2s}
+.btn:hover{filter:brightness(1.07)}.btn:active{transform:scale(.96)}
+.btn.ghost{background:var(--gray);color:var(--ink)}.btn.danger{background:#161214;color:#fff}
+.btn.sm{padding:.45rem .9rem;font-size:.85rem}
+input,select,textarea{width:100%;padding:.75rem .9rem;border-radius:12px;border:1.5px solid var(--line);background:var(--card);transition:border .2s,box-shadow .2s}
+input:focus,select:focus,textarea:focus{outline:0;border-color:var(--accent);box-shadow:0 0 0 4px var(--soft)}
+textarea{resize:vertical;min-height:90px}
+label{display:block;font-size:.85rem;font-weight:600;margin:.9rem 0 .35rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:1.2rem}
+.muted{color:var(--mute);font-size:.9rem}
+.hide{display:none!important}
+/* Modo de demostración local */
+.demo-banner{position:fixed;top:12px;right:12px;z-index:45;background:var(--ink);color:var(--bg);padding:.5rem .9rem;border-radius:40px;font-size:.76rem;font-weight:700;box-shadow:0 6px 24px #0002;pointer-events:none;animation:in .55s both}
+.post{transition:box-shadow .3s,transform .3s}.post:hover{box-shadow:0 8px 28px #00000010;transform:translateY(-2px)}
+.d,.chip,.card,.btn,.av{transition:transform .24s ease,box-shadow .24s ease,background .24s ease}.av{animation:pop .45s both}
+@media(max-width:760px){.demo-banner{top:7px;right:7px;font-size:.64rem;padding:.35rem .6rem}.post:hover{transform:none}}
+/* loader */
+#loader{position:fixed;inset:0;z-index:99;display:grid;place-items:center;background:var(--bg);transition:opacity .6s,visibility .6s}
+#loader.out{opacity:0;visibility:hidden}
+.lw{text-align:center}
+.drop{width:46px;height:46px;margin:auto;background:var(--accent);border-radius:0 50% 50% 50%;transform:rotate(45deg);animation:pulse 1.2s ease-in-out infinite}
+.rings{position:relative;width:46px;height:46px;margin:0 auto 1.4rem}
+.rings i{position:absolute;inset:-6px;border-radius:50%;border:2px solid var(--accent);opacity:0;animation:ring 1.8s ease-out infinite}
+.rings i:nth-child(2){animation-delay:.6s}.rings i:nth-child(3){animation-delay:1.2s}
+@keyframes ring{0%{transform:scale(.8);opacity:.7}100%{transform:scale(2.8);opacity:0}}
+@keyframes pulse{50%{transform:rotate(45deg) scale(.82)}}
+@keyframes in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes pop{0%{transform:scale(.4)}60%{transform:scale(1.18)}100%{transform:scale(1)}}
+/* auth */
+#auth{min-height:100%;display:grid;grid-template-columns:1.1fr 1fr}
+.hero{background:var(--accent);color:var(--on);padding:3rem;display:flex;flex-direction:column;justify-content:flex-end;position:relative;overflow:hidden}
+.hero h1{font-size:clamp(2.4rem,5vw,4.2rem);line-height:1.02;max-width:11ch;position:relative}
+.hero p{max-width:34ch;margin-top:1rem;opacity:.92;position:relative}
+.hero .blob{position:absolute;border-radius:50%;background:rgba(255,255,255,.14);animation:float 9s ease-in-out infinite}
+.hero .b1{width:360px;height:360px;top:-90px;right:-110px}.hero .b2{width:200px;height:200px;top:34%;left:-70px;animation-delay:-4s}
+@keyframes float{50%{transform:translate(18px,26px) scale(1.06)}}
+.authbox{display:grid;place-items:center;padding:2rem}
+.authbox .card{width:min(420px,100%);animation:in .6s .1s both}
+.tabs{display:flex;background:var(--gray);border-radius:99px;padding:4px;margin:1rem 0 .4rem}
+.tabs button{flex:1;padding:.55rem;border-radius:99px;font-weight:600;color:var(--mute);transition:.25s}
+.tabs button.on{background:var(--card);color:var(--ink);box-shadow:0 1px 4px #0002}
+.err{color:#c0183f;font-size:.85rem;margin-top:.7rem;min-height:1.2em}
+/* app */
+#app{display:grid;grid-template-columns:250px 1fr;min-height:100%}
+aside{position:sticky;top:0;height:100vh;border-right:1px solid var(--line);padding:1.4rem 1rem;display:flex;flex-direction:column;gap:.3rem;background:var(--card)}
+.brand{font-family:var(--hf);font-size:1.6rem;font-weight:700;padding:0 .6rem 1rem;display:flex;align-items:center;gap:.5rem}
+.brand b{width:14px;height:14px;background:var(--accent);border-radius:0 50% 50% 50%;transform:rotate(45deg);display:inline-block}
+nav{display:flex;flex-direction:column;gap:.2rem}
+nav button{display:flex;align-items:center;gap:.7rem;padding:.75rem .8rem;border-radius:12px;font-weight:500;color:var(--mute);text-align:left;transition:.2s}
+nav button:hover{background:var(--gray);color:var(--ink)}
+nav button.on{background:var(--soft2);color:var(--ink);font-weight:600}
+nav svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.who{margin-top:auto;padding:.8rem;border-radius:12px;background:var(--gray);font-size:.85rem}
+main{padding:2rem clamp(1rem,3vw,2.6rem) 3rem;max-width:1100px;width:100%}
+main>section{animation:in .45s both}
+.top{display:flex;justify-content:space-between;align-items:end;gap:1rem;flex-wrap:wrap;margin-bottom:1.4rem}
+.top h2{font-size:clamp(1.7rem,3vw,2.3rem)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.8rem;margin-bottom:1.2rem}
+.stat{padding:1rem 1.1rem}.stat small{color:var(--mute)}.stat strong{display:block;font-family:var(--hf);font-size:1.5rem;margin-top:.2rem}
+.calwrap{display:grid;grid-template-columns:1fr 300px;gap:1.2rem;align-items:start}
+.calhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:.8rem}
+.calhead h3{font-size:1.3rem;text-transform:capitalize}
+.iconbtn{width:38px;height:38px;border-radius:50%;background:var(--gray);font-size:1.1rem;transition:.2s}.iconbtn:hover{background:var(--soft2)}
+.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.dow{font-size:.75rem;color:var(--mute);text-align:center;padding:.3rem 0;font-weight:600}
+.d{aspect-ratio:1;border-radius:12px;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:500;background:var(--gray);transition:transform .15s,background .25s;min-height:44px}
+.d:hover{transform:scale(1.06)}.d.e{visibility:hidden}
+.d.today{box-shadow:inset 0 0 0 2px var(--ink)}
+.d.sel{outline:2px solid var(--accent);outline-offset:2px}
+.d.safe{background:var(--gray);color:var(--mute)}
+.d.fert{background:var(--soft2)}
+.d.ovu{background:var(--soft2);box-shadow:inset 0 0 0 2px var(--accent)}
+.d.period{background:var(--accent);color:var(--on);animation:pop .4s both}
+.d.period.pred{background:var(--soft);color:var(--accent);box-shadow:inset 0 0 0 2px var(--accent);border:0;animation:none}
+.mk{font-size:.7rem;line-height:1;height:12px;margin-top:1px}
+.mk svg{width:11px;height:11px;fill:currentColor}
+.legend{display:flex;flex-wrap:wrap;gap:.5rem 1rem;margin-top:1rem;font-size:.8rem;color:var(--mute)}
+.legend span{display:flex;align-items:center;gap:.4rem}.legend i{width:16px;height:16px;border-radius:5px;display:inline-block}
+.sidecard h3{font-size:1.15rem;margin-bottom:.3rem}
+.pill{display:inline-block;padding:.25rem .7rem;border-radius:99px;font-size:.78rem;font-weight:600;background:var(--soft2);margin:.2rem .3rem .6rem 0}
+.row{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.8rem}
+.note{font-size:.78rem;color:var(--mute);margin-top:1rem;line-height:1.45}
+/* forum */
+.chips{display:flex;gap:.4rem;flex-wrap:wrap;margin:.8rem 0}
+.chip{padding:.4rem .9rem;border-radius:99px;background:var(--gray);font-size:.85rem;font-weight:500;transition:.2s}
+.chip.on{background:var(--accent);color:var(--on)}
+.post{margin-top:.9rem;animation:in .4s both}
+.post h3{font-size:1.2rem;margin:.3rem 0}.post p{white-space:pre-wrap;line-height:1.55}
+.meta{font-size:.8rem;color:var(--mute);display:flex;gap:.6rem;flex-wrap:wrap}
+.reply{margin-top:.7rem;padding:.7rem .9rem;background:var(--gray);border-radius:12px;font-size:.92rem;animation:in .3s both}
+.reply b{font-size:.82rem}
+.rform{display:flex;gap:.5rem;margin-top:.8rem}
+/* chat */
+.chatbox{display:flex;flex-direction:column;height:min(68vh,640px)}
+.msgs{flex:1;overflow:auto;display:flex;flex-direction:column;gap:.7rem;padding:.3rem .2rem 1rem}
+.m{max-width:86%;padding:.8rem 1rem;border-radius:18px;line-height:1.55;animation:in .35s both;font-size:.95rem}
+.m.u{align-self:flex-end;background:var(--accent);color:var(--on);border-bottom-right-radius:5px}
+.m.a{align-self:flex-start;background:var(--gray);border-bottom-left-radius:5px}
+.m ul{padding-left:1.2rem;margin:.3rem 0}
+.dots span{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--mute);margin:0 2px;animation:pulse2 1s infinite}
+.dots span:nth-child(2){animation-delay:.15s}.dots span:nth-child(3){animation-delay:.3s}
+@keyframes pulse2{0%,100%{transform:translateY(0);opacity:.4}50%{transform:translateY(-5px);opacity:1}}
+.cform{display:flex;gap:.5rem;padding-top:.6rem;border-top:1px solid var(--line)}
+.sugg{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.6rem}
+/* settings */
+.set{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1rem}
+.sw{display:flex;gap:.5rem;flex-wrap:wrap;margin:.4rem 0}
+.sw button{width:34px;height:34px;border-radius:50%;border:3px solid var(--card);box-shadow:0 0 0 1px var(--line);transition:transform .2s}.sw button:hover{transform:scale(1.15)}
+.line{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.5rem 0}
+.tg{position:relative;width:48px;height:28px;flex:none;background:var(--line);border-radius:99px;transition:.3s}
+.tg::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;background:#fff;border-radius:50%;transition:.3s}
+.tg.on{background:var(--accent)}.tg.on::after{transform:translateX(20px)}
+input[type=color]{padding:2px;height:40px;width:70px}
+#toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,40px);background:#161214;color:#fff;padding:.7rem 1.2rem;border-radius:99px;opacity:0;transition:.35s;z-index:50;font-size:.9rem;pointer-events:none}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+#modal{position:fixed;inset:0;z-index:60;background:#0008;display:grid;place-items:center;padding:1rem;animation:fade .3s both}
+#modal .card{width:min(640px,100%);max-height:86vh;overflow:auto;animation:in .35s both}
+#modal h2{margin-bottom:.6rem}#modal h3{font-size:1.05rem;margin:1.1rem 0 .3rem}#modal p,#modal li{line-height:1.55;font-size:.92rem}#modal ul{padding-left:1.2rem}
+@keyframes fade{from{opacity:0}}
+.lk{color:var(--accent);text-decoration:underline;font-weight:600}
+.chk{display:flex;gap:.6rem;align-items:flex-start;margin-top:1rem;font-size:.85rem;font-weight:400}
+.chk input{width:auto;margin-top:.2rem;accent-color:var(--accent)}
+.demo{background:var(--soft);border-radius:12px;padding:.7rem .9rem;font-size:.85rem;margin-top:1rem}
+.av{border-radius:50%;object-fit:cover;background:var(--soft2);color:var(--accent);display:inline-grid;place-items:center;font-weight:700;font-family:var(--hf);flex:none;overflow:hidden;vertical-align:middle}
+.avrow{display:flex;align-items:center;gap:1rem;margin:.8rem 0}
+.seg{display:flex;gap:.4rem;flex-wrap:wrap;margin:.3rem 0}
+@media(max-width:900px){.calwrap{grid-template-columns:1fr}}
+@media(max-width:760px){
+#auth{grid-template-columns:1fr}.hero{padding:2rem 1.5rem;min-height:230px}
+#app{grid-template-columns:1fr}
+aside{position:fixed;inset:auto 0 0 0;height:auto;z-index:20;flex-direction:row;padding:.4rem .5rem calc(.4rem + env(safe-area-inset-bottom));border-right:0;border-top:1px solid var(--line)}
+.brand,.who{display:none}
+nav{flex-direction:row;width:100%;justify-content:space-around}
+nav button{flex-direction:column;gap:.15rem;font-size:.7rem;padding:.4rem .6rem;text-align:center}
+main{padding-bottom:6rem}
+.d{min-height:40px;border-radius:9px}.grid{gap:3px}
+.rform,.cform{flex-wrap:wrap}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* Ciclo Motion · microinteracciones responsivas */
+html{scroll-behavior:smooth}
+main>section{animation:screenEnter .48s cubic-bezier(.2,.8,.2,1) both}
+@keyframes screenEnter{from{opacity:0;transform:translate3d(0,20px,0) scale(.99);filter:blur(3px)}to{opacity:1;transform:translateZ(0) scale(1);filter:blur(0)}}
+@keyframes cardArrive{from{opacity:0;transform:translate3d(0,18px,0) scale(.975)}to{opacity:1;transform:translateZ(0) scale(1)}}
+.card{transition:transform .27s cubic-bezier(.2,.8,.2,1), box-shadow .27s, background .28s,border-color .28s}
+@media(hover:hover){.stat:hover,.post:hover{transform:translateY(-3px);box-shadow:0 10px 28px #0000000c}}
+button{transition:transform .2s cubic-bezier(.2,.8,.2,1),background .22s,color .22s,box-shadow .22s}
+button:active{transform:scale(.94)}
+nav button.on svg{animation:navPop .42s cubic-bezier(.2,.8,.2,1)}
+@keyframes navPop{0%{transform:scale(.7) rotate(-12deg)}60%{transform:scale(1.16)}100%{transform:scale(1)}}
+.reveal-on-scroll{opacity:0;transform:translateY(22px);transition:opacity .6s ease,transform .6s cubic-bezier(.2,.8,.2,1)}
+.reveal-on-scroll.is-visible{opacity:1;transform:none}
+/* La fecha del periodo se muestra en una gota, no dentro de un bloque cuadrado */
+.d.period{background:transparent!important;color:var(--on);box-shadow:none;isolation:isolate;animation:dropAppear .42s cubic-bezier(.18,.85,.32,1.2) both}
+.d.period::before{content:"";position:absolute;z-index:-1;width:min(94%,47px);height:min(94%,47px);inset:auto;background:var(--accent);clip-path:path('M 23.5 1 C 19 9 4 22 4 31 A 19.5 19.5 0 0 0 43 31 C 43 22 28 9 23.5 1 Z');transform:rotate(0deg);filter:drop-shadow(0 2px 2px #0001)}
+.d.period.pred{color:var(--accent)!important;outline:none}
+.d.period.pred::before{background:var(--soft2)}
+.d.period.pred .daynum{color:var(--accent)}
+.d.period .daynum{z-index:1;position:relative;font-weight:800;font-size:1rem;padding-top:7px;text-shadow:0 1px 1px #00000014}
+.d.period .mk{z-index:1;margin-top:-2px;opacity:.85}
+.d.period.today{outline:2px solid var(--ink);outline-offset:2px;border-radius:50%}
+.d.period.sel{outline:2px solid var(--accent);outline-offset:2px;border-radius:50%}
+@keyframes dropAppear{from{opacity:0;transform:translateY(-10px) scale(.7)}to{opacity:1;transform:translateY(0) scale(1)}}
+.month-slide-next .grid{animation:monthForward .38s ease both}
+.month-slide-prev .grid{animation:monthBackward .38s ease both}
+@keyframes monthForward{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:none}}
+@keyframes monthBackward{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:none}}
+.legend i.drop-legend{background:var(--accent);clip-path:polygon(50% 0%,84% 39%,100% 67%,94% 88%,73% 100%,27% 100%,6% 88%,0% 67%,16% 39%);border-radius:0}
+/* Comunidad */
+.post{animation:cardArrive .4s cubic-bezier(.2,.8,.2,1) both}
+.post:nth-child(2){animation-delay:.035s}.post:nth-child(3){animation-delay:.07s}.post:nth-child(4){animation-delay:.1s}
+.post .author-header{display:flex;align-items:center;gap:.7rem;min-width:0;margin-bottom:.7rem}
+.post .author-header .av{width:44px!important;height:44px!important;box-shadow:0 0 0 3px var(--soft2);transition:transform .3s}
+.post:hover .author-header .av{transform:scale(1.07)}
+.author-lines{display:flex;flex-direction:column;gap:.2rem;min-width:0}.author-lines strong{overflow-wrap:anywhere;font-size:.9rem}.author-lines small{color:var(--mute);font-size:.75rem}
+.post-actions{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;margin-top:.9rem;padding-top:.7rem;border-top:1px solid var(--line)}
+.like-btn{display:inline-flex;align-items:center;gap:.42rem;padding:.5rem .8rem;border-radius:999px;background:var(--gray);color:var(--mute);font-size:.86rem;font-weight:700}
+.like-btn .heart-svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .28s cubic-bezier(.2,.9,.3,1.5),fill .25s}
+.like-btn[aria-pressed=true]{background:var(--soft2);color:var(--accent)}
+.like-btn[aria-pressed=true] .heart-svg{fill:currentColor}
+.like-btn.heart-pop .heart-svg{animation:heartBeat .45s cubic-bezier(.2,.8,.2,1)}
+@keyframes heartBeat{0%{transform:scale(.7)}50%{transform:scale(1.32) rotate(-9deg)}100%{transform:scale(1)}}
+.reply{transition:background .25s,transform .25s;animation:cardArrive .3s ease both}
+.reply-header{display:flex;align-items:center;gap:.5rem;margin-bottom:.25rem}.reply-header .av{width:28px!important;height:28px!important}.reply-footer{margin-top:.5rem}.reply .like-btn{padding:.3rem .6rem;font-size:.78rem}.reply .heart-svg{width:16px;height:16px}
+@media(max-width:760px){.post .author-header .av{width:38px!important;height:38px!important}.d.period::before{width:min(98%,43px);height:min(98%,43px)}.d.period .daynum{font-size:.92rem}.post{border-radius:18px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.reveal-on-scroll{opacity:1;transform:none}}
+
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}main>section,.post,.reply,.d.period,.month-slide-next .grid,.month-slide-prev .grid{animation:none!important}.reveal-on-scroll{opacity:1!important;transform:none!important;transition:none!important}}
+
+/* Ciclo · compositor flotante y feedback de interacciones */
+:root{--motion-ease:cubic-bezier(.2,.8,.2,1)}
+.fab-drop{position:fixed;right:clamp(16px,3vw,42px);bottom:28px;width:68px;height:76px;z-index:38;display:grid;place-items:center;color:#fff;filter:drop-shadow(0 8px 18px #e4457f55);transition:transform .3s var(--motion-ease),filter .3s}
+.fab-drop::before{content:"";position:absolute;inset:3px 6px 7px;background:var(--accent);border-radius:60% 60% 60% 8%;transform:rotate(-45deg);z-index:-1;transition:transform .4s var(--motion-ease)}
+.fab-drop svg{height:30px;width:30px;stroke-width:2.5;transition:transform .36s var(--motion-ease)}
+.fab-drop[aria-expanded=true] svg{transform:rotate(45deg)}
+.fab-drop[aria-expanded=true]::before{transform:rotate(-45deg) scale(1.07)}
+.fab-drop:hover{transform:translateY(-5px);filter:drop-shadow(0 12px 22px #e4457f66)}
+.fab-drop:focus-visible{outline:3px solid var(--ink);outline-offset:5px;border-radius:50%}
+.composer-wrap{position:fixed;inset:0;z-index:35;display:flex;align-items:center;justify-content:center;padding:20px;pointer-events:none;visibility:hidden;transition:visibility .32s}
+.composer-wrap.is-open{visibility:visible;pointer-events:auto}
+.composer-backdrop{position:absolute;inset:0;background:#110a0e99;opacity:0;backdrop-filter:blur(0);transition:opacity .35s,backdrop-filter .35s}
+.composer-wrap.is-open .composer-backdrop{opacity:1;backdrop-filter:blur(5px)}
+.composer-panel{position:relative;z-index:1;width:min(540px,100%);max-height:min(86vh,750px);overflow:auto;overscroll-behavior:contain;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:24px;padding:clamp(20px,4vw,28px);opacity:0;transform:translateY(38px) scale(.78);clip-path:circle(0% at 92% 92%);transition:opacity .35s,transform .48s var(--motion-ease),clip-path .5s var(--motion-ease);box-shadow:0 24px 75px #0003}
+.composer-wrap.is-open .composer-panel{opacity:1;transform:translateY(0) scale(1);clip-path:circle(150% at 92% 92%)}
+.composer-head{display:flex;align-items:center;justify-content:space-between;gap:12px}.composer-head h3{font-size:1.45rem}
+.composer-close{width:36px;height:36px;border-radius:50%;background:var(--gray);display:grid;place-items:center;font-size:1.5rem}
+.composer-panel textarea{min-height:130px}.composer-panel select{flex:1;min-width:150px}
+.composer-tip{font-size:.8rem;color:var(--mute);margin-top:.5rem}
+.is-busy{opacity:.8;pointer-events:none}.submit-spinner{display:inline-block;width:16px;height:16px;border:2px solid currentColor;border-top-color:transparent;border-radius:50%;animation:spinC .7s linear infinite;vertical-align:middle;margin-right:.5rem}
+@keyframes spinC{to{transform:rotate(360deg)}}
+@keyframes fieldShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}50%{transform:translateX(5px)}75%{transform:translateX(-3px)}}
+.field-error{animation:fieldShake .28s ease;border-color:#d53e58!important}
+#top-loading-bar{position:fixed;top:0;left:0;right:0;height:3px;z-index:110;pointer-events:none;opacity:0;transform-origin:left;transform:scaleX(0);background:var(--accent);box-shadow:0 0 9px var(--accent);transition:transform .35s ease,opacity .22s}
+#top-loading-bar.active{opacity:1}
+#top-loading-bar.finishing{transform:scaleX(1)!important;opacity:0;transition:transform .25s ease,opacity .35s .25s}
+#forum-feed .post{content-visibility:auto;contain-intrinsic-size:auto 260px}
+#forum-feed .post .av{transition:filter .4s,opacity .4s}.av[loading=lazy]{background:var(--gray)}
+@media(max-width:760px){.fab-drop{bottom:calc(79px + env(safe-area-inset-bottom));right:17px;width:60px;height:68px}.composer-wrap{align-items:flex-end;padding:0 0 calc(63px + env(safe-area-inset-bottom))}.composer-panel{border-radius:24px 24px 0 0;max-height:calc(94dvh - 65px - env(safe-area-inset-bottom));width:100%;transform:translateY(90px) scale(.96);clip-path:circle(0% at 95% 98%)}}
+@media(prefers-reduced-motion:reduce){.composer-panel,.composer-backdrop,.fab-drop,.fab-drop svg,.fab-drop::before,#top-loading-bar{transition:none!important;animation:none!important}.composer-panel{clip-path:none!important}}
+
+/* ===== Ciclo Motion · animaciones añadidas ===== */
+
+/* 1 · Ripple en botones .btn */
+.btn{position:relative;overflow:hidden}
+.ripple{position:absolute;border-radius:50%;background:currentColor;opacity:.28;transform:scale(0);pointer-events:none;animation:rippleOut .65s cubic-bezier(.2,.8,.2,1) forwards}
+@keyframes rippleOut{to{transform:scale(2.6);opacity:0}}
+
+/* 2 · Stagger de días del calendario (el periodo conserva su “gota”) */
+.d[data-anim]:not(.period){animation:cellIn .34s cubic-bezier(.2,.8,.2,1) backwards}
+@keyframes cellIn{from{opacity:0;transform:translateY(6px) scale(.92)}to{opacity:1;transform:none}}
+
+/* 3 · Confetti de éxito (se inyecta vía JS) */
+.confetti-piece{position:fixed;width:8px;height:8px;border-radius:2px;pointer-events:none;z-index:120;will-change:transform,opacity}
+
+/* 4 · Corazones que brotan del like */
+.heart-particle{position:fixed;pointer-events:none;z-index:120;font-family:Georgia,serif;line-height:1;will-change:transform,opacity}
+
+/* 5 · Volver arriba */
+#scroll-top{position:fixed;left:clamp(16px,3vw,42px);bottom:28px;width:46px;height:46px;border-radius:50%;background:var(--card);color:var(--ink);border:1px solid var(--line);box-shadow:0 8px 22px #0002;display:grid;place-items:center;z-index:34;opacity:0;transform:translateY(14px) scale(.9);pointer-events:none;transition:opacity .3s,transform .35s cubic-bezier(.2,.8,.2,1),background .2s}
+#scroll-top.show{opacity:1;transform:none;pointer-events:auto}
+#scroll-top svg{width:20px;height:20px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round;transition:transform .25s}
+#scroll-top:hover{background:var(--soft2)}
+#scroll-top:hover svg{transform:translateY(-2px)}
+@media(max-width:760px){#scroll-top{bottom:calc(79px + env(safe-area-inset-bottom));left:17px;width:42px;height:42px}}
+
+/* 6 · Empty state animado del foro */
+.empty-state{text-align:center;padding:2.6rem 1rem 2rem;animation:in .5s both}
+.empty-drop{width:80px;height:80px;margin:0 auto 1.1rem;display:grid;place-items:center;color:var(--accent);animation:floatY 2.8s ease-in-out infinite}
+.empty-drop svg{width:60px;height:60px;fill:currentColor;opacity:.9;filter:drop-shadow(0 4px 8px #e4457f33)}
+.empty-state h3{font-size:1.15rem;margin-bottom:.3rem}
+@keyframes floatY{50%{transform:translateY(-8px)}}
+
+/* Números tabulares para los contadores animados */
+.stat strong{font-variant-numeric:tabular-nums}
+
+@media(prefers-reduced-motion:reduce){
+  .ripple,.d[data-anim]:not(.period),.empty-drop{animation:none!important}
+  #scroll-top{transition:none!important}
+}
+
+/* ===== Ciclo · desktop motion & mobile layout polish ===== */
+html{width:100%;max-width:100%;overflow-x:hidden;overflow-y:auto;overscroll-behavior-x:none;scrollbar-gutter:stable}
+body{width:100%;max-width:100%;overflow-x:hidden;overflow-y:visible;min-height:100dvh}
+#app,main,#main,main>section,.calwrap,.set,.stats,.card{min-width:0}
+img,svg,video{max-width:100%}
+button,input,select,textarea{touch-action:manipulation}
+/* A richer motion language on desktops with precise pointers */
+@media (min-width:761px) and (hover:hover) and (pointer:fine){
+  #app{grid-template-columns:252px minmax(0,1fr)}
+  aside{z-index:21;box-shadow:6px 0 35px #00000005;transition:box-shadow .4s}
+  nav button{position:relative;isolation:isolate;overflow:hidden;transform-origin:left center;transition:background .32s cubic-bezier(.2,.8,.2,1),color .26s,transform .3s cubic-bezier(.2,.8,.2,1),padding-left .3s}
+  nav button::before{content:"";position:absolute;inset:0;background:var(--soft);transform:translateX(-106%);transition:transform .38s cubic-bezier(.2,.8,.2,1);z-index:-1;border-radius:12px}
+  nav button:hover::before{transform:translateX(0)}
+  nav button:hover{transform:translateX(5px);padding-left:1rem}
+  nav button.on{box-shadow:inset 3px 0 0 var(--accent)}
+  nav button svg{transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+  nav button:hover svg{transform:rotate(-9deg) scale(1.15)}
+  main>section{animation:desktopSceneIn .62s cubic-bezier(.2,.8,.2,1) both}
+  main .top h2{animation:desktopTitle .75s cubic-bezier(.15,.85,.25,1) both}
+  main .top p{animation:desktopTitle .7s .08s cubic-bezier(.15,.85,.25,1) both}
+  .card:not(.post):not(.chatbox){transition:transform .38s cubic-bezier(.2,.8,.2,1),box-shadow .38s,border-color .3s,background .3s}
+  .card:not(.post):not(.chatbox):hover{transform:translateY(-5px);box-shadow:0 16px 38px #00000012;border-color:color-mix(in srgb,var(--accent) 28%,var(--line))}
+  .post{transition:transform .36s cubic-bezier(.2,.8,.2,1),box-shadow .36s,border-color .36s}
+  .post:hover{transform:translateY(-5px);box-shadow:0 18px 42px #00000016;border-color:color-mix(in srgb,var(--accent) 27%,var(--line))}
+  .btn:not(:disabled):hover,.like-btn:hover,.chip:hover,.iconbtn:hover{transform:translateY(-3px) scale(1.025);box-shadow:0 7px 17px #00000012}
+  .btn:active,.like-btn:active,.chip:active{transform:scale(.96)}
+  .av:hover{transform:scale(1.09) rotate(-3deg)}
+  .d:not(.e):hover{transform:translateY(-3px) scale(1.1);box-shadow:0 6px 18px #00000019}
+  .reply:hover{transform:translateX(5px);background:var(--soft)}
+  .fab-drop{animation:desktopFabFloat 3.7s ease-in-out infinite}
+  .fab-drop:hover{animation-play-state:paused;transform:translateY(-7px) scale(1.08)}
+  .hero h1{animation:desktopTitle .85s cubic-bezier(.2,.8,.2,1) both}
+  .hero p{animation:desktopTitle .8s .15s cubic-bezier(.2,.8,.2,1) both}
+  .tabs button:hover{transform:translateY(-2px)}
+}
+@keyframes desktopSceneIn{from{opacity:0;transform:translate3d(28px,16px,0) scale(.982);filter:blur(5px)}to{opacity:1;transform:translateZ(0) scale(1);filter:blur(0)}}
+@keyframes desktopTitle{from{opacity:0;transform:translateY(19px);filter:blur(4px)}to{opacity:1;transform:none;filter:blur(0)}}
+@keyframes desktopFabFloat{0%,100%{translate:0 0}50%{translate:0 -6px}}
+/* Compact phones, safe areas, virtual keyboard, and landscape */
+@media(max-width:760px){
+  html{scroll-padding-bottom:calc(90px + env(safe-area-inset-bottom))}
+  body{position:relative;-webkit-text-size-adjust:100%}
+  #auth{grid-template-columns:minmax(0,1fr);min-height:100dvh}
+  .hero{min-height:180px;padding:1.7rem 1.2rem;overflow:hidden}
+  .hero h1{font-size:clamp(1.8rem,8vw,2.7rem);max-width:13ch}
+  .authbox{padding:1rem 1rem calc(2rem + env(safe-area-inset-bottom))}
+  .authbox .card{width:100%;max-width:440px;padding:1rem}
+  #app{display:block;min-height:100dvh}
+  aside{width:100%;max-width:100vw;left:0;right:0;bottom:0;box-sizing:border-box;overflow:visible;background:var(--card);padding:.4rem max(8px,env(safe-area-inset-left)) calc(.4rem + env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-right));box-shadow:0 -6px 25px #0000000b}
+  nav{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;width:100%}
+  nav button{min-width:0;padding:.45rem .1rem;gap:.16rem;min-height:50px;align-items:center;justify-content:center;font-size:clamp(.59rem,2.7vw,.73rem);line-height:1.18;border-radius:10px}
+  nav svg{width:21px;height:21px}
+  main{box-sizing:border-box;width:100%;max-width:100%;padding:clamp(13px,3.5vw,20px) clamp(10px,3.5vw,18px) calc(105px + env(safe-area-inset-bottom));overflow:visible}
+  .top{margin-bottom:1rem;gap:.5rem}.top h2{font-size:clamp(1.55rem,7vw,2rem)}
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:.55rem}
+  .stats .card{padding:.75rem;min-width:0}.stat strong{font-size:clamp(1.08rem,5vw,1.42rem);overflow-wrap:anywhere}
+  .stat small{font-size:.72rem;line-height:1.32;display:block}
+  .calwrap,.set{display:grid;grid-template-columns:minmax(0,1fr);gap:.85rem}
+  .calwrap>.card{padding:clamp(9px,2.8vw,15px);width:100%}
+  .calhead{gap:5px}.calhead h3{font-size:clamp(.95rem,4.6vw,1.25rem);text-align:center}
+  .grid{width:100%;grid-template-columns:repeat(7,minmax(0,1fr));gap:clamp(1px,.7vw,4px)}
+  .d{width:100%;min-width:0;min-height:0;aspect-ratio:1;border-radius:8px;font-size:clamp(.68rem,3.3vw,.94rem);padding:0;overflow:visible}
+  .d.period::before{width:min(100%,45px);height:min(100%,45px)}
+  .d.period .daynum{font-size:clamp(.7rem,3.3vw,.94rem);padding-top:4px}
+  .d .mk{height:9px;font-size:.58rem}.mk svg{width:9px;height:9px}
+  .legend{gap:.5rem .7rem;font-size:.73rem}.legend span{gap:.27rem}
+  .post{padding:.95rem}.post h3{font-size:1.1rem;overflow-wrap:anywhere}.post p,.reply p{overflow-wrap:anywhere}
+  .post-actions{gap:.4rem}.author-header{min-width:0}.author-lines{min-width:0}
+  .chips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding:4px 2px 8px;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
+  .chips::-webkit-scrollbar{display:none}.chips .chip{flex:0 0 auto}
+  .rform,.cform{display:flex;flex-wrap:nowrap;gap:.4rem;align-items:stretch}
+  .rform input,.cform input{min-width:0;flex:1 1 auto;width:1%;padding:.65rem .7rem}
+  .rform .btn,.cform .btn{flex:0 0 auto;padding:.65rem .8rem;font-size:.8rem}
+  .chatbox{height:min(69dvh,620px);min-height:330px;padding:.75rem}
+  .msgs{min-height:0}.m{max-width:92%;overflow-wrap:anywhere;font-size:.9rem}
+  .line{align-items:center}.line>div{min-width:0;overflow-wrap:anywhere}
+  .avrow{gap:.7rem;min-width:0}.avrow>div{min-width:0;overflow-wrap:anywhere}
+  .composer-wrap{padding:0;align-items:flex-end}
+  .composer-panel{width:100%;max-width:100%;max-height:min(86dvh,calc(100dvh - 80px));padding:18px 16px calc(20px + env(safe-area-inset-bottom));border-radius:23px 23px 0 0;overscroll-behavior:contain}
+  .composer-wrap{padding-bottom:0;z-index:55}.composer-panel{z-index:56}.composer-backdrop{z-index:54}
+  .fab-drop{right:calc(14px + env(safe-area-inset-right));bottom:calc(77px + env(safe-area-inset-bottom));width:58px;height:66px;z-index:42}
+  .fab-drop[aria-expanded=true]{z-index:57;bottom:calc(12px + env(safe-area-inset-bottom))}
+  #scroll-top{left:calc(12px + env(safe-area-inset-left));bottom:calc(81px + env(safe-area-inset-bottom))}
+  #toast{max-width:calc(100vw - 24px);width:max-content;text-align:center;white-space:normal;bottom:calc(82px + env(safe-area-inset-bottom));font-size:.81rem}
+  .demo-banner{font-size:.55rem;top:4px;right:4px;opacity:.8}
+  #modal{padding:12px;align-items:center}#modal .card{max-height:80dvh}
+  /* No automatic input zoom on iPhone; maintain comfortable tap sizes. */
+  input:not([type=checkbox]):not([type=color]),select,textarea{font-size:16px;min-height:44px}
+}
+@media(max-width:360px){
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .stat strong{font-size:1.08rem}
+  .rform .btn,.cform .btn{padding:.55rem .55rem;font-size:.75rem}
+  .d.period .daynum{padding-top:2px}
+}
+@media(max-width:760px) and (orientation:landscape){
+  .hero{min-height:125px}
+  .composer-panel{max-height:75dvh}
+  main{padding-bottom:calc(96px + env(safe-area-inset-bottom))}
+}
+@media(prefers-reduced-motion:reduce){
+  main>section,main .top h2,main .top p,.hero h1,.hero p,.fab-drop{animation:none!important}
+  html{scroll-behavior:auto!important}
+}
+
+
+/* Comunidad: carrusel horizontal de consejos populares y hilos bajo demanda */
+.forum-section-title{margin:1.5rem 0 .8rem;font-size:1.2rem}
+.trending-strip{display:flex;gap:14px;overflow-x:auto;padding:4px 3px 16px;scroll-snap-type:x proximity;scrollbar-width:thin;overscroll-behavior-x:contain}
+.trending-strip>.forum-teaser{flex:0 0 clamp(230px,30vw,310px);scroll-snap-align:start}
+.recent-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,330px),1fr));gap:12px}
+.forum-teaser{min-width:0;padding:0;overflow:hidden;animation:cardArrive .42s ease both}
+.forum-entry{display:flex;flex-direction:column;align-items:stretch;text-align:left;gap:9px;width:100%;height:100%;padding:16px;color:inherit}
+.forum-entry h3{font-size:1.12rem;line-height:1.3;overflow-wrap:anywhere}
+.forum-entry p{color:var(--mute);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;white-space:normal;font-size:.9rem}
+.teaser-user{display:flex;align-items:center;gap:8px;font-size:.8rem;min-width:0}.teaser-user span{overflow-wrap:anywhere}
+.teaser-foot{display:flex;gap:12px;align-items:center;margin-top:auto;padding-top:9px;color:var(--accent);font-size:.8rem;font-weight:700}
+.teaser-foot span:last-child{margin-left:auto}
+.forum-entry:hover{background:var(--soft)}
+.forum-detail-overlay{position:fixed;inset:0;z-index:52;display:grid;place-items:center;padding:16px;animation:fade .2s both}
+.forum-detail-backdrop{position:absolute;inset:0;background:#10070da8;backdrop-filter:blur(5px)}
+.forum-detail{position:relative;width:min(680px,100%);max-height:90dvh;overflow-y:auto;overscroll-behavior:contain;padding:clamp(16px,3vw,26px);border-radius:22px;animation:screenEnter .35s both}
+.forum-detail .detail-back{margin-bottom:1rem}.forum-detail h2{overflow-wrap:anywhere;margin:.75rem 0}.forum-detail .detail-body{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.6}
+.forum-detail h3{margin-top:1.4rem}.detail-replies{max-height:none}.detail-open{overflow:hidden!important}
+.forum-detail .rform{position:sticky;bottom:0;background:var(--card);padding:12px 0 4px}
+@media(max-width:760px){.trending-strip>.forum-teaser{flex-basis:78vw;max-width:310px}.recent-list{grid-template-columns:1fr}.forum-detail-overlay{align-items:end;padding:0 0 calc(62px + env(safe-area-inset-bottom))}.forum-detail{border-radius:22px 22px 0 0;max-height:calc(95dvh - 62px - env(safe-area-inset-bottom));width:100%}.forum-entry{padding:14px}}
+
+/* Scroll vertical real para escritorio; ningún contenedor principal atrapa el wheel */
+@media(min-width:761px){
+ html,body{height:auto!important;min-height:100%;overflow-y:visible!important}
+ html{overflow-y:auto!important}
+ #app{min-height:100vh;height:auto;align-items:start}
+ main,#main,main>section{height:auto;max-height:none;overflow:visible!important}
+ aside{position:sticky;top:0;height:100vh}
+ .forum-layout,.recent-list{height:auto;max-height:none;overflow:visible}
+ .forum-detail-overlay{overflow:auto;overscroll-behavior:contain}
+ .forum-detail{max-height:calc(100dvh - 40px);overflow-y:auto;overscroll-behavior:contain}
+ body.detail-open{overflow:hidden!important}
+}
+/* El teléfono conserva su tamaño; scroll solo vertical */
+@media(max-width:760px){
+ html{scrollbar-gutter:auto;overflow-x:hidden;overflow-y:auto}
+ body{overflow-x:hidden;overflow-y:visible}
+ #app,main,#main,main>section{overflow-x:visible;max-width:100%}
+ .forum-detail-overlay{padding:8px;align-items:center}
+ .forum-detail{max-height:calc(100dvh - 26px);overflow-y:auto}
+ .trending-strip{max-width:100%;touch-action:pan-x pan-y}
+}
+
+/* Inicio rápido y animación de expansión tipo macOS */
+.who{min-width:0}.who .account-exit{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;margin-top:12px;padding:9px 12px;border:1px solid var(--line);border-radius:12px;background:var(--bg);font-size:.82rem;font-weight:700;transition:transform .25s,background .25s}.who .account-exit:hover{background:var(--soft2);transform:translateY(-2px)}
+.quick-card{margin-top:16px;border:1px solid var(--line);background:var(--soft);border-radius:16px;padding:15px;animation:screenEnter .4s both}.quick-card h3{font-size:1.08rem}.quick-card p{margin:.4rem 0 .7rem;line-height:1.5}.quick-card .quick-row{display:flex;gap:8px;flex-wrap:wrap}.quick-card .quick-row input{flex:1;min-width:125px}.quick-card .quick-row button{flex-shrink:0}.quick-card input{font-size:16px;letter-spacing:.14em}.quick-card .quick-error{min-height:1.25em;font-size:.82rem;color:#c0183f;margin-top:.5rem}.quick-card .quick-muted{font-size:.78rem;color:var(--mute)}
+.forum-detail-overlay{animation:macBackdrop .32s ease both}.forum-detail{animation:macOpen .52s cubic-bezier(.16,1,.25,1) both;transform-origin:var(--mac-origin-x,50%) var(--mac-origin-y,80%);will-change:transform,opacity,filter}
+.forum-detail-overlay.mac-closing{animation:macBackdropOut .26s ease both;pointer-events:none}.mac-closing .forum-detail{animation:macClose .28s cubic-bezier(.4,0,.8,.3) both}
+@keyframes macBackdrop{from{opacity:0}to{opacity:1}}@keyframes macBackdropOut{from{opacity:1}to{opacity:0}}
+@keyframes macOpen{0%{opacity:0;transform:translate(var(--mac-dx,0px),var(--mac-dy,25px)) scale(var(--mac-sx,.72),var(--mac-sy,.55));filter:blur(7px)}65%{opacity:1;filter:blur(0)}100%{transform:translate(0,0) scale(1);opacity:1;filter:blur(0)}}
+@keyframes macClose{from{opacity:1;transform:scale(1);filter:blur(0)}to{opacity:0;transform:translate(var(--mac-dx,0px),var(--mac-dy,18px)) scale(.82);filter:blur(4px)}}
+@media(max-width:760px){.who{display:none}.quick-card{padding:12px}.forum-detail{transform-origin:50% 100%}.forum-detail-overlay .forum-detail{max-width:100%}}
+@media(prefers-reduced-motion:reduce){.forum-detail,.forum-detail-overlay,.mac-closing .forum-detail,.forum-detail-overlay.mac-closing{animation:none!important}}
+.country-flag{display:inline-flex;vertical-align:middle;font-size:1.15em;margin-inline-start:3px;filter:drop-shadow(0 1px 1px #0002)}
+
+/* Women's Period — diarios y escritorio/móvil */
+.diary-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 1rem}
+.symptom-cloud{display:flex;flex-wrap:wrap;gap:.5rem;margin:.7rem 0 1.2rem}.symptom-tag{margin:0;cursor:pointer}.symptom-tag input{position:absolute;opacity:0;width:1px;height:1px}.symptom-tag span{display:inline-block;background:var(--gray);border:1px solid var(--line);border-radius:22px;padding:.55rem .85rem;transition:.25s}.symptom-tag input:checked+span{background:var(--soft2);border-color:var(--accent);color:var(--ink);transform:scale(1.025)}.symptom-tag input:focus-visible+span{outline:2px solid var(--accent)}
+.diary-history{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem}.pattern-row{display:grid;grid-template-columns:minmax(100px,1fr) 2fr 25px;gap:.5rem;align-items:center;margin-top:.8rem;font-size:.86rem}.pattern-track{background:var(--gray);border-radius:99px;overflow:hidden;height:9px}.pattern-track i{display:block;background:var(--accent);height:100%;border-radius:99px;animation:growPattern .65s both}@keyframes growPattern{from{transform:scaleX(0);transform-origin:left}}
+.checkline{display:flex;align-items:center;gap:.7rem;font-size:.94rem;font-weight:500}.checkline input{width:18px;height:18px;accent-color:var(--accent)}
+#nav{scrollbar-width:none}#nav::-webkit-scrollbar{display:none}
+@media(max-width:760px){nav{overflow-x:auto;justify-content:space-between;gap:2px}nav button{flex:0 0 auto;min-width:52px;padding:.42rem .25rem;font-size:.60rem}nav svg{width:19px;height:19px}.diary-fields{grid-template-columns:1fr}main{min-width:0}body{overflow-x:clip}}
+@media(max-width:365px){nav button{min-width:48px;font-size:.57rem}}
+@media(prefers-reduced-motion:reduce){.pattern-track i{animation:none}}
+</style>
+</head>
+<body>
+<div id="loader"><div class="lw"><div class="rings"><i></i><i></i><i></i><div class="drop"></div></div><div class="brand" style="justify-content:center">Women's Period</div><p class="muted">Preparando tu espacio…</p></div></div>
+<div id="auth" class="hide"></div>
+<div id="app" class="hide"><aside><div class="brand"><b></b>Women's Period</div><nav id="nav"></nav><div class="who" id="who"></div></aside><main id="main"></main></div>
+<div class="demo-banner">✦ PRUEBA LOCAL · Sin Supabase</div>
+<div id="toast"></div><div id="top-loading-bar" aria-hidden="true"></div>
+<div id="modal" class="hide" role="dialog" aria-modal="true"></div>
+<button id="scroll-top" type="button" aria-label="Volver arriba"><svg viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></svg></button>
+
+<script>
+/* ===== Conocimiento del asistente (archivo .md inyectado) ===== */
+const KB = "# BASE DE CONOCIMIENTO Y SYSTEM PROMPT: SALUD MENSTRUAL Y CICLO FEMENINO\n\n## 1. ROL Y DIRECTRICES DE LA IA\nActúa como una asistente experta en salud menstrual, educación ginecológica y bienestar femenino. Tu tono debe ser empático, claro, científico, libre de tabúes y directo. \n- **Límite médico (Disclaimer):** Siempre aclara que la información es educativa y no reemplaza una consulta ginecológica presencial.\n- **Triage de urgencias:** Si la usuaria reporta señales de alerta (sección 8), prioriza recomendar atención médica inmediata antes de dar consejos caseros.\n\n---\n\n## 2. PARÁMETROS CLÍNICOS NORMALES (VALORES DE REFERENCIA)\nUsa estos rangos para evaluar si lo que describe una usuaria está dentro de los parámetros habituales:\n- **Duración del ciclo completo:** 21 a 35 días en adultas (promedio 28 días); en adolescentes puede variar de 21 a 45 días durante los primeros 2 a 3 años tras la menarquia (primera menstruación).\n- **Duración del sangrado:** 2 a 7 días (promedio 4 a 5 días).\n- **Volumen total de sangre perdida por ciclo:** 30 ml a 80 ml. Menos de 30 ml se considera hipomenorrea; más de 80 ml se considera menorragia (sangrado menstrual abundante).\n- **Variabilidad normal entre ciclos:** Una variación de +/- 2 a 7 días entre un mes y otro se considera regular.\n- **pH vaginal normal (edad reproductiva):** Entre 3.8 y 4.5 (ácido, mantenido por lactobacilos). Durante la menstruación sube temporalmente porque el pH de la sangre es de 7.4.\n\n---\n\n## 3. FISIOLOGÍA PROFUNDA: EJE HPO Y LAS 4 FASES\nEl ciclo está regulado por el **Eje Hipotálamo-Pituitaria-Ovario (HPO)**:\n\n1. **Fase Menstrual (Días 1-5):**\n   - *Hormonas:* Estrógeno y progesterona en sus niveles basales más bajos.\n   - *Útero:* Descamación funcional del endometrio inducida por vasoconstricción de las arterias espirales y liberación de prostaglandinas ($PGF_{2\\alpha}$ y $PGE_2$).\n   - *Estado sistémico:* Fatiga leve, menor energía física, posible retención de líquidos residual.\n\n2. **Fase Folicular (Días 1-13):**\n   - *Hormonas:* El hipotálamo secreta GnRH en pulsos lentos, estimulando a la hipófisis a liberar FSH (Hormona Foliculoestimulante). Crecen entre 10 y 20 folículos antrales, pero por selección folicular solo uno (el folículo dominante) madura y secreta **estradiol (estrógeno)** en aumento exponencial.\n   - *Útero:* Fase proliferativa; el endometrio se regenera y engrosa (de 2 mm hasta 8-10 mm).\n   - *Estado sistémico:* Aumento de serotonina y dopamina. Mayor energía física, mejor sensibilidad a la insulina, mayor tolerancia al dolor y agudeza cognitiva.\n\n3. **Fase Ovulatoria (Días 13-15 en un ciclo de 28 días):**\n   - *Hormonas:* El nivel alto y sostenido de estradiol por más de 48 horas cambia la retroalimentación negativa a positiva en la hipófisis, disparando el **pico de LH (Hormona Luteinizante)** y un pico menor de FSH. La ovulación ocurre 24 a 36 horas después del inicio del pico de LH (y 10 a 12 horas después de su punto máximo).\n   - *Óvulo y ventana fértil:* El ovocito vive de 12 a 24 horas. Como los espermatozoides viven hasta 5 días en el moco cervical fértil, la **ventana fértil total es de unos 6 días** (los 5 días previos a la ovulación más el día de la ovulación).\n   - *Signos físicos:* Moco cervical tipo clara de huevo (elástico, transparente, alcalino para proteger espermatozoides), cérvix alto, blando y abierto. Posible *Mittelschmerz* (dolor pélvico unilateral leve al romperse el folículo).\n\n4. **Fase Lútea (Días 15-28):**\n   - *Hormonas:* La duración de esta fase es la más constante (casi siempre dura **12 a 14 días**; si un ciclo se retrasa, casi siempre se retrasó la ovulación, no la fase lútea). El folículo roto se transforma en el **cuerpo lúteo**, que secreta **progesterona** y cantidades moderadas de estrógeno.\n   - *Útero:* Fase secretora; el endometrio se vasculariza y acumula glucógeno (llega a 12-16 mm).\n   - *Efecto termogénico:* La progesterona actúa en el hipotálamo elevando la **Temperatura Corporal Basal (TCB)** entre 0.2 °C y 0.5 °C hasta el día antes del siguiente periodo.\n   - *Luteólisis:* Si no hay implantación ni hormona hCG a los 10-12 días post-ovulación, el cuerpo lúteo degenera (corpus albicans), caen la progesterona y el estrógeno, y se desencadena el Síndrome Premenstrual (SPM) y el nuevo sangrado.\n\n---\n\n## 4. CLASIFICACIÓN DEL FLUJO VAGINAL Y SANGRE MENSTRUAL\n\n### Evolución del flujo cervical durante el mes (No menstrual)\n- **Post-menstrual (Días 6-8):** Seco o flujo escaso y pegajoso.\n- **Pre-ovulatorio (Días 9-11):** Cremoso, blanco o ligeramente amarillento al secarse en la ropa interior (tipo loción).\n- **Ovulatorio (Días 12-15):** Acuoso, transparente, muy elástico (filancia mayor a 5 cm).\n- **Lúteo (Días 16-28):** Espeso, blanco, opaco o seco por efecto de la progesterona.\n\n### Interpretación del sangrado\n- **Rojo vivo:** Flujo activo y reciente.\n- **Marrón/Cafés/Negro:** Sangre oxidada de flujo lento (inicio/final del ciclo). Normal.\n- **Rosado:** Mezcla con fluido cervical (inicio del ciclo, manchado ovulatorio o niveles bajos de estrógeno).\n- **Anaranjado o Grisáceo:** Alerta de infección (vaginosis bacteriana o tricomoniasis).\n\n---\n\n## 5. MANEJO DEL DOLOR Y SÍNTOMAS ASOCIADOS\n\n### Mecanismo de las Prostaglandinas\nLa caída de progesterona rompe los lisosomas celulares del endometrio, liberando ácido araquidónico que se convierte en prostaglandinas ($PGF_{2\\alpha}$) vía la enzima ciclooxigenasa (COX). Esto causa hipercontractilidad uterina, isquemia (falta temporal de oxígeno en el músculo uterino, lo que duele) y, si pasan al torrente sanguíneo, causan **diarrea menstrual, náuseas, dolor de cabeza y mareos**.\n\n### Protocolo de alivio\n1. **Farmacológico (Inhibidores de COX / AINEs):** Ibuprofeno, naproxeno o ácido mefenámico. Funcionan mejor si se toman **24 horas antes del sangrado** o al primer síntoma, antes de que la cascada de prostaglandinas se instale. (Contraindicado en úlceras gástricas o alergias). Para quienes no toleran AINEs, el paracetamol ayuda con el umbral del dolor pero no frena las prostaglandinas.\n2. **Termoterapia:** Calor local a 40 °C en hipogastrio (vientre bajo) provoca vasodilatación y reduce la isquemia muscular.\n3. **Suplementación con evidencia:** Magnesio (glicinato o citrato, 200-300 mg/día), Ácidos grasos Omega-3 (EPA/DHA), Vitamina B1 (tiamina, 100 mg/día), Vitamina E y extracto de jengibre en polvo (250-500 mg cada 6-8 horas durante los primeros 3 días).\n\n---\n\n## 6. HIGIENE ÍNTIMA Y PRODUCTOS DE GESTIÓN MENSTRUAL\n\n### Reglas anatómicas y microbiológicas\n- **Vagina (canal interno):** Autolimpiante mediante secreciones cervicales y flora de *Lactobacillus crispatus, gasseri y jensenii* (producen ácido láctico y peróxido de hidrógeno). Prohibido el uso de duchas vaginales, óvulos caseros (ajo, yogur, aceites), vapores vaginales o jabones internos.\n- **Vulva (genitales externos):** Lavar 1 vez al día solo con agua tibia o limpiador syndet de pH ácido (3.8 - 4.5) sin fragancias. Lavar pliegues entre labios mayores y menores, pero no dentro del introito vaginal.\n- **Dirección de limpieza:** Siempre de adelante (uretra/vulva) hacia atrás (ano) para prevenir infecciones urinarias por *Escherichia coli*.\n\n### Tabla técnica de productos menstruales\n- **Toallas desechables / Tela:** Uso externo. Cambio cada 4-6 horas.\n- **Tampones:** Uso interno (absorben flujo y humedad vaginal). Cambio cada 4-6 horas (máximo absoluto 8 horas). Riesgo bajo pero real de Síndrome de Choque Tóxico (SCT) por toxina TSST-1 de *Staphylococcus aureus*.\n- **Copa menstrual:** Uso interno (recolecta, no absorbe; hecha de silicona médica o TPE). Sello por vacío ligero. Duración: hasta 12 horas. Esterilización: hervir de 5 a 10 minutos entre ciclos.\n- **Disco menstrual:** Uso interno (se coloca en el fórnix vaginal, detrás del hueso púbico; no hace vacío). Permite relaciones sexuales con penetración durante el sangrado. Duración: hasta 12 horas. Compatible con DIU (menor riesgo de desplazarlo por succión).\n- **Calzones menstruales:** Uso externo absorbente. Duración: 8 a 12 horas según flujo. Lavar con agua fría primero, sin suavizante de telas (el suavizante impermeabiliza las fibras y daña la absorción).\n\n---\n\n## 7. PATOLOGÍAS Y CONDICIONES FRECUENTES (DIFERENCIACIÓN)\n- **Dismenorrea Primaria vs. Secundaria:** La primaria es dolor menstrual común por prostaglandinas sin enfermedad pélvica subyacente (inicia poco después de la menarquia). La secundaria es dolor causado por una patología (endometriosis, adenomiosis, miomas, enfermedad pélvica inflamatoria) y suele empeorar con los años.\n- **Endometriosis:** Tejido similar al endometrio crece fuera del útero (ovarios, peritoneo, intestino). Síntomas: dismenorrea severa, dispareunia profunda (dolor al tener relaciones), disquecia (dolor al defecar en la regla) e infertilidad.\n- **Síndrome de Ovario Poliquístico (SOP / PCOS):** Trastorno endocrino-metabólico. Criterios de Rotterdam (se necesitan 2 de 3): 1) Oligo o anovulación (ciclos mayores a 35 días o ausentes), 2) Hiperandrogenismo clínico o bioquímico (acné severo, hirsutismo/vello facial, alopecia androgénica), 3) Ovarios de aspecto poliquístico en ecografía. Frecuentemente asociado a resistencia a la insulina.\n- **Trastorno Disfórico Premenstrual (TDPM / PMDD):** Forma severa y psiquiátrica del SPM (afecta al 3-8% de mujeres). Ocurre en la fase lútea tardía y desaparece al iniciar el sangrado: depresión profunda, ataques de pánico, irritabilidad extrema o ideación suicida por hipersensibilidad cerebral a las fluctuaciones normales de alopregnanolona (metabolito de la progesterona).\n\n---\n\n## 8. BANDERAS ROJAS (CUÁNDO DERIVAR AL MÉDICO DE INMEDIATO)\n1. Empapar una toalla o tampón de máxima absorción cada hora durante 2 o más horas seguidas.\n2. Sangrado que dura más de 8 días continuos.\n3. Coágulos frecuentes mayores a 2.5 cm.\n4. Dolor pélvico súbito e intenso en un solo lado (riesgo de torsión ovárica, quiste hemorrágico roto o embarazo ectópico).\n5. Fiebre mayor a 38.9 °C, vómitos, diarrea, mareo al ponerse de pie y sarpullido tipo quemadura solar mientras se usa tampón o copa (sospecha de Síndrome de Choque Tóxico).\n6. Sangrado vaginal después de la menopausia (siempre debe investigarse).\n7. Ausencia de menstruación por más de 90 días (sin embarazo ni lactancia).";
+const SYSTEM = KB + "\n\n## REGLAS ADICIONALES\nResponde SIEMPRE en español, de forma breve y cálida (máx. ~180 palabras salvo que pidan más). Responde únicamente temas de salud menstrual, ciclo, higiene íntima, fertilidad y bienestar femenino; si preguntan otra cosa, redirige amablemente. Nunca diagnostiques ni recetes dosis personalizadas. Usa listas cortas y **negritas** cuando ayude.";
+const DEFAULT_KEY = ""; // Nunca incrustar claves privadas en GitHub.
+const MODEL = "gemini-3.8-flash";
+
+/* Preparación para Supabase blood (sin conexión automática durante la prueba local).
+   SQL seguro en el archivo adjunto; NO activar antes de habilitar Auth y políticas RLS.
+   La clave publishable es pública; jamás incluir service_role aquí. */
+const BLOOD_CONFIG = Object.freeze({
+  url: 'https://ijpvdezhakwflydbjchb.supabase.co',
+  publishableKey: 'sb_publishable_W62apV8zQIQuWwm-IBkk4g_IZduW9Aa',
+  enabled: false
+});
+
+/* ===== Utilidades ===== */
+const $=s=>document.querySelector(s);
+const LS={get:(k,d)=>{try{const v=JSON.parse(localStorage.getItem(k));return v??d}catch{return d}},set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch{}}};
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pad=n=>String(n).padStart(2,'0');
+const iso=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const parse=s=>{const[a,b,c]=s.split('-').map(Number);return new Date(a,b-1,c)};
+const add=(s,n)=>{const d=parse(s);d.setDate(d.getDate()+n);return iso(d)};
+const addM=(s,n)=>{const d=parse(s),day=d.getDate(),t=new Date(d.getFullYear(),d.getMonth()+n,1);t.setDate(Math.min(day,new Date(t.getFullYear(),t.getMonth()+1,0).getDate()));return iso(t)};
+const diff=(a,b)=>Math.round((parse(a)-parse(b))/864e5);
+const fmt=(s,o={day:'numeric',month:'long'})=>parse(s).toLocaleDateString('es',o);
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+let users=LS.get('ciclo_users',[]),posts=LS.get('ciclo_posts',[]),me=null,view='cal',cur=new Date(),sel=iso(new Date()),chat=[],cat='Todos',busy=false;
+let skipCalAnim=false,counterAnimDone=false;
+const today=()=>iso(new Date());
+let pendAv='';
+const LOCAL_BUS = 'ciclo_local_demo_events';
+const communityBus = typeof BroadcastChannel!=='undefined' ? new BroadcastChannel(LOCAL_BUS) : null;
+let forumUpdatePending=false;
+function syncCommunity(){
+ posts=LS.get('ciclo_posts',[]);users=LS.get('ciclo_users',[]);
+ if(me){const fresh=users.find(u=>u.id===me.id);if(fresh)me=fresh;}
+ if(me&&view==='forum') refreshForumPosts();
+}
+if(communityBus)communityBus.onmessage=e=>{if(e.data?.kind==='community')syncCommunity()};
+window.addEventListener('storage',e=>{if(e.key==='ciclo_posts'||e.key==='ciclo_users')syncCommunity()});
+window.addEventListener('focus',syncCommunity);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)syncCommunity()});
+function broadcastCommunity(){communityBus?.postMessage({kind:'community'});}
+function persistChat(){if(me)LS.set('ciclo_chat_'+me.id,chat.slice(-100))}
+
+const av=(u,s=40)=>u&&u.avatar?`<img class="av" src="${u.avatar}" alt="" style="width:${s}px;height:${s}px">`:`<span class="av" style="width:${s}px;height:${s}px;font-size:${Math.round(s*.42)}px">${esc((u?.username||'?')[0].toUpperCase())}</span>`;
+const whoHTML=()=>`<div style="display:flex;gap:.6rem;align-items:center">${av(me,38)}<div><strong>${me.pub&&me.name?esc(me.name):'@'+esc(me.username)}</strong><br><span class="muted">@${esc(me.username)}</span></div></div>`;
+async function pickImg(file){
+ if(!file)throw Error('Selecciona una imagen.');
+ if(file.size>12*1024*1024)throw Error('La imagen supera los 12 MB.');
+ const bitmap=await createImageBitmap(file).catch(()=>{throw Error('El navegador no puede leer este formato de imagen.');});
+ try{
+  const canvas=document.createElement('canvas');canvas.width=canvas.height=256;
+  const ctx=canvas.getContext('2d');const side=Math.min(bitmap.width,bitmap.height);
+  ctx.drawImage(bitmap,(bitmap.width-side)/2,(bitmap.height-side)/2,side,side,0,0,256,256);
+  const result=await new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(Error('Tu navegador no puede codificar AVIF.')),'image/avif',.7));
+  if(result.type!=='image/avif')throw Error('Este navegador no permite exportar AVIF. Prueba una versión compatible.');
+  return await new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=()=>reject(Error('No se pudo guardar AVIF.'));r.readAsDataURL(result)});
+ }finally{bitmap.close?.()}
+}
+const saveU=()=>{LS.set('ciclo_users',users);broadcastCommunity()},saveP=()=>{LS.set('ciclo_posts',posts);broadcastCommunity()};
+function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('show'),2200)}
+async function hash(p,salt){const d=salt+p;if(window.crypto?.subtle){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(d));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}let h=5381;for(const c of d)h=(h*33)^c.charCodeAt(0);return String(h>>>0)}
+const IC={diary:'<svg viewBox="0 0 24 24"><path d="M5 3h14v18H5zM8 8h8M8 12h8M8 16h5"/></svg>',well:'<svg viewBox="0 0 24 24"><path d="M12 21s-9-5.5-9-12a5 5 0 0 1 9-3 5 5 0 0 1 9 3c0 6.5-9 12-9 12z"/></svg>',cal:'<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>',forum:'<svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></svg>',ai:'<svg viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/></svg>',set:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg>'};
+
+
+/* Países (ISO 3166-1) y preferencias de idioma en el dispositivo */
+const COUNTRIES=[["AF","Afghanistan"],["AL","Albania"],["DZ","Algeria"],["AS","American Samoa"],["AD","Andorra"],["AO","Angola"],["AI","Anguilla"],["AQ","Antarctica"],["AG","Antigua and Barbuda"],["AR","Argentina"],["AM","Armenia"],["AW","Aruba"],["AU","Australia"],["AT","Austria"],["AZ","Azerbaijan"],["BS","Bahamas"],["BH","Bahrain"],["BD","Bangladesh"],["BB","Barbados"],["BY","Belarus"],["BE","Belgium"],["BZ","Belize"],["BJ","Benin"],["BM","Bermuda"],["BT","Bhutan"],["BO","Bolivia, Plurinational State of"],["BQ","Bonaire, Sint Eustatius and Saba"],["BA","Bosnia and Herzegovina"],["BW","Botswana"],["BV","Bouvet Island"],["BR","Brazil"],["IO","British Indian Ocean Territory"],["BN","Brunei Darussalam"],["BG","Bulgaria"],["BF","Burkina Faso"],["BI","Burundi"],["CV","Cabo Verde"],["KH","Cambodia"],["CM","Cameroon"],["CA","Canada"],["KY","Cayman Islands"],["CF","Central African Republic"],["TD","Chad"],["CL","Chile"],["CN","China"],["CX","Christmas Island"],["CC","Cocos (Keeling) Islands"],["CO","Colombia"],["KM","Comoros"],["CG","Congo"],["CD","Congo, The Democratic Republic of the"],["CK","Cook Islands"],["CR","Costa Rica"],["HR","Croatia"],["CU","Cuba"],["CW","Curaçao"],["CY","Cyprus"],["CZ","Czechia"],["CI","Côte d'Ivoire"],["DK","Denmark"],["DJ","Djibouti"],["DM","Dominica"],["DO","Dominican Republic"],["EC","Ecuador"],["EG","Egypt"],["SV","El Salvador"],["GQ","Equatorial Guinea"],["ER","Eritrea"],["EE","Estonia"],["SZ","Eswatini"],["ET","Ethiopia"],["FK","Falkland Islands (Malvinas)"],["FO","Faroe Islands"],["FJ","Fiji"],["FI","Finland"],["FR","France"],["GF","French Guiana"],["PF","French Polynesia"],["TF","French Southern Territories"],["GA","Gabon"],["GM","Gambia"],["GE","Georgia"],["DE","Germany"],["GH","Ghana"],["GI","Gibraltar"],["GR","Greece"],["GL","Greenland"],["GD","Grenada"],["GP","Guadeloupe"],["GU","Guam"],["GT","Guatemala"],["GG","Guernsey"],["GN","Guinea"],["GW","Guinea-Bissau"],["GY","Guyana"],["HT","Haiti"],["HM","Heard Island and McDonald Islands"],["VA","Holy See (Vatican City State)"],["HN","Honduras"],["HK","Hong Kong"],["HU","Hungary"],["IS","Iceland"],["IN","India"],["ID","Indonesia"],["IR","Iran, Islamic Republic of"],["IQ","Iraq"],["IE","Ireland"],["IM","Isle of Man"],["IL","Israel"],["IT","Italy"],["JM","Jamaica"],["JP","Japan"],["JE","Jersey"],["JO","Jordan"],["KZ","Kazakhstan"],["KE","Kenya"],["KI","Kiribati"],["KP","Korea, Democratic People's Republic of"],["KR","Korea, Republic of"],["KW","Kuwait"],["KG","Kyrgyzstan"],["LA","Lao People's Democratic Republic"],["LV","Latvia"],["LB","Lebanon"],["LS","Lesotho"],["LR","Liberia"],["LY","Libya"],["LI","Liechtenstein"],["LT","Lithuania"],["LU","Luxembourg"],["MO","Macao"],["MG","Madagascar"],["MW","Malawi"],["MY","Malaysia"],["MV","Maldives"],["ML","Mali"],["MT","Malta"],["MH","Marshall Islands"],["MQ","Martinique"],["MR","Mauritania"],["MU","Mauritius"],["YT","Mayotte"],["MX","Mexico"],["FM","Micronesia, Federated States of"],["MD","Moldova, Republic of"],["MC","Monaco"],["MN","Mongolia"],["ME","Montenegro"],["MS","Montserrat"],["MA","Morocco"],["MZ","Mozambique"],["MM","Myanmar"],["NA","Namibia"],["NR","Nauru"],["NP","Nepal"],["NL","Netherlands"],["NC","New Caledonia"],["NZ","New Zealand"],["NI","Nicaragua"],["NE","Niger"],["NG","Nigeria"],["NU","Niue"],["NF","Norfolk Island"],["MK","North Macedonia"],["MP","Northern Mariana Islands"],["NO","Norway"],["OM","Oman"],["PK","Pakistan"],["PW","Palau"],["PS","Palestine, State of"],["PA","Panama"],["PG","Papua New Guinea"],["PY","Paraguay"],["PE","Peru"],["PH","Philippines"],["PN","Pitcairn"],["PL","Poland"],["PT","Portugal"],["PR","Puerto Rico"],["QA","Qatar"],["RO","Romania"],["RU","Russian Federation"],["RW","Rwanda"],["RE","Réunion"],["BL","Saint Barthélemy"],["SH","Saint Helena, Ascension and Tristan da Cunha"],["KN","Saint Kitts and Nevis"],["LC","Saint Lucia"],["MF","Saint Martin (French part)"],["PM","Saint Pierre and Miquelon"],["VC","Saint Vincent and the Grenadines"],["WS","Samoa"],["SM","San Marino"],["ST","Sao Tome and Principe"],["SA","Saudi Arabia"],["SN","Senegal"],["RS","Serbia"],["SC","Seychelles"],["SL","Sierra Leone"],["SG","Singapore"],["SX","Sint Maarten (Dutch part)"],["SK","Slovakia"],["SI","Slovenia"],["SB","Solomon Islands"],["SO","Somalia"],["ZA","South Africa"],["GS","South Georgia and the South Sandwich Islands"],["SS","South Sudan"],["ES","Spain"],["LK","Sri Lanka"],["SD","Sudan"],["SR","Suriname"],["SJ","Svalbard and Jan Mayen"],["SE","Sweden"],["CH","Switzerland"],["SY","Syrian Arab Republic"],["TW","Taiwan, Province of China"],["TJ","Tajikistan"],["TZ","Tanzania, United Republic of"],["TH","Thailand"],["TL","Timor-Leste"],["TG","Togo"],["TK","Tokelau"],["TO","Tonga"],["TT","Trinidad and Tobago"],["TN","Tunisia"],["TM","Turkmenistan"],["TC","Turks and Caicos Islands"],["TV","Tuvalu"],["TR","Türkiye"],["UG","Uganda"],["UA","Ukraine"],["AE","United Arab Emirates"],["GB","United Kingdom"],["US","United States"],["UM","United States Minor Outlying Islands"],["UY","Uruguay"],["UZ","Uzbekistan"],["VU","Vanuatu"],["VE","Venezuela, Bolivarian Republic of"],["VN","Viet Nam"],["VG","Virgin Islands, British"],["VI","Virgin Islands, U.S."],["WF","Wallis and Futuna"],["EH","Western Sahara"],["YE","Yemen"],["ZM","Zambia"],["ZW","Zimbabwe"],["AX","Åland Islands"]];
+const LANGS=[['es','Español'],['en','English'],['pt','Português'],['fr','Français']];
+let guestLanguage=LS.get('ciclo_language','es');
+const language=()=>me?.lang||guestLanguage;
+const langOptions=()=>LANGS.map(([code,label])=>`<option value="${code}" ${language()===code?'selected':''}>${label}</option>`).join('');
+const countryOptions=(code='')=>{let dn;try{dn=new Intl.DisplayNames([language()],{type:'region'})}catch{}return '<option value="">'+(language()==='en'?'Select your country':language()==='pt'?'Selecione seu país':language()==='fr'?'Choisissez votre pays':'Selecciona tu país')+'</option>'+COUNTRIES.map(([id,name])=>`<option data-country value="${id}" ${id===code?'selected':''}>${esc(dn?.of(id)||name)}</option>`).join('')};
+const WORDS={
+ en:{'Calendario':'Calendar','Comunidad':'Community','Asistente':'Assistant','Ajustes':'Settings','Iniciar sesión':'Sign in','Crear cuenta':'Create account','Entrar':'Sign in','Registrarme':'Sign up','Nombre':'Name','Nombre de usuario':'Username','Contraseña':'Password','Crear mi cuenta':'Create my account','Subir foto de perfil':'Upload profile photo','Título':'Title','Cuéntanos más':'Tell us more','Categoría':'Category','Publicar':'Post','Responder':'Reply','Eliminar':'Delete','Me ayudó':'Helpful','Útil':'Useful','Más populares':'Most helpful','Publicaciones recientes':'Recent posts','Ver conversación':'Open discussion','Respuestas':'Replies','Escribe una respuesta…':'Write a reply…','Comunidad':'Community','Todos':'All','Dolor':'Pain','Higiene':'Hygiene','Alimentación':'Nutrition','Ánimo':'Mood','Productos':'Products','Otros':'Other','País':'Country','Idioma':'Language','Tu país':'Your country','Guardar':'Save','Guardar nombre':'Save name','Apariencia':'Appearance','Perfil':'Profile','Cuenta y asistente':'Account and assistant','Modo oscuro':'Dark mode','Color principal':'Primary color','Legal':'Legal','Tu ciclo':'Your cycle','Cerrar sesión':'Sign out','Eliminar cuenta':'Delete account','Cambiar foto':'Change photo','Quitar':'Remove','Hoy':'Today','Próximo periodo':'Next period','Mi periodo empezó este día':'My period started today','Mi periodo terminó este día':'My period ended today','Quitar este inicio':'Remove this start','Periodo':'Period','Fértil':'Fertile','Ovulación ✦':'Ovulation ✦','Baja fertilidad':'Low fertility','Estimado':'Estimated','Mostrar mi nombre en la comunidad':'Show my name in the community','Crear publicación':'New post','Comparte un consejo 💗':'Share a tip 💗','Cerrar':'Close','Días desde el registro':'Days since signup','Periodos registrados':'Periods logged'},
+ pt:{'Calendario':'Calendário','Comunidad':'Comunidade','Asistente':'Assistente','Ajustes':'Configurações','Iniciar sesión':'Entrar','Crear cuenta':'Criar conta','Entrar':'Entrar','Registrarme':'Cadastrar','Nombre':'Nome','Nombre de usuario':'Nome de usuário','Contraseña':'Senha','Crear mi cuenta':'Criar minha conta','Subir foto de perfil':'Enviar foto de perfil','Título':'Título','Cuéntanos más':'Conte mais','Categoría':'Categoria','Publicar':'Publicar','Responder':'Responder','Eliminar':'Excluir','Me ayudó':'Ajudou','Útil':'Útil','Más populares':'Mais curtidos','Publicaciones recientes':'Publicações recentes','Ver conversación':'Abrir discussão','Respuestas':'Respostas','Escribe una respuesta…':'Escreva uma resposta…','Todos':'Todos','Dolor':'Dor','Higiene':'Higiene','Alimentación':'Alimentação','Ánimo':'Humor','Productos':'Produtos','Otros':'Outros','País':'País','Idioma':'Idioma','Tu país':'Seu país','Guardar':'Salvar','Guardar nombre':'Salvar nome','Apariencia':'Aparência','Perfil':'Perfil','Cuenta y asistente':'Conta e assistente','Modo oscuro':'Modo escuro','Color principal':'Cor principal','Legal':'Legal','Tu ciclo':'Seu ciclo','Cerrar sesión':'Sair','Eliminar cuenta':'Excluir conta','Cambiar foto':'Trocar foto','Quitar':'Remover','Hoy':'Hoje','Próximo periodo':'Próxima menstruação','Mi periodo empezó este día':'Minha menstruação começou neste dia','Periodo':'Menstruação','Fértil':'Fértil','Estimado':'Estimado','Crear publicación':'Nova publicação','Comparte un consejo 💗':'Compartilhe uma dica 💗','Cerrar':'Fechar'},
+ fr:{'Calendario':'Calendrier','Comunidad':'Communauté','Asistente':'Assistant','Ajustes':'Paramètres','Iniciar sesión':'Connexion','Crear cuenta':'Créer un compte','Entrar':'Connexion','Registrarme':"S'inscrire",'Nombre':'Nom','Nombre de usuario':"Nom d'utilisateur",'Contraseña':'Mot de passe','Crear mi cuenta':'Créer mon compte','Subir foto de perfil':'Ajouter une photo','Título':'Titre','Cuéntanos más':'Dites-nous en plus','Categoría':'Catégorie','Publicar':'Publier','Responder':'Répondre','Eliminar':'Supprimer','Me ayudó':"M'a aidé",'Útil':'Utile','Más populares':'Les plus appréciés','Publicaciones recientes':'Publications récentes','Ver conversación':'Voir la discussion','Respuestas':'Réponses','Escribe una respuesta…':'Écrivez une réponse…','Todos':'Tous','Dolor':'Douleur','Higiene':'Hygiène','Alimentación':'Alimentation','Ánimo':'Humeur','Productos':'Produits','Otros':'Autres','País':'Pays','Idioma':'Langue','Tu país':'Votre pays','Guardar':'Enregistrer','Guardar nombre':'Enregistrer le nom','Apariencia':'Apparence','Perfil':'Profil','Cuenta y asistente':'Compte et assistant','Modo oscuro':'Mode sombre','Color principal':'Couleur principale','Tu ciclo':'Votre cycle','Cerrar sesión':'Déconnexion','Eliminar cuenta':'Supprimer le compte','Cambiar foto':'Changer de photo','Quitar':'Retirer','Hoy':"Aujourd'hui",'Próximo periodo':'Prochaines règles','Mi periodo empezó este día':'Mes règles ont commencé ce jour','Periodo':'Règles','Fértil':'Fertile','Estimado':'Estimé','Crear publicación':'Nouvelle publication','Comparte un consejo 💗':'Partagez un conseil 💗','Cerrar':'Fermer'}
+};
+function T(key){return WORDS[language()]?.[key]||key}
+function translateUI(){
+ document.documentElement.lang=language();
+ const nodes=[document.querySelector('#nav'),document.querySelector('#auth'),document.querySelector('#main'),document.querySelector('#composer')].filter(Boolean);
+ for(const root of nodes){const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);let node;
+ while(node=walker.nextNode()){
+  if(node.parentElement.closest('#forum-feed,.msgs,.post,.reply,option[data-country]'))continue;
+  const raw=node.nodeValue,trim=raw.trim();if(trim&&WORDS[language()]?.[trim]) node.nodeValue=raw.replace(trim,T(trim));
+ }
+ root.querySelectorAll('[placeholder]').forEach(e=>{if(e.closest('#forum-feed'))return;const val=e.getAttribute('placeholder');if(WORDS[language()]?.[val])e.setAttribute('placeholder',T(val))});
+ }
+}
+function setLanguage(v){guestLanguage=v;LS.set('ciclo_language',v);if(me){me.lang=v;saveU();}if(me)shell();else showAuth(document.querySelector('.tabs button.on')?.dataset.m||'in');}
+
+/* ===== Tema ===== */
+const FONTS={def:['Fraunces','Figtree','Georgia,serif','Clásica elegante'],round:['Nunito','Nunito','sans-serif','Redondeada'],classic:['Lora','Lora','Georgia,serif','Editorial'],modern:['Space Grotesk','Inter','sans-serif','Moderna'],hand:['Caveat','Figtree','cursive','Manuscrita']};
+function lum(h){const n=parseInt(h.slice(1),16),f=v=>{v/=255;return v<=.03928?v/12.92:((v+.055)/1.055)**2.4};return .2126*f(n>>16)+.7152*f(n>>8&255)+.0722*f(n&255)}
+function applyTheme(){const t=me?.theme||LS.get('ciclo_guest_theme',{mode:matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'});const r=document.documentElement;r.dataset.theme=t.mode||'light';
+ const a=t.accent||'#e4457f';r.style.setProperty('--accent',a);r.style.setProperty('--on',lum(a)>.5?'#161214':'#fff');
+ const F=FONTS[t.font]||FONTS.def;r.style.setProperty('--hf',`'${F[0]}',${F[2]}`);r.style.setProperty('--bf',`'${F[1]}',system-ui,sans-serif`);r.style.fontSize=(t.size||100)+'%';
+ const bg=t.bg?.[t.mode||'light'];bg?r.style.setProperty('--bg',bg):r.style.removeProperty('--bg')}
+
+/* ===== Modelo del ciclo ===== */
+function model(){
+ const P=[...me.periods].sort((a,b)=>a.s.localeCompare(b.s));
+ const gaps=[];for(let i=1;i<P.length;i++){const n=diff(P[i].s,P[i-1].s);if(n>=18&&n<=90)gaps.push(n)}
+ const recent=gaps.slice(-6).sort((a,b)=>a-b),cl=recent.length?Math.round(recent.reduce((a,b)=>a+b,0)/recent.length):Math.max(21,Math.min(45,+me.cycle||28));
+ const lens=P.slice(-6),pl=lens.length?Math.round(lens.reduce((a,b)=>a+b.len,0)/lens.length):me.plen;
+ const C=P.map((p,i)=>({s:p.s,len:p.len,end:i<P.length-1?P[i+1].s:add(p.s,cl),pred:false}));
+ if(P.length){let d=P[P.length-1].s;for(let i=0;i<12;i++){d=add(d,cl);C.push({s:d,len:pl,end:add(d,cl),pred:true})}}
+ return {C,cl,pl,P,irregular:gaps.length>1&&Math.max(...gaps)-Math.min(...gaps)>7,range:recent.length?[recent[0],recent[recent.length-1]]:[cl,cl]}
+}
+function info(d,M){
+ for(const c of M.C){if(d>=c.s&&d<c.end){const n=diff(d,c.s)+1,od=diff(d,add(c.end,-14));
+  let t='safe',ph='Folicular';
+  if(n<=c.len){t='period';ph='Menstrual'}else if(od===0){t='ovu';ph='Ovulación'}else if(od<0&&od>=-5){t='fert';ph='Ventana fértil'}else if(od>0)ph='Lútea';
+  return{t,n,ph,c,od}}}
+ return null
+}
+const LBL={period:'Periodo',ovu:'Ovulación (máxima fertilidad)',fert:'Día fértil',safe:'Día de baja fertilidad'};
+
+/* ===== Inicio rápido con PIN local ===== */
+const QUICK_STORE='ciclo_quick_profiles';
+const quickProfiles=()=>LS.get(QUICK_STORE,{});
+async function pinDigest(pin,salt){
+ if(!crypto?.subtle)throw Error('Para proteger el PIN, abre Ciclo desde HTTPS o un navegador compatible.');
+ const key=await crypto.subtle.importKey('raw',new TextEncoder().encode(pin),'PBKDF2',false,['deriveBits']);
+ const bytes=await crypto.subtle.deriveBits({name:'PBKDF2',salt:new TextEncoder().encode(salt),iterations:210000,hash:'SHA-256'},key,256);
+ return Array.from(new Uint8Array(bytes),b=>b.toString(16).padStart(2,'0')).join('');
+}
+async function enableQuickPin(pin){
+ if(!/^\d{6}$/.test(pin))throw Error('El PIN debe tener exactamente 6 números.');
+ const salt=Array.from(crypto.getRandomValues(new Uint8Array(16)),b=>b.toString(16).padStart(2,'0')).join('');
+ const digest=await pinDigest(pin,salt);const entries=quickProfiles();
+ entries[me.id]={salt,digest,failed:0,blockedUntil:0};LS.set(QUICK_STORE,entries);
+}
+function disableQuickPin(id){const entries=quickProfiles();delete entries[id];LS.set(QUICK_STORE,entries)}
+function quickHTML(){
+ const profiles=quickProfiles(), entries=Object.keys(profiles).filter(id=>users.some(u=>u.id===id));
+ if(!entries.length)return '';
+ const opts=entries.map(id=>{const u=users.find(x=>x.id===id);return `<option value="${esc(id)}">@${esc(u.username)}</option>`}).join('');
+ return `<div class="quick-card"><h3>🔐 Inicio de sesión rápido</h3><p class="muted">Accede con tu PIN de 6 dígitos, sin escribir tu contraseña.</p><form id="quick-login-form"><label for="quick-account">Cuenta guardada</label><select id="quick-account">${opts}</select><label for="quick-login-pin">PIN personal</label><div class="quick-row"><input type="password" id="quick-login-pin" inputmode="numeric" autocomplete="off" pattern="[0-9]{6}" maxlength="6" minlength="6" required placeholder="••••••"><button class="btn sm" type="submit">Entrar con PIN</button></div><div class="quick-error" id="quick-login-error" role="status"></div></form><p class="quick-muted">Solo en este navegador. No compartas tu PIN ni uses esta función en dispositivos ajenos.</p></div>`;
+}
+function bindQuickLogin(){const f=$('#quick-login-form');if(!f)return;f.onsubmit=async e=>{
+ e.preventDefault();const id=$('#quick-account').value,pin=$('#quick-login-pin').value,err=$('#quick-login-error');
+ const entries=quickProfiles(),q=entries[id];if(!q)return err.textContent='Esta cuenta ya no tiene acceso rápido.';
+ if(Date.now()<(q.blockedUntil||0))return err.textContent='Demasiados intentos. Prueba después de 5 minutos.';
+ const b=f.querySelector('button');b.disabled=true;b.textContent='Comprobando…';
+ try{const digest=await pinDigest(pin,q.salt);
+ if(digest!==q.digest){q.failed=(q.failed||0)+1;if(q.failed>=5){q.failed=0;q.blockedUntil=Date.now()+300000};entries[id]=q;LS.set(QUICK_STORE,entries);err.textContent=q.blockedUntil>Date.now()?'PIN bloqueado 5 minutos.':'PIN incorrecto.';return}
+ q.failed=0;q.blockedUntil=0;entries[id]=q;LS.set(QUICK_STORE,entries);
+ const account=users.find(u=>u.id===id);if(!account)throw Error('No se encontró la cuenta guardada.');login(account);
+ }catch(ex){err.textContent=ex.message||'Error al comprobar el PIN.'}finally{if(b.isConnected){b.disabled=false;b.textContent='Entrar con PIN'}}
+ }
+}
+/* ===== Auth ===== */
+function showAuth(mode='in'){
+ $('#app').classList.add('hide');const a=$('#auth');a.classList.remove('hide');
+ a.innerHTML=`<div class="hero"><div class="blob b1"></div><div class="blob b2"></div><h1>Women's Period</h1><p>Calendario, comunidad y una asistente de salud menstrual. Todo se guarda en tu dispositivo.</p></div>
+ <div class="authbox"><div class="card"><h2>${mode==='in'?'Iniciar sesión':'Crear cuenta'}</h2>
+ <div class="tabs"><button class="${mode==='in'?'on':''}" data-m="in">Entrar</button><button class="${mode==='up'?'on':''}" data-m="up">Registrarme</button></div>
+ <form id="af" autocomplete="off">
+ ${mode==='up'?'<div class="avrow"><span id="pv"></span><div><label class="btn ghost sm" for="ph" style="display:inline-block;margin:0;cursor:pointer">Subir foto de perfil</label><input id="ph" type="file" accept="image/*,.heic,.heif,.tiff,.tif,.bmp,.gif,.svg,.avif,.webp,.png,.jpg,.jpeg,.ico" class="hide"><div class="note" style="margin:.3rem 0 0">Opcional · convierte la imagen a AVIF y la guarda localmente</div></div></div><label for="nm">Nombre</label><input id="nm" required maxlength="40" autocomplete="given-name">':''}
+ ${mode==='up'?`<label for="country">País</label><select id="country" required>${countryOptions()}</select>`:''}
+ <label for="reglang">Idioma / Language</label><select id="reglang">${langOptions()}</select>
+ <label for="un">Nombre de usuario</label><input id="un" required maxlength="20" autocapitalize="off" autocomplete="username">
+ <label for="pw">Contraseña</label><input id="pw" type="password" required autocomplete="${mode==='in'?'current-password':'new-password'}">
+ <div class="err" id="er"></div><button class="btn" style="width:100%;margin-top:.5rem">${mode==='in'?'Entrar':'Crear mi cuenta'}</button>
+ ${mode==='up'?'<label class="chk"><input type="checkbox" id="tc" required><span>Acepto los <a href="#" class="lk" data-legal="terms">Términos y condiciones</a> y la <a href="#" class="lk" data-legal="privacy">Política de privacidad</a>.</span></label><p class="note">Sin correo. Tu nombre es privado por defecto; solo tu usuario es visible en la comunidad.</p>':'<div class="demo"><b>Cuenta de prueba</b><br>Usuario: <code>admin</code> · Contraseña: <code>admin</code></div>'}</form>
+ ${mode==='in'?quickHTML():''}<p class="note" style="text-align:center"><a href="#" class="lk" data-legal="terms">Términos</a> · <a href="#" class="lk" data-legal="privacy">Privacidad</a></p></div></div>`;
+ bindQuickLogin();a.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>showAuth(b.dataset.m));$('#reglang').onchange=e=>setLanguage(e.target.value);requestAnimationFrame(translateUI);
+ const pv=()=>{const e=$('#pv');if(e)e.innerHTML=pendAv?`<img class="av" src="${pendAv}" alt="" style="width:64px;height:64px">`:'<span class="av" style="width:64px;height:64px;font-size:26px">+</span>'};pv();
+ if($('#ph'))$('#ph').onchange=async e=>{try{pendAv=await pickImg(e.target.files[0]);pv()}catch(err){toast(err.message||'Esa imagen no es válida')}};
+ $('#af').onsubmit=async e=>{e.preventDefault();const er=$('#er'),un=$('#un').value.trim().toLowerCase(),pw=$('#pw').value;
+  if(mode==='up'){
+   if(pw.length<6)return er.textContent='La contraseña necesita al menos 6 caracteres.';
+   if(!/^[a-z0-9_]{3,20}$/.test(un))return er.textContent='El usuario usa 3–20 letras, números o guion bajo.';
+   if(users.some(u=>u.username===un))return er.textContent='Ese usuario ya existe. Prueba con otro.';
+   const salt=uid(),u={id:uid(),name:$('#nm').value.trim(),username:un,salt,hash:await hash(pw,salt),pub:false,theme:{mode:document.documentElement.dataset.theme||'light'},periods:[],cycle:28,plen:5,avatar:pendAv,created:today(),country:$("#country").value,lang:$("#reglang").value};
+   pendAv='';users.push(u);saveU();login(u)}
+  else{const u=users.find(x=>x.username===un);if(!u||u.hash!==await hash(pw,u.salt))return er.textContent='Usuario o contraseña incorrectos.';login(u)}}
+}
+function login(u){me=u;guestLanguage=u.lang||guestLanguage;chat=LS.get('ciclo_chat_'+u.id,[]);if(!u.created){u.created=today();saveU()}LS.set('ciclo_session',u.id);applyTheme();$('#auth').classList.add('hide');$('#app').classList.remove('hide');view='cal';cur=new Date();sel=today();counterAnimDone=false;shell()}
+function logout(){persistChat();LS.set('ciclo_session',null);me=null;chat=[];applyTheme();showAuth()}
+
+/* ===== Estructura ===== */
+function shell(){
+ const topBar=$('#top-loading-bar');if(topBar){topBar.classList.remove('finishing');topBar.style.transform='scaleX(.4)';topBar.classList.add('active')}
+ const items=[['cal','Calendario'],['diary','Diario'],['well','Bienestar'],['forum','Comunidad'],['ai','Asistente'],['set','Ajustes']];
+ $('#nav').innerHTML=items.map(([k,t])=>`<button data-v="${k}" class="${view===k?'on':''}" aria-label="${t}">${IC[k]}<span>${t}</span></button>`).join('');
+ $('#nav').querySelectorAll('button').forEach(b=>b.onclick=()=>{
+   if(view!==b.dataset.v){view=b.dataset.v;counterAnimDone=false}
+   shell();
+ });
+ $('#who').innerHTML=whoHTML()+`<button class="account-exit" id="sidebar-logout" type="button">↪ Cerrar sesión</button>`;$('#sidebar-logout').onclick=logout;
+ ({cal:vCal,diary:vDiary,well:vWell,forum:vForum,ai:vAI,set:vSet})[view]();requestAnimationFrame(translateUI);window.scrollTo({top:0});if(topBar){requestAnimationFrame(()=>{topBar.classList.add('finishing');topBar.classList.remove('active');setTimeout(()=>{topBar.style.transform='scaleX(0)';topBar.classList.remove('finishing')},650)})}
+}
+const main=h=>{
+ document.querySelector('#composer')?.remove();
+ document.querySelector('#new-post-fab')?.remove();
+ $('#main').innerHTML=`<section>${h}</section>`;
+ requestAnimationFrame(()=>{observeReveal();translateUI()});
+ if(!counterAnimDone){counterAnimDone=true;requestAnimationFrame(animateCounters)}
+};
+let scrollObserver;
+function observeReveal(){
+ if(scrollObserver)scrollObserver.disconnect();
+ if(!('IntersectionObserver' in window)||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+ scrollObserver=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('is-visible');scrollObserver.unobserve(e.target)}}),{threshold:.08,rootMargin:'0px 0px 35px 0px'});
+ $('#main')?.querySelectorAll('.stat,.sidecard,.reply').forEach(el=>{el.classList.add('reveal-on-scroll');scrollObserver.observe(el)});
+}
+
+/* ===== Women's Period: diario, bienestar, recordatorios y respaldo ===== */
+const SYMPTOMS=['Cólicos','Dolor lumbar','Dolor de cabeza','Migraña','Cansancio','Insomnio','Somnolencia','Hinchazón','Sensibilidad mamaria','Náuseas','Mareos','Acné','Antojos','Cambios de apetito','Estreñimiento','Diarrea','Flujo abundante','Flujo escaso','Manchado','Irritabilidad','Ansiedad','Estrés','Tristeza','Cambios de humor','Sensibilidad emocional','Calambres','Dolor pélvico','Fiebre','Picazón','Sequedad','Aumento de energía','Dolor muscular','Problemas digestivos','Dolor ovulatorio'];
+const MOODS=['😊 Feliz','😌 Tranquila','😐 Neutral','😟 Ansiosa','😢 Triste','😠 Irritable','🥱 Cansada','🥰 Cariñosa'];
+const mucus=['No registrado','Seco','Pegajoso','Cremoso','Acuoso','Elástico / clara de huevo'];
+const localDay=()=>iso(new Date());
+function diaryData(){if(!me.diary||typeof me.diary!=='object')me.diary={};return me.diary}
+function recordFor(day){return diaryData()[day]||{}}
+function optionsHTML(arr,val){return arr.map(v=>`<option value="${esc(v)}" ${v===val?'selected':''}>${esc(v)}</option>`).join('')}
+function vDiary(){
+ const data=recordFor(sel),active=Array.isArray(data.symptoms)?data.symptoms:[],n=Object.keys(diaryData()).length;
+ main(`<div class="top"><div><h2>Mi diario</h2><p class="muted">Registra cómo te sientes cada día. Todo permanece local en tu dispositivo.</p></div></div>
+ <div class="card"><div class="top"><h3>Registro del ${fmt(sel,{day:'numeric',month:'long',year:'numeric'})}</h3><input style="max-width:210px" id="diary-day" aria-label="Fecha del registro" type="date" value="${sel}"></div>
+ <form id="diary-form"><div class="diary-fields"><div><label>Estado de ánimo</label><select name="mood">${optionsHTML(['No registrado',...MOODS],data.mood||'No registrado')}</select></div><div><label>Intensidad del flujo</label><select name="flow">${optionsHTML(['No registrado','Sin sangrado','Manchado','Ligero','Moderado','Abundante'],data.flow||'No registrado')}</select></div>
+ <div><label>Peso (kg, opcional)</label><input name="weight" inputmode="decimal" type="number" step="0.1" min="20" max="400" placeholder="Ej. 60.5" value="${esc(data.weight??'')}"></div>
+ <div><label>Temperatura basal (°C)</label><input name="temp" inputmode="decimal" type="number" step="0.01" min="33" max="43" placeholder="Ej. 36.55" value="${esc(data.temp??'')}"></div>
+ <div><label>Moco cervical</label><select name="mucus">${optionsHTML(mucus,data.mucus||'No registrado')}</select></div>
+ <div><label>Actividad sexual (registro privado)</label><select name="intimacy">${optionsHTML(['No registrado','No','Sí','Sí, con protección','Sí, sin protección'],data.intimacy||'No registrado')}</select></div></div>
+ <label>Síntomas y sensaciones</label><div class="symptom-cloud">${SYMPTOMS.map(x=>`<label class="symptom-tag"><input type="checkbox" name="symptom" value="${esc(x)}" ${active.includes(x)?'checked':''}><span>${esc(x)}</span></label>`).join('')}</div>
+ <label>Notas privadas</label><textarea name="notes" maxlength="1800" placeholder="¿Qué notaste hoy?">${esc(data.notes||'')}</textarea><div class="row"><button class="btn" type="submit">Guardar registro</button><button class="btn ghost" type="button" id="diary-clear">Eliminar este día</button></div></form></div>
+ <div class="card" style="margin-top:1rem"><h3>Mi historial</h3><p class="muted">${n} días registrados · selecciona una fecha para editarla.</p><div class="diary-history">${Object.keys(diaryData()).sort().reverse().slice(0,50).map(day=>`<button type="button" class="chip" data-day="${day}">${fmt(day)} · ${esc(recordFor(day).mood||'Diario')}</button>`).join('')||'<p class="muted">Aún no hay registros.</p>'}</div></div>`);
+ $('#diary-day').onchange=e=>{if(e.target.value){sel=e.target.value;vDiary()}};
+ $('#diary-form').onsubmit=e=>{e.preventDefault();const f=new FormData(e.currentTarget),get=k=>String(f.get(k)||'');diaryData()[sel]={mood:get('mood'),flow:get('flow'),weight:get('weight')?Number(get('weight')):null,temp:get('temp')?Number(get('temp')):null,mucus:get('mucus'),intimacy:get('intimacy'),symptoms:f.getAll('symptom'),notes:get('notes').trim(),updatedAt:new Date().toISOString()};saveU();toast('Registro guardado 💗');vDiary()};
+ $('#diary-clear').onclick=()=>{if(confirm('¿Eliminar el registro de esta fecha?')){delete diaryData()[sel];saveU();vDiary()}};
+ $('#main').querySelectorAll('[data-day]').forEach(b=>b.onclick=()=>{sel=b.dataset.day;vDiary()})
+}
+function dailyStats(){const M=model(),entries=Object.entries(diaryData()).sort(([a],[b])=>b.localeCompare(a)),counts={};for(const [,r]of entries)for(const symptom of (r.symptoms||[]))counts[symptom]=(counts[symptom]||0)+1;return{M,entries,counts}}
+const REMINDER_STORAGE='womens_period_reminders_';
+function getReminders(){return LS.get(REMINDER_STORAGE+me.id,{water:false,waterHours:3,pill:false,pillTime:'20:00',period:true,lastWater:'',lastPill:''})}
+function reminderSave(r){LS.set(REMINDER_STORAGE+me.id,r)}
+function vWell(){
+ const {M,entries,counts}=dailyStats(),r=getReminders(),sym=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,6);
+ main(`<div class="top"><div><h2>Mi bienestar</h2><p class="muted">Tendencias de tu ciclo, alertas opcionales y respaldo de tus datos.</p></div></div>
+ <div class="stats"><div class="card stat"><small>Duración estimada</small><strong>${M.cl} días</strong><small>${M.irregular?'Variabilidad elevada':'Según historial disponible'}</small></div><div class="card stat"><small>Periodos anotados</small><strong>${M.P.length}</strong></div><div class="card stat"><small>Diario</small><strong>${entries.length} días</strong></div></div>
+ <div class="set"><div class="card"><h3>Patrones y síntomas</h3><p class="muted">${M.irregular?'Tus ciclos registrados muestran diferencias importantes de duración. Las predicciones son menos fiables.':'Las predicciones mejoran al registrar varios ciclos completos.'}</p><p class="note">${M.P.length<3?'Para conocer tendencias necesitas al menos tres inicios de periodo.':'Intervalo reciente observado: '+M.range.join('–')+' días.'}</p>${sym.length?sym.map(([k,v])=>`<div class="pattern-row"><span>${esc(k)}</span><div class="pattern-track"><i style="width:${Math.round(v/Math.max(...sym.map(x=>x[1]))*100)}%"></i></div><b>${v}</b></div>`).join(''):'<p class="muted">Registra síntomas en el Diario para ver tus patrones.</p>'}</div>
+ <div class="card"><h3>Objetivo personal</h3><p class="muted">Elige un modo orientativo de seguimiento. No ofrece diagnósticos.</p><div class="seg">${[['cycle','Seguir mi ciclo'],['conceive','Buscar embarazo'],['pregnancy','Seguimiento de embarazo']].map(([v,t])=>`<button type="button" class="chip ${(me.goal||'cycle')===v?'on':''}" data-goal="${v}">${t}</button>`).join('')}</div><p class="note">Las fechas fértiles son aproximadas y no deben usarse como anticonceptivo. El modo embarazo solo registra información: no confirma ni evalúa un embarazo.</p>${(me.goal||'cycle')==='pregnancy'?`<label>Fecha probable de parto (opcional)</label><input type="date" id="due-date" value="${esc(me.dueDate||'')}"><button id="due-save" type="button" class="btn sm" style="margin-top:.7rem">Guardar fecha</button>`:''}</div>
+ <div class="card"><h3>Recordatorios</h3><p class="muted">Avisos locales mientras Women's Period está abierta y el navegador permite notificaciones.</p><form id="reminder-form"><label class="checkline"><input name="period" type="checkbox" ${r.period?'checked':''}> Aviso de próximo periodo estimado (3 días antes)</label><label class="checkline"><input name="water" type="checkbox" ${r.water?'checked':''}> Recordarme beber agua</label><label>Repetir agua cada</label><select name="waterHours">${[1,2,3,4,6].map(v=>`<option value="${v}" ${r.waterHours===v?'selected':''}>${v} horas</option>`).join('')}</select><label class="checkline"><input name="pill" type="checkbox" ${r.pill?'checked':''}> Recordatorio diario de píldora (si corresponde)</label><label>Hora del recordatorio</label><input type="time" name="pillTime" value="${r.pillTime}"><div class="row"><button class="btn sm" type="submit">Guardar recordatorios</button><button class="btn ghost sm" type="button" id="notify-enable">Permitir notificaciones</button></div></form></div>
+ <div class="card"><h3>Respaldo privado</h3><p class="muted">Descarga un archivo JSON con tus datos de cuenta, calendario y diario. Se guarda en tu dispositivo; no se sube a Google automáticamente.</p><div class="row"><button class="btn sm" type="button" id="export-data">Exportar mis datos</button><label class="btn ghost sm" for="import-file" style="cursor:pointer;margin:0">Restaurar archivo</label><input class="hide" id="import-file" type="file" accept=".json,application/json"></div><p class="note">El respaldo contiene información sensible. Guárdalo en un lugar seguro y no lo compartas.</p></div>
+ </div><div class="card" style="margin-top:1rem"><h3>Información importante</h3><p class="muted">El seguimiento menstrual no determina días seguros para evitar embarazo. Ante sangrado muy abundante, dolor intenso o síntomas preocupantes, busca atención médica. Las anotaciones son educativas, no diagnóstico.</p></div>`);
+ $('#main').querySelectorAll('[data-goal]').forEach(b=>b.onclick=()=>{me.goal=b.dataset.goal;saveU();vWell()});
+ if($('#due-save'))$('#due-save').onclick=()=>{me.dueDate=$('#due-date').value;saveU();toast('Fecha guardada')};
+ $('#reminder-form').onsubmit=e=>{e.preventDefault();const f=new FormData(e.currentTarget),p=getReminders();p.period=f.has('period');p.water=f.has('water');p.pill=f.has('pill');p.waterHours=Number(f.get('waterHours'))||3;p.pillTime=String(f.get('pillTime')||'20:00');reminderSave(p);toast('Recordatorios configurados')};
+ $('#notify-enable').onclick=async()=>{if(!('Notification'in window)){toast('Notificaciones no disponibles');return}try{const a=await Notification.requestPermission();toast(a==='granted'?'Notificaciones habilitadas':'Permiso no concedido')}catch{toast('No disponible en este contexto')}};
+ $('#export-data').onclick=()=>{const obj={app:'Womens Period',version:1,exportedAt:new Date().toISOString(),username:me.username,country:me.country,profile:{name:me.name,lang:me.lang,theme:me.theme,cycle:me.cycle,plen:me.plen,goal:me.goal,dueDate:me.dueDate,periods:me.periods,diary:diaryData()},reminders:getReminders()};const blob=new Blob([JSON.stringify(obj,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`womens-period-${today()}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1500);toast('Respaldo descargado')};
+ $('#import-file').onchange=async e=>{const file=e.target.files?.[0];if(!file)return;try{if(file.size>4e6)throw Error('Archivo demasiado grande');const obj=JSON.parse(await file.text());if(obj.app!=='Womens Period'||obj.version!==1||!obj.profile||!Array.isArray(obj.profile.periods)||!obj.profile.diary||Array.isArray(obj.profile.diary))throw Error('Archivo inválido');if(!confirm('¿Restaurar el calendario y diario de este respaldo? Se reemplazarán tus registros actuales.'))return;me.periods=obj.profile.periods.filter(x=>/^\d{4}-\d{2}-\d{2}$/.test(x.s)&&Number.isInteger(x.len)&&x.len>=1&&x.len<=14).slice(0,500);me.diary=Object.fromEntries(Object.entries(obj.profile.diary).filter(([k,v])=>/^\d{4}-\d{2}-\d{2}$/.test(k)&&v&&typeof v==='object').slice(0,2000));me.plen=Math.max(2,Math.min(10,Number(obj.profile.plen)||5));me.cycle=Math.max(21,Math.min(45,Number(obj.profile.cycle)||28));me.goal=['cycle','conceive','pregnancy'].includes(obj.profile.goal)?obj.profile.goal:'cycle';me.dueDate=obj.profile.dueDate||'';saveU();toast('Respaldo restaurado');vWell()}catch(err){toast(err.message||'Error al restaurar')}};
+}
+let reminderChecked=0;
+function checkLocalReminders(){if(!me||document.hidden||Date.now()-reminderChecked<50000)return;reminderChecked=Date.now();const r=getReminders(),d=new Date(),now=iso(d),hh=pad(d.getHours())+':'+pad(d.getMinutes());const notify=(msg)=>{toast(msg);if('Notification'in window&&Notification.permission==='granted')new Notification("Women's Period",{body:msg})};if(r.water&&(!r.lastWater||Date.now()-new Date(r.lastWater).getTime()>r.waterHours*3600000)){r.lastWater=new Date().toISOString();notify('💧 Hora de beber agua')};if(r.pill&&hh===r.pillTime&&r.lastPill!==now){r.lastPill=now;notify('💊 Recordatorio de tu píldora')};if(r.period&&r.lastPeriod!==now){const next=model().C.find(c=>c.s>=now);if(next&&diff(next.s,now)===3){r.lastPeriod=now;notify('🩸 Tu próximo periodo podría empezar en 3 días')}}reminderSave(r)}
+setInterval(checkLocalReminders,60000);
+/* ===== Calendario ===== */
+function vCal(){
+ const M=model(),t=today(),ti=info(t,M),y=cur.getFullYear(),m=cur.getMonth();
+ const first=(new Date(y,m,1).getDay()+6)%7,days=new Date(y,m+1,0).getDate();
+ const nextP=M.C.find(c=>c.s>t),dn=nextP?diff(nextP.s,t):null;
+ const nO=M.C.find(c=>add(c.end,-14)>=t),ov=nO?add(nO.end,-14):null,sh={weekday:'short',day:'numeric',month:'short'},sd={day:'numeric',month:'short'};
+ let cells='';for(let i=0;i<first;i++)cells+='<div class="d e"></div>';
+ const staggerCal=!skipCalAnim;
+ for(let d=1;d<=days;d++){const s=`${y}-${pad(m+1)}-${pad(d)}`,i=info(s,M),c=['d',i?i.t:'',i?.t==='period'&&i.c.pred?'pred':'',s===t?'today':'',s===sel?'sel':''].join(' ');
+  const mk=!i?'':i.t==='period'?'<svg viewBox="0 0 24 24"><path d="M12 2C8 8 5 11 5 15a7 7 0 0014 0c0-4-3-7-7-13z"/></svg>':i.t==='ovu'?'✦':i.t==='fert'?'●':'';
+  const animAttr=staggerCal?` data-anim style="animation-delay:${(d-1)*4}ms"`:'';
+  cells+=`<button class="${c}" data-d="${s}"${animAttr} aria-label="${fmt(s)}${i?': '+LBL[i.t]:''}" title="${i?LBL[i.t]:''}"><span class="daynum">${d}</span><span class="mk">${mk}</span></button>`}
+ skipCalAnim=false;
+ const si=info(sel,M),isStart=me.periods.some(p=>p.s===sel);
+ let side=`<h3>${fmt(sel,{weekday:'long',day:'numeric',month:'long'})}</h3>`;
+ if(si)side+=`<span class="pill">${LBL[si.t]}${si.t==='period'&&si.c.pred?' (estimado)':''}</span><span class="pill">Día ${si.n} del ciclo</span><p class="muted">Fase ${si.ph.toLowerCase()}.</p>`;
+ else side+='<p class="muted">Aún no hay datos para este día.</p>';
+ side+='<div class="row">';
+ if(!isStart)side+=`<button class="btn sm" data-a="start">Mi periodo empezó este día</button>`;
+ if(si&&!si.c.pred&&si.n>1&&si.n<=12&&!isStart)side+=`<button class="btn ghost sm" data-a="end">Mi periodo terminó este día</button>`;
+ if(isStart)side+=`<button class="btn danger sm" data-a="del">Quitar este inicio</button>`;
+ side+='</div>';
+ main(`<div class="top"><div><h2>Hola, ${esc(me.name.split(' ')[0])}</h2><p class="muted">Marca el primer día de cada periodo y el calendario calcula el resto.</p></div></div>
+ <div class="stats">
+ <div class="card stat"><small>Hoy</small><strong>${ti?'Día '+ti.n:'—'}</strong><small>${ti?ti.ph:'Registra tu periodo'}</small></div>
+ <div class="card stat"><small>Próximo periodo</small><strong>${dn===null?'—':dn===0?'Hoy':'En '+dn+' d'}</strong><small>${nextP?fmt(nextP.s):'Sin datos'}</small></div>
+ <div class="card stat"><small>Ciclo</small><strong>Cada mes</strong><small>Periodo: ${M.P.length?M.pl:me.plen} días</small></div></div>
+ ${nextP&&ov?`<div class="stats"><div class="card stat"><small>Próximo periodo</small><strong>${fmt(nextP.s,sh)}</strong><small>Hasta el ${fmt(add(nextP.s,nextP.len-1),sd)} · ${nextP.len} días</small></div><div class="card stat"><small>Próxima ovulación</small><strong>${fmt(ov,sh)}</strong><small>${diff(ov,t)===0?'Hoy':'En '+diff(ov,t)+' días'}</small></div><div class="card stat"><small>Ventana fértil</small><strong>${fmt(add(ov,-5),sd)} – ${fmt(ov,sd)}</strong><small>6 días</small></div></div>`:''}
+ <div class="calwrap"><div class="card"><div class="calhead"><button class="iconbtn" data-n="-1" aria-label="Mes anterior">‹</button><h3>${cur.toLocaleDateString('es',{month:'long',year:'numeric'})}</h3><button class="iconbtn" data-n="1" aria-label="Mes siguiente">›</button></div>
+ <div class="grid">${['L','M','X','J','V','S','D'].map(x=>`<div class="dow">${x}</div>`).join('')}${cells}</div>
+ <div class="legend"><span><i class="drop-legend"></i>Periodo</span><span><i style="background:var(--soft);box-shadow:inset 0 0 0 2px var(--accent)"></i>Estimado</span><span><i style="background:var(--soft2)"></i>Fértil</span><span><i style="background:var(--soft2);box-shadow:inset 0 0 0 2px var(--accent)"></i>Ovulación ✦</span><span><i style="background:var(--gray)"></i>Baja fertilidad</span></div></div>
+ <div class="card sidecard">${side}<p class="note">Tu próximo periodo se calcula cada mes, el mismo día del mes que el último inicio que registraste. La ovulación se estima ~14 días antes. Son estimaciones orientativas: no sirven como método anticonceptivo ni reemplazan una consulta ginecológica.</p></div></div>`);
+ $('#main').querySelectorAll('[data-n]').forEach(b=>b.onclick=()=>{const delta=+b.dataset.n;cur=new Date(y,m+delta,1);vCal();$('.calwrap')?.classList.add(delta>0?'month-slide-next':'month-slide-prev')});
+ $('#main').querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{skipCalAnim=true;sel=b.dataset.d;vCal()});
+ $('#main').querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{
+  skipCalAnim=true;
+  const a=b.dataset.a;
+  if(a==='start'){me.periods.push({s:sel,len:me.plen});toast('Inicio registrado')}
+  if(a==='del'){me.periods=me.periods.filter(p=>p.s!==sel);toast('Registro eliminado')}
+  if(a==='end'){const p=me.periods.find(p=>p.s===si.c.s);if(p){p.len=si.n;toast('Duración actualizada: '+si.n+' días')}}
+  saveU();vCal()})
+}
+
+/* ===== Comunidad ===== */
+const CATS=['Dolor','Higiene','Alimentación','Ánimo','Productos','Otros'];
+const author=id=>{const u=users.find(x=>x.id===id);return u?(u.pub&&u.name?`${esc(u.name)} · @${esc(u.username)}`:'@'+esc(u.username)):'usuaria eliminada'};
+function refreshForumPosts(){
+ if(view!=='forum'||!me||!$('#forum-feed'))return;
+ const active=document.activeElement;
+ if(active?.closest?.('#forum-feed')&&(active.matches('input,textarea'))){forumUpdatePending=true;return;}
+ const list=posts.filter(p=>cat==='Todos'||p.cat===cat).sort((a,b)=>b.ts-a.ts);
+ $('#forum-feed').innerHTML=forumCards(list);
+ bindForumCards();forumUpdatePending=false;
+}
+const heartIcon='<svg class="heart-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"/></svg>';
+function likeButton(likes,kind,id,postId){
+ const ids=Array.isArray(likes)?likes:[],liked=ids.includes(me.id);
+ return `<button type="button" class="like-btn" data-like="${kind}" data-id="${esc(id)}" ${postId?`data-post="${esc(postId)}"`:''} aria-pressed="${liked}" aria-label="${liked?'Quitar corazón':'Dar corazón'}">${heartIcon}<span>${ids.length}</span><span>${kind==='post'?'Me ayudó':'Útil'}</span></button>`;
+}
+let openedPost=null,macSource=null,macClosing=false;
+const countryFlag=(code)=>{const c=String(code||'').toUpperCase();return /^[A-Z]{2}$/.test(c)?String.fromCodePoint(...[...c].map(ch=>127397+ch.charCodeAt(0))):'🌐'};
+const countryTag=(u)=>u?.country?`<span class="country-flag" title="${esc(u.country)}" aria-label="País: ${esc(u.country)}">${countryFlag(u.country)}</span>`:'';
+const userWithFlag=(id)=>{const u=users.find(x=>x.id===id);return `${author(id)} ${countryTag(u)}`};
+const popularity=p=>(p.likes?.length||0);
+function forumCards(list){
+ const top=[...list].filter(p=>popularity(p)>0).sort((a,b)=>popularity(b)-popularity(a)||b.ts-a.ts).slice(0,8);
+ const recent=[...list].sort((a,b)=>b.ts-a.ts);
+ const tile=p=>`<article class="forum-teaser card"><button class="forum-entry" data-open="${esc(p.id)}" aria-label="${T('Ver conversación')}: ${esc(p.title)}"><div class="teaser-user">${av(users.find(x=>x.id===p.uid),34)}<span>${userWithFlag(p.uid)}</span></div><h3>${esc(p.title)}</h3><p>${esc(p.body)}</p><div class="teaser-foot"><span>♥ ${popularity(p)}</span><span>💬 ${p.r.length}</span><span>${T('Ver conversación')} →</span></div></button></article>`;
+ const detail=()=>{const p=posts.find(x=>x.id===openedPost);if(!p)return '';
+ return `<div class="forum-detail-overlay" id="forum-detail-overlay"><div class="forum-detail-backdrop" data-close-detail></div><section class="forum-detail card" role="dialog" aria-modal="true" aria-label="${esc(p.title)}"><button class="detail-back btn ghost sm" data-close-detail>← ${T('Cerrar')}</button><div class="author-header">${av(users.find(x=>x.id===p.uid),44)}<div class="author-lines"><strong>${userWithFlag(p.uid)}</strong><small>${esc(p.cat)} · ${new Date(p.ts).toLocaleDateString(language())}</small></div></div><h2>${esc(p.title)}</h2><p class="detail-body">${esc(p.body)}</p><div class="post-actions">${likeButton(p.likes,'post',p.id)}${p.uid===me.id?`<button class="btn ghost sm" data-del="${esc(p.id)}">${T('Eliminar')}</button>`:''}</div><h3>${T('Respuestas')} (${p.r.length})</h3><div class="detail-replies">${p.r.map((r,i)=>`<div class="reply"><div class="reply-header">${av(users.find(x=>x.id===r.uid),28)}<b>${userWithFlag(r.uid)}</b></div><p>${esc(r.t)}</p><div class="reply-footer">${likeButton(r.likes,'reply',String(i),p.id)}</div></div>`).join('')}</div><form class="rform" data-p="${esc(p.id)}"><input required maxlength="500" placeholder="${T('Escribe una respuesta…')}" aria-label="Respuesta"><button class="btn sm">${T('Responder')}</button></form></section></div>`};
+ return `<div class="forum-layout"><h3 class="forum-section-title">💗 ${T('Más populares')}</h3>${top.length?`<div class="trending-strip">${top.map(tile).join('')}</div>`:`<p class="muted">${language()==='es'?'Las publicaciones con corazones aparecerán aquí.':'Popular posts will appear here.'}</p>`}<h3 class="forum-section-title">🕒 ${T('Publicaciones recientes')}</h3><div class="recent-list">${recent.length?recent.map(tile).join(''):'<div class="empty-state"><h3>Todavía no hay publicaciones aquí</h3></div>'}</div>${openedPost?detail():''}</div>`;
+}
+function bindForumCards(){
+ $('#forum-feed')?.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>{
+ macSource=b.getBoundingClientRect();openedPost=b.dataset.open;refreshForumPosts();document.body.classList.add('detail-open');
+ const box=$('#forum-detail-overlay .forum-detail');if(box&&macSource){const r=box.getBoundingClientRect();box.style.setProperty('--mac-dx',(macSource.left+macSource.width/2-r.left-r.width/2)+'px');box.style.setProperty('--mac-dy',(macSource.top+macSource.height/2-r.top-r.height/2)+'px');box.style.setProperty('--mac-sx',Math.max(.25,Math.min(.9,macSource.width/r.width)));box.style.setProperty('--mac-sy',Math.max(.2,Math.min(.8,macSource.height/r.height)));}
+ $('#forum-detail-overlay .detail-back')?.focus();});
+ $('#forum-feed')?.querySelectorAll('[data-close-detail]').forEach(b=>b.onclick=()=>{
+ if(macClosing)return;macClosing=true;const overlay=$('#forum-detail-overlay');const close=()=>{openedPost=null;document.body.classList.remove('detail-open');macClosing=false;refreshForumPosts()};
+ if(overlay&&!matchMedia('(prefers-reduced-motion: reduce)').matches){overlay.classList.add('mac-closing');setTimeout(close,260)}else close();});
+
+ $('#forum-feed')?.querySelectorAll('[data-like]').forEach(b=>b.onclick=()=>{
+  const p=posts.find(x=>x.id===(b.dataset.post||b.dataset.id));if(!p)return;
+  const target=b.dataset.like==='post'?p:p.r[Number(b.dataset.id)];if(!target)return;
+  if(!Array.isArray(target.likes))target.likes=[];
+  const i=target.likes.indexOf(me.id);if(i>=0)target.likes.splice(i,1);else target.likes.push(me.id);
+  const liked=i<0;b.setAttribute('aria-pressed',String(liked));b.setAttribute('aria-label',liked?'Quitar corazón':'Dar corazón');
+  b.querySelector('span').textContent=target.likes.length;
+  b.classList.remove('heart-pop');void b.offsetWidth;b.classList.add('heart-pop');
+  if(liked) heartBurst(b);
+  saveP();
+  if(openedPost)refreshForumPosts();
+ });
+ $('#forum-feed')?.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{posts=posts.filter(p=>p.id!==b.dataset.del);saveP();refreshForumPosts()});
+ $('#forum-feed')?.querySelectorAll('.rform').forEach(f=>f.onsubmit=e=>{e.preventDefault();const p=posts.find(x=>x.id===f.dataset.p);if(!p)return;p.r.push({uid:me.id,t:f.querySelector('input').value.trim()});saveP();document.activeElement.blur();refreshForumPosts()});
+}
+document.addEventListener('focusout',()=>{if(forumUpdatePending)queueMicrotask(()=>{if(!document.activeElement?.closest?.('#forum-feed'))refreshForumPosts()})});
+let composerOpen=false,lastComposerFocus=null;
+function setComposer(open){
+ const wrap=$('#composer'),btn=$('#new-post-fab');if(!wrap||!btn)return;
+ composerOpen=!!open;wrap.classList.toggle('is-open',composerOpen);wrap.setAttribute('aria-hidden',String(!composerOpen));
+ btn.setAttribute('aria-expanded',String(composerOpen));btn.setAttribute('aria-label',composerOpen?'Cerrar formulario':'Crear publicación');
+ if(composerOpen){lastComposerFocus=document.activeElement;$('#pt')?.focus({preventScroll:true})}
+ else{if(lastComposerFocus?.isConnected)lastComposerFocus.focus({preventScroll:true});else btn.focus({preventScroll:true})}
+}
+function vForum(){
+ composerOpen=false;openedPost=null;document.body.classList.remove('detail-open');
+ const list=posts.filter(p=>cat==='Todos'||p.cat===cat).sort((a,b)=>b.ts-a.ts);
+ main(`<div class="top"><div><h2>Comunidad</h2><p class="muted">Comparte consejos, responde y agradece los tips que te ayudan con un corazón. Sincronización entre pestañas.</p></div></div>
+ <div class="chips">${['Todos',...CATS].map(c=>`<button class="chip ${c===cat?'on':''}" data-c="${c}">${c}</button>`).join('')}</div>
+ <div id="forum-feed">${forumCards(list)}</div>
+ <p class="note">Prueba local: actualización entre pestañas, sin recargar toda la página. Distintos dispositivos requieren conexión posterior a un servidor.</p>
+ <div id="composer" class="composer-wrap" aria-hidden="true"><div class="composer-backdrop" id="composer-backdrop"></div>
+ <div class="composer-panel" role="dialog" aria-modal="true" aria-labelledby="composer-title">
+ <div class="composer-head"><h3 id="composer-title">Comparte un consejo 💗</h3><button type="button" class="composer-close" id="composer-close" aria-label="Cerrar">×</button></div>
+ <p class="muted">Tu experiencia puede ayudar a otra persona.</p>
+ <form id="pf"><label for="pt">Título</label><input id="pt" required maxlength="90" placeholder="¿Qué te ayuda con los cólicos?">
+ <label for="pb">Cuéntanos más</label><textarea id="pb" required maxlength="1200" placeholder="Escribe tu consejo, duda o experiencia..."></textarea>
+ <label for="pc">Categoría</label><div class="row" style="align-items:center"><select id="pc">${CATS.map(c=>`<option>${c}</option>`).join('')}</select><button class="btn" id="publish-btn" type="submit">Publicar</button></div>
+ <p class="composer-tip">Recuerda no compartir datos personales o información médica privada.</p></form></div></div>
+ <button class="fab-drop" id="new-post-fab" type="button" aria-label="Crear publicación" aria-expanded="false" aria-controls="composer" title="Crear publicación"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>`);
+ document.body.append($('#composer'),$('#new-post-fab'));
+ $('#new-post-fab').onclick=()=>setComposer(!composerOpen);
+ $('#composer-close').onclick=()=>setComposer(false);
+ $('#composer-backdrop').onclick=()=>setComposer(false);
+ $('#composer').addEventListener('keydown',e=>{if(e.key==='Escape'){e.stopPropagation();setComposer(false)}else if(e.key==='Tab'){
+  const focusable=[...$('#composer .composer-panel').querySelectorAll('button,input,textarea,select')].filter(x=>!x.disabled);
+  if(!focusable.length)return;const first=focusable[0],last=focusable[focusable.length-1];
+  if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}
+ }});
+ $('#pf').onsubmit=async e=>{e.preventDefault();const title=$('#pt').value.trim(),body=$('#pb').value.trim();
+  if(!title||!body){const fld=!title?$('#pt'):$('#pb');fld.classList.add('field-error');fld.focus();setTimeout(()=>fld.classList.remove('field-error'),400);return}
+  const b=$('#publish-btn');b.disabled=true;b.innerHTML='<span class="submit-spinner"></span>Publicando…';
+  const rect=b.getBoundingClientRect();
+  posts.push({id:uid(),uid:me.id,title,body,cat:$('#pc').value,ts:Date.now(),likes:[],r:[]});saveP();
+  $('#pf').reset();setComposer(false);refreshForumPosts();
+  confettiAt(rect.left+rect.width/2,rect.top+rect.height/2);
+  toast('¡Publicado con éxito! 💗');
+ };
+ $('#main').querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>{cat=b.dataset.c;vForum()});
+ bindForumCards();requestAnimationFrame(translateUI);
+}
+
+/* ===== Asistente IA (Gemini) ===== */
+const md=t=>{let h=esc(t).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');const L=h.split('\n');let o='',ul=false;for(const l of L){const m=l.match(/^\s*[\*\-]\s+(.*)/);if(m){if(!ul){o+='<ul>';ul=true}o+=`<li>${m[1]}</li>`}else{if(ul){o+='</ul>';ul=false}o+=l?l+'<br>':''}}return o+(ul?'</ul>':'')};
+async function askGemini(key){
+ const body=JSON.stringify({systemInstruction:{parts:[{text:SYSTEM}]},contents:chat.slice(-12).map(c=>({role:c.role,parts:[{text:c.text}]})),generationConfig:{temperature:.5,maxOutputTokens:2048,thinkingConfig:{thinkingLevel:"low"}}});
+ const gl=`https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`;
+ const vertex=`https://aiplatform.googleapis.com/v1/publishers/google/models/${MODEL}:generateContent`;
+ const urls=key.startsWith('AQ.')?[vertex,gl]:[gl];let err='';
+ for(const u of urls){try{
+  const r=await fetch(u,{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':key},body});
+  const j=await r.json().catch(()=>({}));
+  if(r.ok){const c=j.candidates?.[0],t=(c?.content?.parts||[]).map(p=>p.text||'').join('').trim();if(t)return[true,t];err=j.promptFeedback?.blockReason?'La consulta fue bloqueada por seguridad. Reformúlala.':'Gemini no devolvió texto ('+(c?.finishReason||'sin motivo')+').';continue}
+  if(r.status===429)return[false,'Se alcanzó el límite de solicitudes o la cuota de tu clave. Revisa el consumo y los límites en Google AI Studio.'];
+  err=(j.error?.message||'Error '+r.status).slice(0,220)
+ }catch(e){err='No se pudo conectar con Gemini ('+(e.message||'red')+'). Revisa tu internet.'}}
+ return[false,'No pude responder: '+err+' — Si el problema es la clave, revisa tu clave en Google AI Studio y vuelve a introducirla en el asistente.']}
+function vAI(){
+ const key=LS.get('ciclo_key','')||DEFAULT_KEY;
+ if(!key){main(`<div class="top"><div><h2>Asistente</h2><p class="muted">Una guía de salud menstrual, disponible cuando quieras.</p></div></div><div class="card" style="max-width:520px"><h3>Conecta tu clave de Gemini</h3><p class="muted" style="margin:.5rem 0">Es gratis. Créala en <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener" style="color:var(--accent)">aistudio.google.com/apikey</a> y pégala aquí. Se guarda solo en este navegador.</p><form id="kf"><input id="kv" required placeholder="AIza…" type="password" aria-label="Clave API"><button class="btn" style="margin-top:.8rem">Guardar y empezar</button></form></div>`);
+  $('#kf').onsubmit=e=>{e.preventDefault();LS.set('ciclo_key',$('#kv').value.trim());vAI()};return}
+ const S=['¿Cómo calmo los cólicos?','¿Qué es la ventana fértil?','¿Cuándo debo ir al médico?','¿Copa o disco menstrual?'];
+ main(`<div class="top"><div><h2>Asistente</h2><p class="muted">Información educativa; no reemplaza una consulta ginecológica.</p></div></div>
+ <div class="card chatbox"><div class="msgs" id="ms" aria-live="polite">${chat.length?'':`<div class="m a">Hola ${esc(me.name.split(' ')[0])}, soy tu asistente de salud menstrual. ¿Qué quieres saber?</div>`}${chat.map(c=>`<div class="m ${c.role==='user'?'u':'a'}">${c.role==='user'?esc(c.text):md(c.text)}</div>`).join('')}</div>
+ ${chat.length?'':`<div class="sugg">${S.map(s=>`<button class="chip" data-s="${s}">${s}</button>`).join('')}</div>`}
+ <form class="cform" id="cf"><input id="ci" required maxlength="600" placeholder="Escribe tu duda…" aria-label="Mensaje" autocomplete="off"><button class="btn" id="sb">Enviar</button></form></div>`);
+ const ms=$('#ms');ms.scrollTop=ms.scrollHeight;
+ const send=async text=>{if(busy)return;busy=true;chat.push({role:'user',text});persistChat();
+  ms.insertAdjacentHTML('beforeend',`<div class="m u">${esc(text)}</div><div class="m a" id="ty"><span class="dots"><span></span><span></span><span></span></span></div>`);ms.scrollTop=ms.scrollHeight;$('#ci').value='';
+  const[ok,out]=await askGemini(key);
+  if(ok)chat.push({role:'model',text:out});else chat.pop();persistChat();busy=false;$('#ty').outerHTML=`<div class="m a">${md(out)}</div>`;ms.scrollTop=ms.scrollHeight};
+ $('#cf').onsubmit=e=>{e.preventDefault();send($('#ci').value.trim())};
+ $('#main').querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>send(b.dataset.s))
+}
+
+/* ===== Ajustes ===== */
+const PRESETS=['#e4457f','#d6336c','#f06595','#9c36b5','#4263eb','#2f9e44','#161214'];
+function vSet(){
+ const t=me.theme,mode=t.mode||'light';
+ main(`<div class="top"><div><h2>Ajustes</h2><p class="muted">Tu perfil y cómo se ve tu espacio.</p></div></div><div class="set">
+ <div class="card"><h3>Perfil</h3><div class="avrow">${av(me,72)}<div><b>@${esc(me.username)}</b><div class="muted">Miembro desde ${fmt(me.created,{day:'numeric',month:'long',year:'numeric'})}</div><div class="row" style="margin-top:.4rem"><label class="btn ghost sm" for="ph2" style="margin:0;cursor:pointer">Cambiar foto</label><input id="ph2" type="file" accept="image/*,.heic,.heif,.tiff,.tif,.bmp,.gif,.svg,.avif,.webp,.png,.jpg,.jpeg,.ico" class="hide">${me.avatar?'<button class="btn ghost sm" id="rp">Quitar</button>':''}</div></div></div>
+ <div class="stats" style="margin:.2rem 0 .4rem"><div class="card stat"><small>Días desde el registro</small><strong>${diff(today(),me.created)}</strong></div><div class="card stat"><small>Periodos registrados</small><strong>${me.periods.length}</strong></div></div><label for="sn">Nombre</label><input id="sn" value="${esc(me.name)}" maxlength="40">
+ <div class="line"><div><strong>Mostrar mi nombre en la comunidad</strong><div class="muted">Privado por defecto. Tu usuario (@${esc(me.username)}) siempre es visible.</div></div><button class="tg ${me.pub?'on':''}" id="tp" role="switch" aria-checked="${me.pub}" aria-label="Nombre público"></button></div>
+ <button class="btn sm" id="sv">Guardar nombre</button></div>
+ <div class="card"><h3>🔐 Inicio de sesión rápido</h3><p class="muted">Configura un PIN de 6 números para entrar más rápido desde este navegador al cerrar sesión. No reemplaza la contraseña de tu cuenta.</p><form id="quick-pin-form"><label for="pin-new">Nuevo PIN (6 dígitos)</label><input id="pin-new" type="password" inputmode="numeric" autocomplete="new-password" maxlength="6" minlength="6" pattern="[0-9]{6}" placeholder="••••••" required><label for="pin-repeat">Repite el PIN</label><input id="pin-repeat" type="password" inputmode="numeric" autocomplete="new-password" maxlength="6" minlength="6" pattern="[0-9]{6}" placeholder="••••••" required><div class="row"><button class="btn sm" type="submit">Activar inicio rápido</button><button class="btn ghost sm" type="button" id="quick-pin-remove">Desactivar PIN</button></div><p class="note" id="pin-status" role="status"></p></form></div><div class="card"><h3>País e idioma</h3><label for="set-country">País</label><select id="set-country">${countryOptions(me.country||'')}</select><label for="set-lang">Idioma / Language</label><select id="set-lang">${langOptions()}</select><button class="btn sm" id="save-locale" style="margin-top:.7rem">Guardar</button></div>
+ <div class="card"><h3>Apariencia</h3>
+ <div class="line"><strong>Modo oscuro</strong><button class="tg ${mode==='dark'?'on':''}" id="tm" role="switch" aria-checked="${mode==='dark'}" aria-label="Modo oscuro"></button></div>
+ <label>Color principal</label><div class="sw">${PRESETS.map(c=>`<button style="background:${c}" data-ac="${c}" aria-label="Color ${c}"></button>`).join('')}</div>
+ <div class="line"><span>Personalizado</span><input type="color" id="ca" value="${t.accent||'#e4457f'}"></div>
+ <div class="line"><span>Fondo (${mode==='dark'?'oscuro':'claro'})</span><input type="color" id="cb" value="${t.bg?.[mode]||(mode==='dark'?'#141113':'#faf7f8')}"></div>
+ <label>Estilo de texto</label><div class="seg">${Object.entries(FONTS).map(([k,f])=>`<button class="chip ${(t.font||'def')===k?'on':''}" data-f="${k}" style="font-family:'${f[0]}'">${f[3]}</button>`).join('')}</div>
+ <label>Tamaño del texto</label><div class="seg">${[[90,'Pequeño'],[100,'Normal'],[112,'Grande'],[125,'Muy grande']].map(([v,n])=>`<button class="chip ${(t.size||100)===v?'on':''}" data-z="${v}">${n}</button>`).join('')}</div>
+ <button class="btn ghost sm" id="rt" style="margin-top:.6rem">Restablecer apariencia</button></div>
+ <div class="card"><h3>Legal</h3><p class="muted">Cómo funciona el servicio y cómo cuidamos tus datos.</p><div class="row"><button class="btn ghost sm" data-legal="terms">Términos y condiciones</button><button class="btn ghost sm" data-legal="privacy">Política de privacidad</button></div></div>
+ <div class="card"><h3>Tu ciclo</h3><p class="muted">Duración del periodo que se usa hasta que tengas historial.</p>
+ <label for="pl">Duración del periodo (días)</label><input id="pl" type="number" min="2" max="10" value="${me.plen}"><button class="btn sm" id="sc" style="margin-top:.8rem">Guardar</button></div>
+ <div class="card"><h3>Cuenta</h3><p class="muted">Administra tu información y tu cuenta.</p><div class="row"><button class="btn ghost sm" id="lo">Cerrar sesión</button><button class="btn danger sm" id="dl">Eliminar cuenta</button></div></div></div>`);
+ $('#save-locale').onclick=()=>{me.country=$('#set-country').value;me.lang=$('#set-lang').value;guestLanguage=me.lang;LS.set('ciclo_language',me.lang);saveU();shell();toast('Preferencias guardadas')};
+ const upd=()=>{saveU();applyTheme()};
+ $('#quick-pin-form').onsubmit=async e=>{e.preventDefault();const a=$('#pin-new').value,b=$('#pin-repeat').value,status=$('#pin-status');if(a!==b){status.textContent='Los dos PIN no coinciden.';return}const btn=e.submitter;btn.disabled=true;try{await enableQuickPin(a);status.textContent='✓ Inicio rápido activado en este navegador.';$('#quick-pin-form').reset()}catch(err){status.textContent=err.message}finally{btn.disabled=false}};
+ $('#quick-pin-remove').onclick=()=>{disableQuickPin(me.id);$('#pin-status').textContent='PIN desactivado.'};
+ $('#ph2').onchange=async e=>{try{me.avatar=await pickImg(e.target.files[0]);saveU();shell();toast('Foto AVIF actualizada')}catch(err){toast(err.message||'Esa imagen no es válida')}};
+ if($('#rp'))$('#rp').onclick=()=>{me.avatar='';saveU();shell()};
+ $('#sv').onclick=()=>{me.name=$('#sn').value.trim()||me.name;saveU();shell();toast('Perfil guardado')};
+ $('#tp').onclick=e=>{me.pub=!me.pub;saveU();e.target.classList.toggle('on',me.pub);e.target.setAttribute('aria-checked',me.pub);$('#who').innerHTML=whoHTML();toast(me.pub?'Tu nombre ahora es público':'Tu nombre es privado')};
+ $('#tm').onclick=()=>{t.mode=mode==='dark'?'light':'dark';upd();vSet()};
+ $('#main').querySelectorAll('[data-ac]').forEach(b=>b.onclick=()=>{t.accent=b.dataset.ac;upd();vSet()});
+ $('#ca').oninput=e=>{t.accent=e.target.value;upd()};
+ $('#cb').oninput=e=>{t.bg={...t.bg,[mode]:e.target.value};upd()};
+ $('#main').querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{t.font=b.dataset.f;upd();vSet()});
+ $('#main').querySelectorAll('[data-z]').forEach(b=>b.onclick=()=>{t.size=+b.dataset.z;upd();vSet()});
+ $('#rt').onclick=()=>{delete t.accent;delete t.bg;delete t.font;delete t.size;upd();vSet()};
+ $('#sc').onclick=()=>{me.plen=Math.min(10,Math.max(2,+$('#pl').value||5));saveU();toast('Guardado')};
+ $('#lo').onclick=logout;
+ $('#dl').onclick=()=>{if(confirm('Se eliminará tu cuenta y tus datos de este dispositivo. ¿Continuar?')){users=users.filter(u=>u.id!==me.id);LS.set('ciclo_chat_'+me.id,[]);disableQuickPin(me.id);posts=posts.filter(p=>p.uid!==me.id).map(p=>({...p,r:p.r.filter(r=>r.uid!==me.id)}));saveP();saveU();logout()}}
+}
+
+/* ===== Legal ===== */
+const LEGAL={
+terms:['Términos y condiciones',`<p class="muted">Última actualización: octubre de 2026</p>
+<h3>1. Qué es Ciclo</h3><p>Ciclo es una herramienta educativa para registrar tu ciclo menstrual, consultar estimaciones y conversar con una comunidad y con un asistente de IA. Al crear una cuenta aceptas estos términos.</p>
+<h3>2. No es consejo médico</h3><p>Todo el contenido, las predicciones del calendario y las respuestas del asistente son informativos. No reemplazan una consulta ginecológica ni un diagnóstico. Las fechas de fertilidad son estimaciones y <b>no deben usarse como método anticonceptivo</b>. Si tienes una señal de alerta (sangrado muy abundante, dolor súbito e intenso, fiebre con tampón, etc.), busca atención médica de inmediato.</p>
+<h3>3. Tu cuenta</h3><ul><li>Eres responsable de tu usuario y contraseña. No hay recuperación por correo: si la olvidas, no podremos restablecerla.</li><li>Debes dar información veraz y usar un nombre de usuario que no suplante a otras personas.</li></ul>
+<h3>4. Comunidad</h3><p>Trata a las demás con respeto. No se permite acoso, discriminación, spam, contenido sexual explícito, venta de medicamentos ni compartir datos personales de terceras personas. Lo que publiques en la comunidad es visible para otras usuarias. Los consejos de otras usuarias son experiencias personales, no indicaciones médicas.</p>
+<h3>5. Asistente de IA</h3><p>Las respuestas las genera un modelo de inteligencia artificial y pueden contener errores. Contrasta siempre la información con una profesional de la salud.</p>
+<h3>6. Disponibilidad y cambios</h3><p>El servicio se ofrece “tal cual”, sin garantía de disponibilidad. Podemos modificar estos términos; el uso continuado implica que aceptas los cambios.</p>
+<h3>7. Limitación de responsabilidad</h3><p>En la medida permitida por la ley, no nos hacemos responsables de decisiones tomadas a partir de la información de la aplicación.</p>`],
+privacy:['Política de privacidad',`<p class="muted">Última actualización: octubre de 2026</p>
+<h3>1. Qué datos tratamos</h3><ul><li><b>Cuenta:</b> nombre, nombre de usuario, foto de perfil (opcional), fecha de registro y una versión cifrada (hash) de tu contraseña. No pedimos correo.</li><li><b>Salud:</b> las fechas de tu periodo y tus ajustes del ciclo.</li><li><b>Comunidad:</b> publicaciones y respuestas que escribas.</li><li><b>Preferencias:</b> colores, tipografía y modo oscuro.</li><li><b>Asistente:</b> las conversaciones con la IA se guardan localmente en este navegador, separadas por cuenta. No se sincronizan con Supabase.</li></ul>
+<h3>2. Dónde se guardan</h3><p>Esta versión es una demostración local: perfiles, fotos AVIF, calendario, comunidad y chats permanecen en este navegador. No se conecta a Supabase. Si borras los datos del navegador o eliminas tu cuenta, se pierden.</p>
+<h3>3. Visibilidad</h3><p>Tu nombre de usuario es público en la comunidad. Tu nombre real es <b>privado por defecto</b>; solo se muestra si activas la opción en Ajustes. Tu calendario nunca es visible para otras usuarias.</p>
+<h3>4. Asistente de IA (Google Gemini)</h3><p>Cuando usas el asistente, los mensajes que escribes se envían a la API de Google Gemini con tu propia clave para generar la respuesta. No incluimos tus fechas de ciclo en esos mensajes. Evita escribir datos que te identifiquen. Consulta la política de privacidad de Google para saber cómo trata esa información. Tu clave se guarda solo en tu navegador.</p>
+<h3>5. Tus derechos</h3><p>Puedes editar tu nombre, cambiar tu visibilidad y eliminar tu cuenta y tus datos del dispositivo en cualquier momento desde Ajustes.</p>
+<h3>6. Seguridad</h3><p>Usa una contraseña única y cierra sesión en dispositivos compartidos. Ningún sistema es completamente infalible.</p>
+<h3>7. Menores de edad</h3><p>Si eres menor de edad, usa la aplicación con acompañamiento de una persona adulta de confianza.</p>`]};
+function legal(k){const m=$('#modal');m.innerHTML=`<div class="card"><h2>${LEGAL[k][0]}</h2>${LEGAL[k][1]}<div class="row" style="margin-top:1.2rem"><button class="btn" id="mc">Entendido</button></div></div>`;m.classList.remove('hide');$('#mc').focus();
+ const close=()=>{m.classList.add('hide');m.innerHTML=''};$('#mc').onclick=close;m.onclick=e=>{if(e.target===m)close()}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-legal]');if(b){e.preventDefault();legal(b.dataset.legal)}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')$('#mc')?.click()});
+
+/* ===== Cuenta de prueba ===== */
+async function seed(){
+ if(users.some(u=>u.username==='admin'))return;
+ const salt=uid(),t=today(),u={id:uid(),name:'Admin',username:'admin',salt,hash:await hash('admin',salt),pub:false,theme:{mode:document.documentElement.dataset.theme||'light'},periods:[{s:add(t,-66),len:5},{s:add(t,-38),len:5},{s:add(t,-10),len:5}],cycle:28,plen:5,avatar:'',created:t};
+ users.push(u);saveU();
+ if(!posts.length){posts.push({id:uid(),uid:u.id,title:'Lo que más me ayuda con los cólicos',body:'Calor en el vientre bajo y tomar el analgésico al primer síntoma, no cuando ya duele mucho. ¿Ustedes qué hacen?',cat:'Dolor',ts:Date.now()-36e5,r:[{uid:u.id,t:'También ayuda caminar un rato y tomar infusión de jengibre.'}]});saveP()}
+}
+
+/* ===== Animaciones añadidas ===== */
+
+/* Ripple en cualquier .btn */
+document.addEventListener('pointerdown',e=>{
+ const btn=e.target.closest('.btn');
+ if(!btn)return;
+ const r=btn.getBoundingClientRect();
+ const size=Math.max(r.width,r.height)*1.2;
+ const span=document.createElement('span');
+ span.className='ripple';
+ span.style.width=span.style.height=size+'px';
+ span.style.left=(e.clientX-r.left-size/2)+'px';
+ span.style.top=(e.clientY-r.top-size/2)+'px';
+ btn.appendChild(span);
+ span.addEventListener('animationend',()=>span.remove());
+});
+
+/* Contadores animados en .stat strong (una vez por vista) */
+function animateCounters(){
+ if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+ document.querySelectorAll('#main .stat strong').forEach(el=>{
+  const orig=el.textContent;
+  const m=orig.match(/\d+/);
+  if(!m)return;
+  const target=parseInt(m[0],10);
+  if(target<2)return;
+  const before=orig.slice(0,m.index);
+  const after=orig.slice(m.index+m[0].length);
+  const dur=Math.min(900,400+target*12);
+  const t0=performance.now();
+  const ease=p=>1-Math.pow(1-p,3);
+  function step(now){
+   const p=Math.min(1,(now-t0)/dur);
+   el.textContent=before+Math.round(ease(p)*target)+after;
+   if(p<1)requestAnimationFrame(step);
+   else el.textContent=orig;
+  }
+  requestAnimationFrame(step);
+ });
+}
+
+/* Confetti desde un punto */
+function confettiAt(cx,cy){
+ if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+ const colors=['#e4457f','#ff8ab8','#ffb3d1','#ffd6e8','#fff0f6','#c0265a'];
+ for(let i=0;i<26;i++){
+  const p=document.createElement('div');
+  p.className='confetti-piece';
+  p.style.left=cx+'px';
+  p.style.top=cy+'px';
+  p.style.background=colors[i%colors.length];
+  p.style.width=(6+Math.random()*6)+'px';
+  p.style.height=(6+Math.random()*6)+'px';
+  p.style.borderRadius=Math.random()>.5?'50%':'2px';
+  document.body.appendChild(p);
+  const angle=-Math.PI/2+(Math.random()-.5)*Math.PI*1.1;
+  const dist=90+Math.random()*130;
+  const dx=Math.cos(angle)*dist;
+  const dy=Math.sin(angle)*dist;
+  const rot=(Math.random()-.5)*900;
+  p.animate([
+   {transform:'translate(-50%,-50%) rotate(0deg) scale(1)',opacity:1},
+   {transform:`translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) rotate(${rot}deg) scale(.4)`,opacity:0}
+  ],{duration:850+Math.random()*450,easing:'cubic-bezier(.2,.8,.2,1)'}).onfinish=()=>p.remove();
+ }
+}
+
+/* Corazones que brotan del botón de like */
+function heartBurst(btn){
+ if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+ const r=btn.getBoundingClientRect();
+ const cx=r.left+24,cy=r.top+r.height/2;
+ for(let i=0;i<6;i++){
+  const s=document.createElement('span');
+  s.className='heart-particle';
+  s.textContent='♥';
+  s.style.left=cx+(Math.random()*24-12)+'px';
+  s.style.top=cy+'px';
+  s.style.color='var(--accent)';
+  s.style.fontSize=(11+Math.random()*9)+'px';
+  document.body.appendChild(s);
+  const dx=(Math.random()-.5)*50;
+  const dy=-(40+Math.random()*40);
+  s.animate([
+   {transform:'translate(-50%,-50%) scale(.4)',opacity:1},
+   {transform:`translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(1)`,opacity:0}
+  ],{duration:700+Math.random()*350,easing:'cubic-bezier(.2,.8,.2,1)'}).onfinish=()=>s.remove();
+ }
+}
+
+/* Botón “volver arriba” */
+(function setupScrollTop(){
+ const st=$('#scroll-top');if(!st)return;
+ st.addEventListener('click',()=>{
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  window.scrollTo({top:0,behavior:reduce?'auto':'smooth'});
+ });
+ addEventListener('scroll',()=>{
+  const hidden=document.querySelector('#app').classList.contains('hide');
+  st.classList.toggle('show',!hidden&&scrollY>420);
+ },{passive:true});
+})();
+
+/* ===== Inicio ===== */
+applyTheme();
+const sid=LS.get('ciclo_session',null);
+seed().then(()=>{const u0=users.find(u=>u.id===sid);setTimeout(()=>{u0?login(u0):showAuth();$('#loader').classList.add('out')},1500)});
+</script>
+</body>
+</html>
