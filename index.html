@@ -1299,7 +1299,7 @@ startCloud().finally(()=>$('#loader').classList.add('out'));
  function guide(){
   info.textContent=ios
     ? 'En Safari: toca Compartir y elige «Añadir a pantalla de inicio».'
-    : 'Abre el menú ⋮ del navegador y elige «Instalar app» o «Añadir a pantalla de inicio».';
+    : 'En Chrome o Brave abre el menú ⋮ y elige «Instalar aplicación». Si solo ofrece «Crear acceso directo», usa Chrome para intentar la instalación.';
   action.textContent='Entendido';
   action.onclick=close;
  }
