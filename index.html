@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Women's Period · Calendario y bienestar</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Figtree:wght@400;500;600&family=Nunito:wght@500;700&family=Lora:wght@500;700&family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
@@ -458,6 +458,64 @@ button,input,select,textarea{touch-action:manipulation}
 #verified-screen.leaving{opacity:0;transition:opacity .45s}
 @keyframes verifiedIn{from{opacity:0}to{opacity:1}}@keyframes verifiedBounce{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:scale(1)}}@keyframes verifiedProgress{from{width:0}to{width:100%}}
 @media(prefers-reduced-motion:reduce){#verified-screen,#verified-screen .verified-icon,#verified-screen .verified-bar span{animation:none!important}#verified-screen .verified-bar span{width:100%}}
+
+/* Responsive universal: móviles pequeños, tablets, escritorio y modo instalado */
+html{min-width:0;max-width:100%;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{min-width:0;max-width:100%;min-height:100dvh}
+#auth,#app,main,main>section,.top,.calwrap,.stats,.set,.card,.chatbox,.chatbox .msgs{min-width:0;max-width:100%}
+img,video,canvas,iframe{max-width:100%;height:auto}
+button,input,select,textarea{max-width:100%}
+input,textarea,select{font-size:16px}
+h1,h2,h3,p,.muted,.card,.post{overflow-wrap:anywhere}
+.calwrap{grid-template-columns:minmax(0,1fr) minmax(240px,300px)}
+.stats{grid-template-columns:repeat(auto-fit,minmax(min(100%,160px),1fr))}
+.set{grid-template-columns:repeat(auto-fit,minmax(min(100%,290px),1fr))}
+.grid{grid-template-columns:repeat(7,minmax(0,1fr))}
+.d{min-width:0;min-height:0;aspect-ratio:1;touch-action:manipulation}
+.dow{min-width:0}
+#modal{padding:max(12px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left))}
+#modal .card{max-width:100%;max-height:min(86dvh,850px);overflow:auto;overscroll-behavior:contain}
+@media(max-width:1024px){.calwrap{grid-template-columns:minmax(0,1fr)}}
+@media(min-width:761px) and (max-width:1050px){#app{grid-template-columns:210px minmax(0,1fr)}aside{min-width:0}main{padding:1.5rem 1rem 3rem}}
+@media(max-width:760px){
+  #app{grid-template-columns:minmax(0,1fr)}
+  main{width:100%;max-width:100%;padding:1.1rem max(12px,env(safe-area-inset-left)) calc(110px + env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-right))}
+  aside{padding-left:max(5px,env(safe-area-inset-left));padding-right:max(5px,env(safe-area-inset-right));max-width:100%}
+  nav{width:100%;min-width:0;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
+  nav::-webkit-scrollbar{display:none}
+  nav button{min-width:52px;min-height:48px;white-space:normal}
+  .top{align-items:flex-start}
+  .top h2{font-size:clamp(1.45rem,6vw,2rem)}
+  .calwrap,.set,.diary-fields{grid-template-columns:minmax(0,1fr)}
+  .grid{gap:clamp(2px,.8vw,5px)}
+  .d{border-radius:clamp(5px,2vw,12px);font-size:clamp(.71rem,3.2vw,.98rem)}
+  .dow{font-size:clamp(.63rem,2.5vw,.75rem)}
+  .chatbox{height:min(70dvh,640px);min-height:300px}
+  .rform,.cform{min-width:0}
+  .rform input,.cform input{min-width:0;flex:1 1 140px}
+  .rform button,.cform button{flex:0 0 auto}
+  .hero{padding-top:max(20px,env(safe-area-inset-top))}
+  #wp-install{bottom:calc(85px + env(safe-area-inset-bottom));max-width:calc(100% - 20px)}
+}
+@media(max-width:380px){
+  main{padding-left:10px;padding-right:10px}
+  .card{padding:.85rem}
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .stat{padding:.7rem}
+  .stat strong{font-size:1.08rem}
+  nav button{min-width:48px;font-size:.57rem;padding:.4rem .2rem}
+  nav svg{width:18px;height:18px}
+  .d{font-size:.7rem}
+}
+@media(max-width:760px) and (orientation:landscape){
+  main{padding-bottom:calc(90px + env(safe-area-inset-bottom))}
+  #modal .card{max-height:calc(100dvh - 24px)}
+  .chatbox{height:65dvh}
+}
+@media(display-mode:standalone){
+  body{min-height:100dvh}
+  main{padding-top:max(1rem,env(safe-area-inset-top))}
+}
 </style>
 <meta name="theme-color" content="#e4457f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -465,8 +523,10 @@ button,input,select,textarea{touch-action:manipulation}
 <meta name="apple-mobile-web-app-title" content="Women's Period">
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="/manifest.webmanifest">
-<link rel="icon" href="/favicon/favicon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" sizes="192x192" href="/favicon/icon-192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
+<link rel="icon" type="image/svg+xml" href="/favicon/app-icon.svg">
+<link rel="apple-touch-icon" href="/favicon/apple-touch-icon.png">
 </head>
 <body>
 <div id="loader"><div class="lw"><div class="rings"><i></i><i></i><i></i><div class="drop"></div></div><div class="brand" style="justify-content:center">Women's Period</div><p class="muted">Preparando tu espacio…</p></div></div>
@@ -1200,7 +1260,7 @@ startCloud().finally(()=>$('#loader').classList.add('out'));
 @media(min-width:761px){#wp-install{bottom:24px}}
 </style>
 <div id="wp-install" hidden role="region" aria-label="Instalar Women's Period">
-<img src="/favicon/favicon.svg" alt="">
+<img src="/favicon/android-chrome-192x192.png" alt="">
 <div class="wp-copy"><strong>Women's Period en tu inicio</strong><span id="wp-install-info">Entra directo como una app</span></div>
 <button type="button" class="wp-action" id="wp-install-action">Instalar</button>
 <button type="button" class="wp-close" id="wp-install-close" aria-label="Cerrar sugerencia">×</button>
