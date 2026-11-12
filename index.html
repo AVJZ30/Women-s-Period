@@ -239,6 +239,47 @@ nav button.on svg{animation:navPop .42s cubic-bezier(.2,.8,.2,1)}
 @media(prefers-reduced-motion:reduce){.composer-panel,.composer-backdrop,.fab-drop,.fab-drop svg,.fab-drop::before,#top-loading-bar{transition:none!important;animation:none!important}.composer-panel{clip-path:none!important}}
 
 
+
+/* Resumen del diario y guía del ciclo */
+.diary-summary-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.diary-summary-head small{color:var(--mute);font-size:.8rem}
+.diary-summary-head h3{margin:5px 0}
+.diary-summary-head>span{font-size:.75rem;font-weight:800;border-radius:100px;background:#e7f8eb;color:#248353;padding:7px 11px}
+.diary-summary-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:18px}
+.diary-summary-item{background:var(--soft);border:1px solid var(--line);border-radius:13px;padding:13px;overflow-wrap:anywhere}
+.diary-summary-item small{display:block;color:var(--mute);margin-bottom:5px}
+.diary-summary-item strong{font-size:.94rem}
+.diary-summary-notes{background:var(--soft);border-radius:13px;margin-top:14px;padding:14px;overflow-wrap:anywhere}
+.diary-summary-notes p{margin:10px 0 0;white-space:pre-wrap;line-height:1.6}
+.diary-tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.diary-tags span{font-size:.8rem;padding:6px 10px;background:var(--card);border-radius:99px}
+.cycle-guide{margin-top:16px;padding:17px;border:1px solid var(--line);border-radius:17px;background:linear-gradient(145deg,var(--soft),var(--card))}
+.cycle-guide-title{font-size:1rem;font-weight:800;color:var(--ink);display:flex;align-items:center;justify-content:space-between;gap:10px}
+.cycle-guide-title small{font-size:.72rem;font-weight:700;color:var(--accent);background:var(--card);border-radius:99px;padding:5px 9px}
+.cycle-guide-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:14px 0}
+.cycle-guide-list>div{display:flex;gap:10px;align-items:center;padding:11px;background:var(--card);border:1px solid var(--line);border-radius:13px;min-width:0}
+.cycle-guide-list b,.cycle-guide-list small{display:block;line-height:1.35}
+.cycle-guide-list b{font-size:.84rem}
+.cycle-guide-list small{font-size:.74rem;color:var(--mute);margin-top:3px}
+.cycle-guide-symbol{flex:0 0 32px;height:32px;display:grid;place-items:center;border-radius:10px;font-size:19px}
+.cycle-guide-symbol.blood{background:#fbe3eb;color:#d6336c}
+.cycle-guide-symbol.estimate{background:#fff1f6;color:#f06595}
+.cycle-guide-symbol.fertile{background:#e8f5ef;color:#238558}
+.cycle-guide-symbol.ovulation{background:#f0e9fc;color:#8950bd}
+.cycle-guide-note{display:block;color:var(--mute);line-height:1.5}
+.support-card{text-align:center;background:linear-gradient(140deg,var(--card),var(--soft))}
+.support-icon{font-size:38px;margin-bottom:8px}
+.donation-info{max-width:510px;text-align:left;margin:18px auto 0;padding:18px;border:1px solid var(--line);border-radius:15px;background:var(--card);overflow-wrap:anywhere}
+.donation-info[hidden]{display:none!important}
+.donation-info p,.donation-info small{font-size:.84rem;color:var(--mute)}
+.donation-info small{display:block;margin-top:10px}
+.donation-copy{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.donation-copy code{font-size:1rem;font-weight:800;overflow-wrap:anywhere}
+.support-credit,.site-credit{font-size:12px;text-align:center;color:var(--mute)}
+.support-credit{margin-top:22px}
+.site-credit{padding:24px 12px 30px}
+@media(max-width:480px){.diary-summary-grid,.cycle-guide-list{grid-template-columns:1fr}}
+
 /* Women's Period · fluidez y accesibilidad en teléfonos modestos */
 html,body,button,a,input,select,textarea,label,[role="button"]{-webkit-tap-highlight-color:transparent}
 button:focus:not(:focus-visible),a:focus:not(:focus-visible),input:focus:not(:focus-visible){outline:none;box-shadow:none}
@@ -849,7 +890,7 @@ function shell(){
 const main=h=>{
  document.querySelector('#composer')?.remove();
  document.querySelector('#new-post-fab')?.remove();
- $('#main').innerHTML=`<section>${h}</section>`;
+ $('#main').innerHTML=`<section>${h}</section><footer class="site-credit">Creado gracias a <strong>AVJ COMUNITY</strong> 💗</footer>`;
  requestAnimationFrame(()=>{observeReveal();translateUI()});
  if(!counterAnimDone){counterAnimDone=true;requestAnimationFrame(animateCounters)}
 };
@@ -1145,6 +1186,8 @@ function vSet(){
  <div class="card"><h3>Tu ciclo</h3><p class="muted">Duración del periodo que se usa hasta que tengas historial.</p>
  <label for="pl">Duración del periodo (días)</label><input id="pl" type="number" min="2" max="10" value="${me.plen}"><button class="btn sm" id="sc" style="margin-top:.8rem">Guardar</button></div>
  <div class="card"><h3>Cuenta</h3><p class="muted">Administra tu información y tu cuenta.</p><form id="change-email-form"><label for="change-email">Cambiar correo electrónico</label><input id="change-email" type="email" autocomplete="email" placeholder="nuevo@correo.com" required><p class="muted" style="font-size:12px;margin:8px 0">Por seguridad, Supabase enviará un correo para confirmar el cambio. Según la configuración, también puede pedir confirmación en el correo anterior.</p><button class="btn ghost sm" type="submit">Enviar confirmación de cambio</button><p id="change-email-status" class="note" role="status"></p></form><div class="row"><button class="btn ghost sm" id="lo">Cerrar sesión</button><button class="btn danger sm" id="dl">Eliminar cuenta</button></div></div></div>`);
+ const donate=document.createElement('div');donate.innerHTML="<div class=\"card support-card\" id=\"support\"><div class=\"support-icon\">💗</div><h3>Apoya Women's Period</h3><p class=\"muted\">Tu apoyo es opcional y ayuda a mantener y mejorar este espacio gratuito.</p><div class=\"donation-info\" id=\"donate-ec\"><strong>🇪🇨 Desde Ecuador · Banco Guayaquil</strong><p>Cuenta de ahorros</p><div class=\"donation-copy\"><code>0055390856</code><button type=\"button\" class=\"btn ghost sm\" data-copy=\"0055390856\">Copiar</button></div><small>Titular: Plua Jimenez Luis Ricardo</small></div><div class=\"donation-info\" id=\"donate-world\"><strong>🌎 Desde otros países · PayPal</strong><p>Envía tu apoyo al correo asociado a PayPal:</p><div class=\"donation-copy\"><code>luispluajj@gmail.com</code><button type=\"button\" class=\"btn ghost sm\" data-copy=\"luispluajj@gmail.com\">Copiar</button></div><a href=\"https://www.paypal.com/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"btn ghost sm\" style=\"display:inline-block;margin-top:12px\">Abrir PayPal ↗</a></div><p class=\"support-credit\">Gracias por apoyar el proyecto 💗</p></div>";$('#main .set')?.appendChild(donate.firstElementChild);$('#donate-ec').hidden=me.country!=='EC';$('#donate-world').hidden=me.country==='EC';
+ $('#main').querySelectorAll('[data-copy]').forEach(b=>b.onclick=()=>{if(navigator.clipboard?.writeText){navigator.clipboard.writeText(b.dataset.copy).then(()=>toast('Copiado 💗')).catch(()=>toast('Selecciona el dato para copiarlo'))}else toast('Selecciona el dato para copiarlo')});
  $('#save-locale').onclick=()=>{me.country=$('#set-country').value;me.lang=$('#set-lang').value;guestLanguage=me.lang;LS.set('ciclo_language',me.lang);saveU();shell();toast('Preferencias guardadas')};
  const upd=()=>{saveU();applyTheme()};
  $('#quick-pin-form').onsubmit=async e=>{e.preventDefault();const a=$('#pin-new').value,b=$('#pin-repeat').value,status=$('#pin-status');if(a!==b){status.textContent='Los dos PIN no coinciden.';return}const btn=e.submitter;btn.disabled=true;try{await enableQuickPin(a);status.textContent='✓ Inicio rápido activado en este navegador.';$('#quick-pin-form').reset()}catch(err){status.textContent=err.message}finally{btn.disabled=false}};
