@@ -459,6 +459,13 @@ button,input,select,textarea{touch-action:manipulation}
 @keyframes verifiedIn{from{opacity:0}to{opacity:1}}@keyframes verifiedBounce{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:scale(1)}}@keyframes verifiedProgress{from{width:0}to{width:100%}}
 @media(prefers-reduced-motion:reduce){#verified-screen,#verified-screen .verified-icon,#verified-screen .verified-bar span{animation:none!important}#verified-screen .verified-bar span{width:100%}}
 </style>
+<meta name="theme-color" content="#e4457f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Women's Period">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/app-icon.svg" type="image/svg+xml">
 </head>
 <body>
 <div id="loader"><div class="lw"><div class="rings"><i></i><i></i><i></i><div class="drop"></div></div><div class="brand" style="justify-content:center">Women's Period</div><p class="muted">Preparando tu espacio…</p></div></div>
@@ -1178,6 +1185,47 @@ async function startCloud(){const hash=new URLSearchParams(location.hash.replace
 /* ===== Inicio ===== */
 applyTheme();
 startCloud().finally(()=>$('#loader').classList.add('out'));
+</script>
+<!-- Acceso rápido a la app instalada -->
+<style>
+#wp-install{position:fixed;z-index:70;left:50%;bottom:calc(14px + env(safe-area-inset-bottom));transform:translateX(-50%);width:min(470px,calc(100% - 28px));display:flex;align-items:center;gap:12px;padding:12px 13px;border:1px solid var(--line);border-radius:18px;background:var(--card);color:var(--ink);box-shadow:0 10px 35px #0003;animation:in .25s both}
+#wp-install[hidden]{display:none!important}
+#wp-install img{width:46px;height:46px;border-radius:12px;flex:none}
+#wp-install .wp-copy{flex:1;min-width:0;line-height:1.3}
+#wp-install .wp-copy strong{display:block;font-size:.89rem}
+#wp-install .wp-copy span{font-size:.75rem;color:var(--mute)}
+#wp-install button.wp-action{flex:none;background:var(--accent);color:#fff;border-radius:12px;padding:9px 11px;font-size:.78rem;font-weight:700}
+#wp-install button.wp-close{flex:none;color:var(--mute);font-size:23px;line-height:1;padding:2px}
+@media(min-width:761px){#wp-install{bottom:24px}}
+</style>
+<div id="wp-install" hidden role="region" aria-label="Instalar Women's Period">
+<img src="/app-icon.svg" alt="">
+<div class="wp-copy"><strong>Women's Period en tu inicio</strong><span id="wp-install-info">Entra directo como una app</span></div>
+<button type="button" class="wp-action" id="wp-install-action">Instalar</button>
+<button type="button" class="wp-close" id="wp-install-close" aria-label="Cerrar sugerencia">×</button>
+</div>
+<script>
+(function(){
+ if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(err=>console.warn('PWA:',err)));
+ const standalone=window.matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+ if(standalone)return;
+ const dismissed=localStorage.getItem('wp-install-dismissed')==='1';
+ const box=document.getElementById('wp-install'),action=document.getElementById('wp-install-action'),info=document.getElementById('wp-install-info');
+ const ios=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+ let deferred=null;
+ function show(){if(!dismissed)box.hidden=false}
+ function close(){box.hidden=true;localStorage.setItem('wp-install-dismissed','1')}
+ document.getElementById('wp-install-close').addEventListener('click',close);
+ window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferred=e;action.textContent='Instalar';info.textContent='Accede desde tu pantalla de inicio';show()});
+ window.addEventListener('appinstalled',()=>{box.hidden=true;deferred=null});
+ action.addEventListener('click',async()=>{
+  if(deferred){const prompt=deferred;deferred=null;box.hidden=true;await prompt.prompt();return}
+  if(ios){info.textContent='En Safari: Compartir → Añadir a pantalla de inicio';action.textContent='Entendido';action.onclick=()=>close();return}
+  info.textContent='Abre el menú ⋮ del navegador y elige «Instalar app» o «Añadir a pantalla de inicio»';action.textContent='Entendido';action.onclick=()=>close();
+ });
+ if(ios){info.textContent='En Safari, añádela a tu pantalla de inicio';action.textContent='Cómo hacerlo';show()}
+ window.setTimeout(()=>{if(!deferred&&!ios){info.textContent='Desde el menú ⋮ puedes añadirla al inicio';action.textContent='Cómo hacerlo';show()}},5000);
+})();
 </script>
 </body>
 </html>
