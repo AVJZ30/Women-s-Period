@@ -623,8 +623,8 @@ const BLOOD_CONFIG = Object.freeze({
 
 /* ===== Utilidades ===== */
 const $=s=>document.querySelector(s);
-/* El único dato persistente del navegador es el verificador de PIN. Borrar restos anteriores de esta aplicación. */
-try{for(let i=localStorage.length-1;i>=0;i--){const k=localStorage.key(i);if(k&&k!=='ciclo_quick_profiles'&&(k.startsWith('ciclo_')||k.startsWith('womens_period_')||k==='sb-ijpvdezhakwflydbjchb-auth-token'))localStorage.removeItem(k)}}catch{}
+/* Mantener el token de autenticación de Supabase entre recargas y nuevas visitas.
+   No limpiar localStorage globalmente: contiene la sesión y la foto pendiente del registro. */
 const LS={get:(k,d)=>{if(k==='ciclo_quick_profiles'){try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}}return d},set:(k,v)=>{if(k==='ciclo_quick_profiles')try{localStorage.setItem(k,JSON.stringify(v))}catch{}}};
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const pad=n=>String(n).padStart(2,'0');
