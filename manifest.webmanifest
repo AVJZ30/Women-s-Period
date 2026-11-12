@@ -1,0 +1,19 @@
+{
+  "id": "/",
+  "name": "Women's Period · Calendario y bienestar",
+  "short_name": "Women's Period",
+  "description": "Tu calendario menstrual, diario y espacio de bienestar.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#faf7f8",
+  "theme_color": "#e4457f",
+  "icons": [
+    {
+      "src": "/app-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
