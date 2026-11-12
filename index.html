@@ -604,7 +604,7 @@ function restoreSignupAvatar(email){try{const v=JSON.parse(localStorage.getItem(
 function clearSignupAvatar(){try{localStorage.removeItem(REG_AVATAR_KEY)}catch{}}
 const LOCAL_BUS = 'ciclo_local_demo_events';
 const communityBus = typeof BroadcastChannel!=='undefined' ? new BroadcastChannel(LOCAL_BUS) : null;
-let forumUpdatePending=false,forumLastSignature='',forumCloudTimer=null,forumCloudInFlight=null;
+let forumUpdatePending=false,forumLastSignature='',forumStructureSignature='',forumCloudTimer=null,forumCloudInFlight=null;
 function syncCommunity(){
  if(me)return refreshFromCloud();
  posts=LS.get('ciclo_posts',[]);users=LS.get('ciclo_users',[]);
@@ -869,9 +869,18 @@ const localDay=()=>iso(new Date());
 function diaryData(){if(!me.diary||typeof me.diary!=='object')me.diary={};return me.diary}
 function recordFor(day){return diaryData()[day]||{}}
 function optionsHTML(arr,val){return arr.map(v=>`<option value="${esc(v)}" ${v===val?'selected':''}>${esc(v)}</option>`).join('')}
+function diarySummary(){
+ const d=recordFor(sel);if(!d.updatedAt)return;
+ const rows=[['😊 Estado de ánimo',d.mood],['🩸 Flujo',d.flow],['⚖️ Peso',d.weight!=null?d.weight+' kg':''],['🌡️ Temperatura',d.temp!=null?d.temp+' °C':''],['🌷 Moco cervical',d.mucus],['💗 Actividad sexual',d.intimacy]].filter(x=>x[1]&&x[1]!=='No registrado').map(([k,v])=>'<div class="diary-summary-item"><small>'+esc(k)+'</small><strong>'+esc(v)+'</strong></div>').join('');
+ const symptoms=(d.symptoms||[]).length?'<div class="diary-summary-notes"><strong>✨ Síntomas y sensaciones</strong><div class="diary-tags">'+d.symptoms.map(t=>'<span>'+esc(t)+'</span>').join('')+'</div></div>':'';
+ const notes=d.notes?'<div class="diary-summary-notes"><strong>📝 Mis notas</strong><p>'+esc(d.notes)+'</p></div>':'';
+ const card=$('#diary-form')?.closest('.card');if(!card)return;
+ card.innerHTML='<div class="diary-summary-head"><div><small>Mi registro guardado</small><h3>'+fmt(sel,{weekday:'long',day:'numeric',month:'long',year:'numeric'})+'</h3></div><span>✓ Guardado</span></div><div class="diary-summary-grid">'+(rows||'<p class="muted">Sin valores adicionales</p>')+'</div>'+symptoms+notes+'<div class="row" style="margin-top:18px"><button type="button" class="btn sm" id="diary-edit">✏️ Editar registro</button><button type="button" class="btn ghost sm" id="diary-back-today">Registrar otro día</button></div>';
+ $('#diary-edit').onclick=()=>vDiary();$('#diary-back-today').onclick=()=>{sel=today();vDiary()}
+}
 function vDiary(){
  const data=recordFor(sel),active=Array.isArray(data.symptoms)?data.symptoms:[],n=Object.keys(diaryData()).length;
- main(`<div class="top"><div><h2>Mi diario</h2><p class="muted">Registra cómo te sientes cada día. Todo permanece local en tu dispositivo.</p></div></div>
+ main(`<div class="top"><div><h2>Mi diario</h2><p class="muted">Registra cómo te sientes cada día. Tus registros se guardan de forma privada en tu cuenta.</p></div></div>
  <div class="card"><div class="top"><h3>Registro del ${fmt(sel,{day:'numeric',month:'long',year:'numeric'})}</h3><input style="max-width:210px" id="diary-day" aria-label="Fecha del registro" type="date" value="${sel}"></div>
  <form id="diary-form"><div class="diary-fields"><div><label>Estado de ánimo</label><select name="mood">${optionsHTML(['No registrado',...MOODS],data.mood||'No registrado')}</select></div><div><label>Intensidad del flujo</label><select name="flow">${optionsHTML(['No registrado','Sin sangrado','Manchado','Ligero','Moderado','Abundante'],data.flow||'No registrado')}</select></div>
  <div><label>Peso (kg, opcional)</label><input name="weight" inputmode="decimal" type="number" step="0.1" min="20" max="400" placeholder="Ej. 60.5" value="${esc(data.weight??'')}"></div>
@@ -882,9 +891,9 @@ function vDiary(){
  <label>Notas privadas</label><textarea name="notes" maxlength="1800" placeholder="¿Qué notaste hoy?">${esc(data.notes||'')}</textarea><div class="row"><button class="btn" type="submit">Guardar registro</button><button class="btn ghost" type="button" id="diary-clear">Eliminar este día</button></div></form></div>
  <div class="card" style="margin-top:1rem"><h3>Mi historial</h3><p class="muted">${n} días registrados · selecciona una fecha para editarla.</p><div class="diary-history">${Object.keys(diaryData()).sort().reverse().slice(0,50).map(day=>`<button type="button" class="chip" data-day="${day}">${fmt(day)} · ${esc(recordFor(day).mood||'Diario')}</button>`).join('')||'<p class="muted">Aún no hay registros.</p>'}</div></div>`);
  $('#diary-day').onchange=e=>{if(e.target.value){sel=e.target.value;vDiary()}};
- $('#diary-form').onsubmit=e=>{e.preventDefault();const f=new FormData(e.currentTarget),get=k=>String(f.get(k)||'');diaryData()[sel]={mood:get('mood'),flow:get('flow'),weight:get('weight')?Number(get('weight')):null,temp:get('temp')?Number(get('temp')):null,mucus:get('mucus'),intimacy:get('intimacy'),symptoms:f.getAll('symptom'),notes:get('notes').trim(),updatedAt:new Date().toISOString()};saveU();toast('Registro guardado 💗');vDiary()};
+ $('#diary-form').onsubmit=e=>{e.preventDefault();const f=new FormData(e.currentTarget),get=k=>String(f.get(k)||'');diaryData()[sel]={mood:get('mood'),flow:get('flow'),weight:get('weight')?Number(get('weight')):null,temp:get('temp')?Number(get('temp')):null,mucus:get('mucus'),intimacy:get('intimacy'),symptoms:f.getAll('symptom'),notes:get('notes').trim(),updatedAt:new Date().toISOString()};saveU();toast('Registro guardado 💗');vDiary();diarySummary()};
  $('#diary-clear').onclick=()=>{if(confirm('¿Eliminar el registro de esta fecha?')){delete diaryData()[sel];saveU();vDiary()}};
- $('#main').querySelectorAll('[data-day]').forEach(b=>b.onclick=()=>{sel=b.dataset.day;vDiary()})
+ $('#main').querySelectorAll('[data-day]').forEach(b=>b.onclick=()=>{sel=b.dataset.day;vDiary();diarySummary()})
 }
 function dailyStats(){const M=model(),entries=Object.entries(diaryData()).sort(([a],[b])=>b.localeCompare(a)),counts={};for(const [,r]of entries)for(const symptom of (r.symptoms||[]))counts[symptom]=(counts[symptom]||0)+1;return{M,entries,counts}}
 const REMINDER_DEFAULT={water:false,waterHours:3,pill:false,pillTime:'20:00',period:true,lastWater:'',lastPill:''};
@@ -959,7 +968,7 @@ function vCal(){
  <div class="calwrap"><div class="card"><div class="calhead"><button class="iconbtn" data-n="-1" aria-label="Mes anterior">‹</button><h3>${cur.toLocaleDateString('es',{month:'long',year:'numeric'})}</h3><button class="iconbtn" data-n="1" aria-label="Mes siguiente">›</button></div>
  <div class="grid">${['L','M','X','J','V','S','D'].map(x=>`<div class="dow">${x}</div>`).join('')}${cells}</div>
  <div class="legend"><span><i class="drop-legend"></i>Periodo</span><span><i style="background:var(--soft);box-shadow:inset 0 0 0 2px var(--accent)"></i>Estimado</span><span><i style="background:var(--soft2)"></i>Fértil</span><span><i style="background:var(--soft2);box-shadow:inset 0 0 0 2px var(--accent)"></i>Ovulación ✦</span><span><i style="background:var(--gray)"></i>Baja fertilidad</span></div></div>
- <div class="card sidecard">${side}<p class="cycle-help"><strong>Guía rápida:</strong> 🩸 Gota rosa: menstruación registrada. Gota clara: periodo previsto. ● Días fértiles aproximados. ✦ Ovulación estimada. Gris: menor probabilidad estimada. Las predicciones son orientativas.</p><p class="note">Tu próximo periodo se calcula cada mes, el mismo día del mes que el último inicio que registraste. La ovulación se estima ~14 días antes. Son estimaciones orientativas: no sirven como método anticonceptivo ni reemplazan una consulta ginecológica.</p></div></div>`);
+ <div class="card sidecard">${side}<div class="cycle-guide"><div class="cycle-guide-title">🌷 Entiende tu ciclo <small>Guía rápida</small></div><div class="cycle-guide-list"><div><span class="cycle-guide-symbol blood">♥</span><span><b>Periodo</b><small>Menstruación registrada</small></span></div><div><span class="cycle-guide-symbol estimate">♡</span><span><b>Periodo estimado</b><small>Fecha aproximada</small></span></div><div><span class="cycle-guide-symbol fertile">●</span><span><b>Días fértiles</b><small>Ventana aproximada</small></span></div><div><span class="cycle-guide-symbol ovulation">✦</span><span><b>Ovulación</b><small>Día estimado</small></span></div></div><small class="cycle-guide-note">💡 Las predicciones no sirven como anticonceptivo.</small></div><p class="note">Tu próximo periodo se calcula cada mes, el mismo día del mes que el último inicio que registraste. La ovulación se estima ~14 días antes. Son estimaciones orientativas: no sirven como método anticonceptivo ni reemplazan una consulta ginecológica.</p></div></div>`);
  $('#main').querySelectorAll('[data-n]').forEach(b=>b.onclick=()=>{const delta=+b.dataset.n;cur=new Date(y,m+delta,1);vCal();void 0});
  $('#main').querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{skipCalAnim=true;sel=b.dataset.d;vCal()});
  $('#main').querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{
@@ -979,10 +988,20 @@ function refreshForumPosts(){
  const active=document.activeElement;
  if(active?.closest?.('#forum-feed')&&(active.matches('input,textarea'))){forumUpdatePending=true;return;}
  const list=posts.filter(p=>cat==='Todos'||p.cat===cat).sort((a,b)=>b.ts-a.ts);
- const sig=cat+'|'+openedPost+'|'+list.map(p=>p.id+':'+p.likes?.length+':'+p.r.length+':'+p.r.map(r=>r.likes?.length).join(',')).join('|');
+ const structure=cat+'|'+openedPost+'|'+list.map(p=>p.id+':'+p.r.length).join('|');
+ const sig=structure+'|'+list.map(p=>p.likes?.length+':'+p.r.map(r=>r.likes?.length).join(',')).join('|');
  if(sig===forumLastSignature)return;
  const feed=$('#forum-feed'),scroll=window.scrollY;
- feed.innerHTML=forumCards(list);forumLastSignature=sig;
+ if(structure===forumStructureSignature){
+  feed.querySelectorAll('[data-like]').forEach(b=>{
+   const p=posts.find(x=>x.id===(b.dataset.post||b.dataset.id)),target=b.dataset.like==='post'?p:p?.r[Number(b.dataset.id)];
+   if(!target)return;
+   const liked=(target.likes||[]).includes(me.id),count=b.querySelector('span');
+   if(count&&count.textContent!==String(target.likes?.length||0))count.textContent=String(target.likes?.length||0);
+   b.setAttribute('aria-pressed',String(liked));b.setAttribute('aria-label',liked?'Quitar corazón':'Dar corazón')
+  });forumLastSignature=sig;return;
+ }
+ feed.innerHTML=forumCards(list);forumLastSignature=sig;forumStructureSignature=structure;
  if(Math.abs(window.scrollY-scroll)>20)window.scrollTo({top:scroll,behavior:'instant'});
  bindForumCards();forumUpdatePending=false;
 }
@@ -1021,10 +1040,8 @@ function bindForumCards(){
   saveLikeCloud(p,b.dataset.like,b.dataset.like==='reply'?Number(b.dataset.id):null,i<0).catch(err=>toast(err.message));
   const liked=i<0;b.setAttribute('aria-pressed',String(liked));b.setAttribute('aria-label',liked?'Quitar corazón':'Dar corazón');
   b.querySelector('span').textContent=target.likes.length;
-  b.classList.remove('heart-pop');void b.offsetWidth;b.classList.add('heart-pop');
-  if(liked) heartBurst(b);
-  saveP();
-  if(openedPost)refreshForumPosts();
+  if(matchMedia('(hover:hover) and (pointer:fine)').matches){b.classList.remove('heart-pop');void b.offsetWidth;b.classList.add('heart-pop');if(liked)heartBurst(b)}
+  forumLastSignature='';refreshForumPosts();
  });
  $('#forum-feed')?.querySelectorAll('[data-del]').forEach(b=>b.onclick=async()=>{const {error}=await sb.from('wp_posts').delete().eq('id',b.dataset.del);if(error)return toast(error.message);await refreshFromCloud()});
  $('#forum-feed')?.querySelectorAll('.rform').forEach(f=>f.onsubmit=async e=>{e.preventDefault();const t=f.querySelector('input').value.trim();if(!t)return;const {error}=await sb.from('wp_replies').insert({post_id:f.dataset.p,user_id:me.id,body:t});if(error)return toast(error.message);document.activeElement.blur();await refreshFromCloud()});
@@ -1039,7 +1056,7 @@ function setComposer(open){
  else{if(lastComposerFocus?.isConnected)lastComposerFocus.focus({preventScroll:true});else btn.focus({preventScroll:true})}
 }
 function vForum(){
- forumLastSignature='';composerOpen=false;openedPost=null;document.body.classList.remove('detail-open');
+ forumLastSignature='';forumStructureSignature='';composerOpen=false;openedPost=null;document.body.classList.remove('detail-open');
  const list=posts.filter(p=>cat==='Todos'||p.cat===cat).sort((a,b)=>b.ts-a.ts);
  main(`<div class="top"><div><h2>Comunidad</h2><p class="muted">Comparte consejos, responde y agradece los tips que te ayudan con un corazón. Actualizaciones entre dispositivos.</p></div></div>
  <div class="chips">${['Todos',...CATS].map(c=>`<button class="chip ${c===cat?'on':''}" data-c="${c}">${c}</button>`).join('')}</div>
@@ -1286,6 +1303,7 @@ function heartBurst(btn){
 
 /* Supabase blood — autenticación, historial protegido y comunidad compartida. */
 let geminiRuntimeKey='';
+try{const k='sb-ijpvdezhakwflydbjchb-auth-token';if(!localStorage.getItem(k)&&sessionStorage.getItem(k))localStorage.setItem(k,sessionStorage.getItem(k))}catch{}
 const sb=window.supabase.createClient(BLOOD_CONFIG.url,BLOOD_CONFIG.publishableKey,{auth:{persistSession:true,storage:window.localStorage,autoRefreshToken:true,detectSessionInUrl:true}});
 let cloudChannel=null,privateTimer=null,profileTimer=null,cloudLoading=false;
 const privateFields=['periods','plen','cycle','theme','diary','goal','dueDate'];
@@ -1300,7 +1318,7 @@ async function bootCloud(user){if(!user)return showAuth();cloudLoading=true;try{
  const {data:priv,error:pe}=await sb.from('wp_private').select('data').eq('user_id',user.id).maybeSingle();if(pe)throw pe;const d=priv?.data||{};
  const u={id:user.id,username:profile.username,name:d.name||user.user_metadata?.display_name||profile.display_name||profile.username,country:profile.country,lang:profile.language,pub:profile.name_public,avatar:profile.avatar_url||'',created:profile.created_at.slice(0,10),periods:d.periods||[],plen:d.plen||5,cycle:d.cycle||28,theme:d.theme||{mode:'light'},diary:d.diary||{},goal:d.goal||'cycle',dueDate:d.dueDate||''};
  u.reminders=d.reminders||{...REMINDER_DEFAULT};users=[u];me=u;chat=Array.isArray(d.chat)?d.chat:[];login(u);await refreshFromCloud();startRealtime();{const avatar=pendAv||restoreSignupAvatar(user.email);if(avatar){pendAv='';const uploaded=await uploadAvatar(avatar);if(uploaded)clearSignupAvatar()}}
- }catch(e){console.error(e);toast('Error de conexión: '+e.message);await sb.auth.signOut();showAuth()}finally{cloudLoading=false}}
+ }catch(e){console.error(e);toast('Error de conexión: reintenta al volver a abrir. Tu sesión sigue guardada.');showAuth('in')}finally{cloudLoading=false}}
 async function refreshFromCloudNow(){if(!me)return;const [pr,rr,lr,ur]=await Promise.all([sb.from('wp_posts').select('*').order('created_at',{ascending:false}).limit(200),sb.from('wp_replies').select('*').order('created_at',{ascending:true}).limit(500),sb.from('wp_likes').select('*').limit(2000),sb.from('wp_profiles').select('id,username,display_name,country,language,name_public,avatar_url,created_at').limit(500)]);
  for(const result of [pr,rr,lr,ur])if(result.error){console.error(result.error);return}
  users=ur.data.map(p=>p.id===me.id?me:({id:p.id,username:p.username,name:p.display_name,country:p.country,lang:p.language,pub:p.name_public,avatar:p.avatar_url,created:p.created_at.slice(0,10)}));
@@ -1314,7 +1332,17 @@ function stopRealtime(){if(cloudChannel){sb.removeChannel(cloudChannel);cloudCha
 function startRealtime(){stopRealtime();cloudChannel=sb.channel('wp-forum').on('postgres_changes',{event:'*',schema:'public',table:'wp_posts'},()=>scheduleCommunityRefresh()).on('postgres_changes',{event:'*',schema:'public',table:'wp_replies'},()=>scheduleCommunityRefresh()).on('postgres_changes',{event:'*',schema:'public',table:'wp_likes'},()=>scheduleCommunityRefresh()).subscribe()}
 function isSignupReturn(){const hash=new URLSearchParams(location.hash.replace(/^#/,'')),query=new URLSearchParams(location.search);return hash.get('type')==='signup'||hash.get('type')==='email'||(query.get('type')==='signup'&&!!query.get('code'))||((hash.has('access_token')||query.has('code'))&&!sessionStorage.getItem('wp_auth_welcome_shown'))}
 function showVerifiedWelcome(){sessionStorage.setItem('wp_auth_welcome_shown','1');const el=document.createElement('div');el.id='verified-screen';el.setAttribute('role','status');el.innerHTML='<div class="verified-card"><div class="verified-icon">✓</div><h2>¡Correo verificado!</h2><p>Tu cuenta de Women\'s Period está lista. Te llevaremos a tu espacio en unos segundos.</p><div class="verified-bar"><span></span></div></div>';document.body.appendChild(el);setTimeout(()=>{el.classList.add('leaving');setTimeout(()=>el.remove(),460)},3000)}
-async function startCloud(){const hash=new URLSearchParams(location.hash.replace(/^#/,''));const cameFromRecovery=hash.get('type')==='recovery';const cameFromEmail=isSignupReturn();try{const {data:{user},error}=await sb.auth.getUser();if(error)throw error;if(user){if(cameFromRecovery){showNewPassword();return}await bootCloud(user);if(cameFromEmail&&me?.id===user.id)showVerifiedWelcome()}else showAuth()}catch(e){console.error(e);showAuth();toast('No fue posible completar el acceso. Intenta iniciar sesión.')}}
+async function startCloud(){
+ const hash=new URLSearchParams(location.hash.replace(/^#/,'')),query=new URLSearchParams(location.search);
+ const recovery=hash.get('type')==='recovery'||query.get('type')==='recovery',confirmed=isSignupReturn();
+ try{
+  const {data:{session},error}=await sb.auth.getSession();if(error)throw error;
+  if(!session?.user){showAuth('in');return}
+  if(recovery){showNewPassword();return}
+  await bootCloud(session.user);
+  if(confirmed&&me?.id===session.user.id)showVerifiedWelcome()
+ }catch(e){console.error('Restauración de sesión:',e);showAuth('in');toast('No se pudo restaurar la sesión. Revisa tu conexión.')}
+}
 
 /* ===== Inicio ===== */
 applyTheme();
