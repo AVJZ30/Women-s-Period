@@ -238,6 +238,32 @@ nav button.on svg{animation:navPop .42s cubic-bezier(.2,.8,.2,1)}
 @media(max-width:760px){.fab-drop{bottom:calc(79px + env(safe-area-inset-bottom));right:17px;width:60px;height:68px}.composer-wrap{align-items:flex-end;padding:0 0 calc(63px + env(safe-area-inset-bottom))}.composer-panel{border-radius:24px 24px 0 0;max-height:calc(94dvh - 65px - env(safe-area-inset-bottom));width:100%;transform:translateY(90px) scale(.96);clip-path:circle(0% at 95% 98%)}}
 @media(prefers-reduced-motion:reduce){.composer-panel,.composer-backdrop,.fab-drop,.fab-drop svg,.fab-drop::before,#top-loading-bar{transition:none!important;animation:none!important}.composer-panel{clip-path:none!important}}
 
+
+/* Women's Period · fluidez y accesibilidad en teléfonos modestos */
+html,body,button,a,input,select,textarea,label,[role="button"]{-webkit-tap-highlight-color:transparent}
+button:focus:not(:focus-visible),a:focus:not(:focus-visible),input:focus:not(:focus-visible){outline:none;box-shadow:none}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.d.period{animation:none!important;overflow:visible;isolation:isolate}
+.d.period::before{clip-path:polygon(50% 0%,67% 21%,81% 40%,91% 59%,93% 72%,87% 88%,74% 97%,50% 100%,26% 97%,13% 88%,7% 72%,9% 59%,19% 40%,33% 21%)!important;border-radius:48% 48% 52% 52%;width:min(86%,43px)!important;height:min(88%,43px)!important;left:50%;top:50%;transform:translate(-50%,-50%)!important;filter:none!important}
+.d.period .daynum{padding-top:3px!important;line-height:1.2}
+.d.period .mk{margin-top:0!important}
+#main:has(.calwrap)>section,#main:has(.calwrap) .stat,#main:has(.calwrap) .sidecard,#main:has(.calwrap) .d,#main:has(.calwrap) .grid{animation:none!important;transition:none!important;filter:none!important}
+#main:has(.calwrap) .d[data-anim]{animation:none!important}
+#main:has(.calwrap) .calwrap{overflow:visible}
+.cycle-help{font-size:.83rem;line-height:1.5;color:var(--mute);margin-top:.7rem;padding:12px;border-radius:12px;background:var(--soft)}
+.cycle-help strong{color:var(--ink)}
+@media(max-width:760px),(hover:none),(pointer:coarse){
+  main>section,.post,.reply,.forum-teaser,.forum-detail,.forum-layout,.trending-strip,.recent-list,.stat,.sidecard{animation:none!important;filter:none!important}
+  .composer-panel{clip-path:none!important;transform:translateY(25px) scale(1)!important;transition:opacity .16s ease,transform .16s ease!important}
+  .composer-wrap.is-open .composer-panel{transform:translateY(0) scale(1)!important}
+  .composer-backdrop,.forum-detail-backdrop{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+  .composer-backdrop{transition:opacity .16s ease!important}
+  .forum-detail{transition:none!important;animation:none!important}
+  .card,.stat,.post,.forum-teaser,.btn,.chip{transition:background-color .12s ease,color .12s ease,border-color .12s ease!important}
+  .ripple,.heart-particle,.confetti-piece{display:none!important}
+  #main .reveal-on-scroll{opacity:1!important;transform:none!important}
+}
+
 /* ===== Ciclo Motion · animaciones añadidas ===== */
 
 /* 1 · Ripple en botones .btn */
@@ -572,19 +598,23 @@ let users=LS.get('ciclo_users',[]),posts=LS.get('ciclo_posts',[]),me=null,view='
 let skipCalAnim=false,counterAnimDone=false;
 const today=()=>iso(new Date());
 let pendAv='';
+const REG_AVATAR_KEY='wp_pending_signup_avatar';
+function rememberSignupAvatar(email){if(!pendAv)return;try{localStorage.setItem(REG_AVATAR_KEY,JSON.stringify({email:email.toLowerCase(),avatar:pendAv,expires:Date.now()+86400000}))}catch{}}
+function restoreSignupAvatar(email){try{const v=JSON.parse(localStorage.getItem(REG_AVATAR_KEY)||'null');if(v?.expires>Date.now()&&v.email===email?.toLowerCase()&&/^data:image\/(avif|webp|jpeg);base64,/i.test(v.avatar))return v.avatar;if(v?.expires<=Date.now())localStorage.removeItem(REG_AVATAR_KEY)}catch{}return ''}
+function clearSignupAvatar(){try{localStorage.removeItem(REG_AVATAR_KEY)}catch{}}
 const LOCAL_BUS = 'ciclo_local_demo_events';
 const communityBus = typeof BroadcastChannel!=='undefined' ? new BroadcastChannel(LOCAL_BUS) : null;
-let forumUpdatePending=false;
+let forumUpdatePending=false,forumLastSignature='',forumCloudTimer=null,forumCloudInFlight=null;
 function syncCommunity(){
  if(me)return refreshFromCloud();
  posts=LS.get('ciclo_posts',[]);users=LS.get('ciclo_users',[]);
  if(me){const fresh=users.find(u=>u.id===me.id);if(fresh)me=fresh;}
  if(me&&view==='forum') refreshForumPosts();
 }
-if(communityBus)communityBus.onmessage=e=>{if(e.data?.kind==='community')refreshFromCloud()};
+if(communityBus)communityBus.onmessage=e=>{if(e.data?.kind==='community')scheduleCommunityRefresh()};
 window.addEventListener('storage',e=>{if(e.key==='ciclo_posts'||e.key==='ciclo_users')syncCommunity()});
-window.addEventListener('focus',()=>{if(me)refreshFromCloud()});
-document.addEventListener('visibilitychange',()=>{if(!document.hidden&&me)refreshFromCloud()});
+window.addEventListener('focus',()=>{if(me&&view==='forum')scheduleCommunityRefresh()});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&me&&view==='forum')scheduleCommunityRefresh()});
 function broadcastCommunity(){communityBus?.postMessage({kind:'community'});}
 function persistChat(){if(me)queuePrivateSave()}
 
@@ -747,6 +777,23 @@ function showMailAccess(mode='otp'){
  if(res.error)throw res.error;mailNotice(email,mode==='recovery'?'recovery':'login');
  }catch(ex){err.textContent=ex.message||'No se pudo enviar el código.'}finally{btn.disabled=false}};
 }
+
+/* País detectado para registro: preferencias locales y, si existe conexión, IP aproximada.
+   No se solicita GPS ni se envía ubicación precisa. Siempre editable. */
+function deviceCountry(){
+ const locales=[...(navigator.languages||[]),navigator.language||''];
+ for(const item of locales){try{const code=new Intl.Locale(item).region?.toUpperCase();if(code&&COUNTRIES.some(c=>c[0]===code))return code}catch{}}
+ const tz=Intl.DateTimeFormat().resolvedOptions().timeZone||'';
+ const hints={'America/Guayaquil':'EC','America/Bogota':'CO','America/Lima':'PE','America/Mexico_City':'MX','America/Argentina/Buenos_Aires':'AR','America/Santiago':'CL','America/Sao_Paulo':'BR','America/New_York':'US','Europe/Madrid':'ES','Europe/London':'GB','Europe/Paris':'FR','Europe/Lisbon':'PT','America/Caracas':'VE','America/La_Paz':'BO','America/Asuncion':'PY','America/Montevideo':'UY','America/Panama':'PA','America/Costa_Rica':'CR'};
+ return hints[tz]||'';
+}
+async function detectSignupCountry(){
+ const field=document.querySelector('#auth #country');if(!field||field.dataset.touched==='1')return;
+ const local=deviceCountry();if(local){field.value=local;field.dataset.detected='local'}
+ const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),3500);
+ try{const response=await fetch('https://ipwho.is/',{signal:controller.signal,cache:'no-store'});if(!response.ok)return;const info=await response.json();const country=String(info?.country_code||'').toUpperCase();if(info?.success&&COUNTRIES.some(c=>c[0]===country)&&field.isConnected&&field.dataset.touched!=='1'){field.value=country;field.dataset.detected='ip'}}catch{}finally{clearTimeout(timer)}
+}
+
 function showAuth(mode='in'){
  $('#app').classList.add('hide');const a=$('#auth');a.classList.remove('hide');
  a.innerHTML=`<div class="hero"><div class="blob b1"></div><div class="blob b2"></div><h1>Women's Period</h1><p>Calendario, comunidad y una asistente de salud menstrual. Tu calendario se guarda de forma privada en la nube y las conversaciones con el asistente se guardan en tu cuenta privada.</p></div>
@@ -761,9 +808,10 @@ function showAuth(mode='in'){
  <div class="err" id="er"></div><button class="btn" style="width:100%;margin-top:.5rem">${mode==='in'?'Entrar':'Crear mi cuenta'}</button>
  ${mode==='up'?'<label class="chk"><input type="checkbox" id="tc" required><span>Acepto los <a href="#" class="lk" data-legal="terms">Términos y condiciones</a> y la <a href="#" class="lk" data-legal="privacy">Política de privacidad</a>.</span></label><p class="note">Tu correo no será público. Tu nombre es privado por defecto; solo tu usuario es visible en la comunidad.</p>':'<p class="note">Inicia sesión con tu correo y contraseña. Si acabas de registrarte, confirma tu correo primero.</p>'}</form>
  ${mode==='in'?'<div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:14px 0"><button id="login-code" class="btn ghost sm" type="button">Entrar con código</button><button id="forgot-pass" class="btn ghost sm" type="button">Olvidé mi contraseña</button></div>':''}
- <p class="note" style="text-align:center"><a href="#" class="lk" data-legal="terms">Términos</a> · <a href="#" class="lk" data-legal="privacy">Privacidad</a></p>${mode==='in'?quickHTML():''}</div></div>`;
+ <p class="note" style="text-align:center"><a href="#" class="lk" data-legal="terms">Términos</a> · <a href="#" class="lk" data-legal="privacy">Privacidad</a></p>${mode==='up'?'<p class="note" style="text-align:center;font-size:11px;letter-spacing:.03em;margin-top:20px">by <strong>AVJ COMUNITY</strong> · pensando en las mujeres 💗</p>':''}${mode==='in'?quickHTML():''}</div></div>`;
  if(mode==='in'){$('#login-code').onclick=()=>showMailAccess('otp');$('#forgot-pass').onclick=()=>showMailAccess('recovery')}
  bindQuickLogin();a.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>showAuth(b.dataset.m));$('#reglang').onchange=e=>setLanguage(e.target.value);requestAnimationFrame(translateUI);
+ if(mode==='up'){const country=$('#country');country?.addEventListener('change',()=>country.dataset.touched='1');detectSignupCountry()}
  const pv=()=>{const e=$('#pv');if(e)e.innerHTML=pendAv?`<img class="av" src="${pendAv}" alt="" style="width:64px;height:64px">`:'<label for="ph" class="av" style="width:64px;height:64px;font-size:26px;cursor:pointer" title="Elegir una foto">+</label>'};pv();
  if($('#ph'))$('#ph').onchange=async e=>{try{pendAv=await pickImg(e.target.files[0]);pv()}catch(err){toast(err.message||'Esa imagen no es válida')}finally{e.target.value=''}};
  $('#af').onsubmit=async e=>{
@@ -777,7 +825,7 @@ function showAuth(mode='in'){
    const meta={username,display_name:$('#nm').value.trim(),country:$('#country').value,language:$('#reglang').value};
    const {data,error}=await sb.auth.signUp({email,password,options:{data:meta,emailRedirectTo:'https://women-s-period.netlify.app/'}});if(error)throw error;
    if(data.session){await initCloudAccount(data.user,meta);await bootCloud(data.user);}
-   else{pendAv='';showAuth('in');mailNotice(email,'signup')}
+   else{rememberSignupAvatar(email);pendAv='';showAuth('in');mailNotice(email,'signup')}
   }else{const {data,error}=await sb.auth.signInWithPassword({email,password});if(error)throw error;await bootCloud(data.user);}
  }catch(ex){er.textContent=ex.message||'No se pudo iniciar sesión.'}
  finally{if(button.isConnected)button.disabled=false}
@@ -862,6 +910,25 @@ function vWell(){
 let reminderChecked=0;
 function checkLocalReminders(){if(!me||document.hidden||Date.now()-reminderChecked<50000)return;reminderChecked=Date.now();const r=getReminders(),d=new Date(),now=iso(d),hh=pad(d.getHours())+':'+pad(d.getMinutes());const notify=(msg)=>{toast(msg);if('Notification'in window&&Notification.permission==='granted')new Notification("Women's Period",{body:msg})};if(r.water&&(!r.lastWater||Date.now()-new Date(r.lastWater).getTime()>r.waterHours*3600000)){r.lastWater=new Date().toISOString();notify('💧 Hora de beber agua')};if(r.pill&&hh===r.pillTime&&r.lastPill!==now){r.lastPill=now;notify('💊 Recordatorio de tu píldora')};if(r.period&&r.lastPeriod!==now){const next=model().C.find(c=>c.s>=now);if(next&&diff(next.s,now)===3){r.lastPeriod=now;notify('🩸 Tu próximo periodo podría empezar en 3 días')}}reminderSave(r)}
 setInterval(checkLocalReminders,60000);
+
+function renderCalendarSmooth(html){
+ const section=$('#main > section');
+ if(!section||view!=='cal'||!section.querySelector('.calwrap')){main(html);return}
+ const scratch=document.createElement('div');scratch.innerHTML=html;
+ const currentGrid=section.querySelector('.calwrap .grid'),nextGrid=scratch.querySelector('.calwrap .grid');
+ if(currentGrid&&nextGrid){
+  const oldDays=[...currentGrid.querySelectorAll('[data-d]')],newDays=[...nextGrid.querySelectorAll('[data-d]')];
+  if(oldDays.length===newDays.length&&oldDays.every((b,i)=>b.dataset.d===newDays[i].dataset.d)){
+   for(let i=0;i<oldDays.length;i++){const a=oldDays[i],b=newDays[i];if(a.className!==b.className)a.className=b.className;if(a.innerHTML!==b.innerHTML)a.innerHTML=b.innerHTML;if(a.getAttribute('aria-label')!==b.getAttribute('aria-label'))a.setAttribute('aria-label',b.getAttribute('aria-label'))}
+  }else currentGrid.innerHTML=nextGrid.innerHTML;
+ }
+ const heading=section.querySelector('.calhead h3'),freshHeading=scratch.querySelector('.calhead h3');if(heading&&freshHeading)heading.textContent=freshHeading.textContent;
+ const side=section.querySelector('.sidecard'),freshSide=scratch.querySelector('.sidecard');if(side&&freshSide&&side.innerHTML!==freshSide.innerHTML)side.innerHTML=freshSide.innerHTML;
+ const currentStats=section.querySelectorAll('.stats'),freshStats=scratch.querySelectorAll('.stats');
+ if(currentStats.length===freshStats.length){currentStats.forEach((el,i)=>{if(el.innerHTML!==freshStats[i].innerHTML)el.innerHTML=freshStats[i].innerHTML})}
+ else{const oldTop=section.querySelector('.top');if(oldTop){section.innerHTML=html}}
+}
+
 /* ===== Calendario ===== */
 function vCal(){
  const M=model(),t=today(),ti=info(t,M),y=cur.getFullYear(),m=cur.getMonth();
@@ -869,7 +936,7 @@ function vCal(){
  const nextP=M.C.find(c=>c.s>t),dn=nextP?diff(nextP.s,t):null;
  const nO=M.C.find(c=>add(c.end,-14)>=t),ov=nO?add(nO.end,-14):null,sh={weekday:'short',day:'numeric',month:'short'},sd={day:'numeric',month:'short'};
  let cells='';for(let i=0;i<first;i++)cells+='<div class="d e"></div>';
- const staggerCal=!skipCalAnim;
+ const staggerCal=false;
  for(let d=1;d<=days;d++){const s=`${y}-${pad(m+1)}-${pad(d)}`,i=info(s,M),c=['d',i?i.t:'',i?.t==='period'&&i.c.pred?'pred':'',s===t?'today':'',s===sel?'sel':''].join(' ');
   const mk=!i?'':i.t==='period'?'<svg viewBox="0 0 24 24"><path d="M12 2C8 8 5 11 5 15a7 7 0 0014 0c0-4-3-7-7-13z"/></svg>':i.t==='ovu'?'✦':i.t==='fert'?'●':'';
   const animAttr=staggerCal?` data-anim style="animation-delay:${(d-1)*4}ms"`:'';
@@ -884,7 +951,7 @@ function vCal(){
  if(si&&!si.c.pred&&si.n>1&&si.n<=12&&!isStart)side+=`<button class="btn ghost sm" data-a="end">Mi periodo terminó este día</button>`;
  if(isStart)side+=`<button class="btn danger sm" data-a="del">Quitar este inicio</button>`;
  side+='</div>';
- main(`<div class="top"><div><h2>Hola, ${esc(me.name.split(' ')[0])}</h2><p class="muted">Marca el primer día de cada periodo y el calendario calcula el resto.</p></div></div>
+ renderCalendarSmooth(`<div class="top"><div><h2>Hola, ${esc(me.name.split(' ')[0])}</h2><p class="muted">Marca el primer día de cada periodo y el calendario calcula el resto.</p></div></div>
  <div class="stats">
  <div class="card stat"><small>Hoy</small><strong>${ti?'Día '+ti.n:'—'}</strong><small>${ti?ti.ph:'Registra tu periodo'}</small></div>
  <div class="card stat"><small>Próximo periodo</small><strong>${dn===null?'—':dn===0?'Hoy':'En '+dn+' d'}</strong><small>${nextP?fmt(nextP.s):'Sin datos'}</small></div>
@@ -893,8 +960,8 @@ function vCal(){
  <div class="calwrap"><div class="card"><div class="calhead"><button class="iconbtn" data-n="-1" aria-label="Mes anterior">‹</button><h3>${cur.toLocaleDateString('es',{month:'long',year:'numeric'})}</h3><button class="iconbtn" data-n="1" aria-label="Mes siguiente">›</button></div>
  <div class="grid">${['L','M','X','J','V','S','D'].map(x=>`<div class="dow">${x}</div>`).join('')}${cells}</div>
  <div class="legend"><span><i class="drop-legend"></i>Periodo</span><span><i style="background:var(--soft);box-shadow:inset 0 0 0 2px var(--accent)"></i>Estimado</span><span><i style="background:var(--soft2)"></i>Fértil</span><span><i style="background:var(--soft2);box-shadow:inset 0 0 0 2px var(--accent)"></i>Ovulación ✦</span><span><i style="background:var(--gray)"></i>Baja fertilidad</span></div></div>
- <div class="card sidecard">${side}<p class="note">Tu próximo periodo se calcula cada mes, el mismo día del mes que el último inicio que registraste. La ovulación se estima ~14 días antes. Son estimaciones orientativas: no sirven como método anticonceptivo ni reemplazan una consulta ginecológica.</p></div></div>`);
- $('#main').querySelectorAll('[data-n]').forEach(b=>b.onclick=()=>{const delta=+b.dataset.n;cur=new Date(y,m+delta,1);vCal();$('.calwrap')?.classList.add(delta>0?'month-slide-next':'month-slide-prev')});
+ <div class="card sidecard">${side}<p class="cycle-help"><strong>Guía rápida:</strong> 🩸 Gota rosa: menstruación registrada. Gota clara: periodo previsto. ● Días fértiles aproximados. ✦ Ovulación estimada. Gris: menor probabilidad estimada. Las predicciones son orientativas.</p><p class="note">Tu próximo periodo se calcula cada mes, el mismo día del mes que el último inicio que registraste. La ovulación se estima ~14 días antes. Son estimaciones orientativas: no sirven como método anticonceptivo ni reemplazan una consulta ginecológica.</p></div></div>`);
+ $('#main').querySelectorAll('[data-n]').forEach(b=>b.onclick=()=>{const delta=+b.dataset.n;cur=new Date(y,m+delta,1);vCal();void 0});
  $('#main').querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{skipCalAnim=true;sel=b.dataset.d;vCal()});
  $('#main').querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{
   skipCalAnim=true;
@@ -913,7 +980,11 @@ function refreshForumPosts(){
  const active=document.activeElement;
  if(active?.closest?.('#forum-feed')&&(active.matches('input,textarea'))){forumUpdatePending=true;return;}
  const list=posts.filter(p=>cat==='Todos'||p.cat===cat).sort((a,b)=>b.ts-a.ts);
- $('#forum-feed').innerHTML=forumCards(list);
+ const sig=cat+'|'+openedPost+'|'+list.map(p=>p.id+':'+p.likes?.length+':'+p.r.length+':'+p.r.map(r=>r.likes?.length).join(',')).join('|');
+ if(sig===forumLastSignature)return;
+ const feed=$('#forum-feed'),scroll=window.scrollY;
+ feed.innerHTML=forumCards(list);forumLastSignature=sig;
+ if(Math.abs(window.scrollY-scroll)>20)window.scrollTo({top:scroll,behavior:'instant'});
  bindForumCards();forumUpdatePending=false;
 }
 const heartIcon='<svg class="heart-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"/></svg>';
@@ -969,7 +1040,7 @@ function setComposer(open){
  else{if(lastComposerFocus?.isConnected)lastComposerFocus.focus({preventScroll:true});else btn.focus({preventScroll:true})}
 }
 function vForum(){
- composerOpen=false;openedPost=null;document.body.classList.remove('detail-open');
+ forumLastSignature='';composerOpen=false;openedPost=null;document.body.classList.remove('detail-open');
  const list=posts.filter(p=>cat==='Todos'||p.cat===cat).sort((a,b)=>b.ts-a.ts);
  main(`<div class="top"><div><h2>Comunidad</h2><p class="muted">Comparte consejos, responde y agradece los tips que te ayudan con un corazón. Actualizaciones entre dispositivos.</p></div></div>
  <div class="chips">${['Todos',...CATS].map(c=>`<button class="chip ${c===cat?'on':''}" data-c="${c}">${c}</button>`).join('')}</div>
@@ -998,8 +1069,8 @@ function vForum(){
   const b=$('#publish-btn');b.disabled=true;b.innerHTML='<span class="submit-spinner"></span>Publicando…';
   const rect=b.getBoundingClientRect();
   const {error}=await sb.from('wp_posts').insert({user_id:me.id,title,body,category:$('#pc').value});if(error){toast(error.message);b.disabled=false;b.textContent='Publicar';return;}await refreshFromCloud();
-  $('#pf').reset();setComposer(false);refreshForumPosts();
-  confettiAt(rect.left+rect.width/2,rect.top+rect.height/2);
+  $('#pf').reset();setComposer(false);
+  if(matchMedia('(hover:hover) and (pointer:fine)').matches)confettiAt(rect.left+rect.width/2,rect.top+rect.height/2);
   toast('¡Publicado con éxito! 💗');
  };
  $('#main').querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>{cat=b.dataset.c;vForum()});
@@ -1216,7 +1287,7 @@ function heartBurst(btn){
 
 /* Supabase blood — autenticación, historial protegido y comunidad compartida. */
 let geminiRuntimeKey='';
-const sb=window.supabase.createClient(BLOOD_CONFIG.url,BLOOD_CONFIG.publishableKey,{auth:{persistSession:true,storage:window.sessionStorage,autoRefreshToken:true,detectSessionInUrl:true}});
+const sb=window.supabase.createClient(BLOOD_CONFIG.url,BLOOD_CONFIG.publishableKey,{auth:{persistSession:true,storage:window.localStorage,autoRefreshToken:true,detectSessionInUrl:true}});
 let cloudChannel=null,privateTimer=null,profileTimer=null,cloudLoading=false;
 const privateFields=['periods','plen','cycle','theme','diary','goal','dueDate'];
 async function flushPrivateSave(){if(!me)return;clearTimeout(privateTimer);const {error}=await sb.from('wp_private').upsert({user_id:me.id,data:privatePayload(),updated_at:new Date().toISOString()});if(error)toast('No se guardaron todos tus cambios: '+error.message)}
@@ -1229,17 +1300,19 @@ async function bootCloud(user){if(!user)return showAuth();cloudLoading=true;try{
  let {data:profile,error}=await sb.from('wp_profiles').select('*').eq('id',user.id).maybeSingle();if(error)throw error;if(!profile){await initCloudAccount(user);({data:profile,error}=await sb.from('wp_profiles').select('*').eq('id',user.id).single());if(error)throw error}
  const {data:priv,error:pe}=await sb.from('wp_private').select('data').eq('user_id',user.id).maybeSingle();if(pe)throw pe;const d=priv?.data||{};
  const u={id:user.id,username:profile.username,name:d.name||user.user_metadata?.display_name||profile.display_name||profile.username,country:profile.country,lang:profile.language,pub:profile.name_public,avatar:profile.avatar_url||'',created:profile.created_at.slice(0,10),periods:d.periods||[],plen:d.plen||5,cycle:d.cycle||28,theme:d.theme||{mode:'light'},diary:d.diary||{},goal:d.goal||'cycle',dueDate:d.dueDate||''};
- u.reminders=d.reminders||{...REMINDER_DEFAULT};users=[u];me=u;chat=Array.isArray(d.chat)?d.chat:[];login(u);await refreshFromCloud();startRealtime();if(pendAv){const avatar=pendAv;pendAv='';await uploadAvatar(avatar)}
+ u.reminders=d.reminders||{...REMINDER_DEFAULT};users=[u];me=u;chat=Array.isArray(d.chat)?d.chat:[];login(u);await refreshFromCloud();startRealtime();{const avatar=pendAv||restoreSignupAvatar(user.email);if(avatar){pendAv='';await uploadAvatar(avatar);clearSignupAvatar()}}
  }catch(e){console.error(e);toast('Error de conexión: '+e.message);await sb.auth.signOut();showAuth()}finally{cloudLoading=false}}
-async function refreshFromCloud(){if(!me)return;const [pr,rr,lr,ur]=await Promise.all([sb.from('wp_posts').select('*').order('created_at',{ascending:false}).limit(200),sb.from('wp_replies').select('*').order('created_at',{ascending:true}).limit(500),sb.from('wp_likes').select('*').limit(2000),sb.from('wp_profiles').select('id,username,display_name,country,language,name_public,avatar_url,created_at').limit(500)]);
+async function refreshFromCloudNow(){if(!me)return;const [pr,rr,lr,ur]=await Promise.all([sb.from('wp_posts').select('*').order('created_at',{ascending:false}).limit(200),sb.from('wp_replies').select('*').order('created_at',{ascending:true}).limit(500),sb.from('wp_likes').select('*').limit(2000),sb.from('wp_profiles').select('id,username,display_name,country,language,name_public,avatar_url,created_at').limit(500)]);
  for(const result of [pr,rr,lr,ur])if(result.error){console.error(result.error);return}
  users=ur.data.map(p=>p.id===me.id?me:({id:p.id,username:p.username,name:p.display_name,country:p.country,lang:p.language,pub:p.name_public,avatar:p.avatar_url,created:p.created_at.slice(0,10)}));
  const replies=new Map();for(const r of rr.data){const a=replies.get(r.post_id)||[];a.push({id:r.id,uid:r.user_id,t:r.body,likes:lr.data.filter(l=>l.reply_id===r.id).map(l=>l.user_id)});replies.set(r.post_id,a)}
  posts=pr.data.map(p=>({id:p.id,uid:p.user_id,title:p.title,body:p.body,cat:p.category,ts:new Date(p.created_at).getTime(),likes:lr.data.filter(l=>l.post_id===p.id).map(l=>l.user_id),r:replies.get(p.id)||[]}));
  if(view==='forum')refreshForumPosts()}
+async function refreshFromCloud(){if(!me)return;if(forumCloudInFlight)return forumCloudInFlight;forumCloudInFlight=refreshFromCloudNow().finally(()=>{forumCloudInFlight=null});return forumCloudInFlight}
+function scheduleCommunityRefresh(){if(forumCloudTimer)return;forumCloudTimer=setTimeout(()=>{forumCloudTimer=null;refreshFromCloud().catch(console.warn)},450)}
 async function saveLikeCloud(p,kind,i,liked){const row={user_id:me.id};if(kind==='post')row.post_id=p.id;else row.reply_id=p.r[i]?.id;if(!row.post_id&&!row.reply_id)return;const q=sb.from('wp_likes');const res=liked?await q.insert(row):await q.delete().eq('user_id',me.id).eq(kind==='post'?'post_id':'reply_id',row.post_id||row.reply_id);if(res.error){await refreshFromCloud();throw res.error}}
 function stopRealtime(){if(cloudChannel){sb.removeChannel(cloudChannel);cloudChannel=null}}
-function startRealtime(){stopRealtime();cloudChannel=sb.channel('wp-forum').on('postgres_changes',{event:'*',schema:'public',table:'wp_posts'},()=>refreshFromCloud()).on('postgres_changes',{event:'*',schema:'public',table:'wp_replies'},()=>refreshFromCloud()).on('postgres_changes',{event:'*',schema:'public',table:'wp_likes'},()=>refreshFromCloud()).subscribe()}
+function startRealtime(){stopRealtime();cloudChannel=sb.channel('wp-forum').on('postgres_changes',{event:'*',schema:'public',table:'wp_posts'},()=>scheduleCommunityRefresh()).on('postgres_changes',{event:'*',schema:'public',table:'wp_replies'},()=>scheduleCommunityRefresh()).on('postgres_changes',{event:'*',schema:'public',table:'wp_likes'},()=>scheduleCommunityRefresh()).subscribe()}
 function isSignupReturn(){const hash=new URLSearchParams(location.hash.replace(/^#/,'')),query=new URLSearchParams(location.search);return hash.get('type')==='signup'||hash.get('type')==='email'||(query.get('type')==='signup'&&!!query.get('code'))||((hash.has('access_token')||query.has('code'))&&!sessionStorage.getItem('wp_auth_welcome_shown'))}
 function showVerifiedWelcome(){sessionStorage.setItem('wp_auth_welcome_shown','1');const el=document.createElement('div');el.id='verified-screen';el.setAttribute('role','status');el.innerHTML='<div class="verified-card"><div class="verified-icon">✓</div><h2>¡Correo verificado!</h2><p>Tu cuenta de Women\'s Period está lista. Te llevaremos a tu espacio en unos segundos.</p><div class="verified-bar"><span></span></div></div>';document.body.appendChild(el);setTimeout(()=>{el.classList.add('leaving');setTimeout(()=>el.remove(),460)},3000)}
 async function startCloud(){const hash=new URLSearchParams(location.hash.replace(/^#/,''));const cameFromRecovery=hash.get('type')==='recovery';const cameFromEmail=isSignupReturn();try{const {data:{user},error}=await sb.auth.getUser();if(error)throw error;if(user){if(cameFromRecovery){showNewPassword();return}await bootCloud(user);if(cameFromEmail&&me?.id===user.id)showVerifiedWelcome()}else showAuth()}catch(e){console.error(e);showAuth();toast('No fue posible completar el acceso. Intenta iniciar sesión.')}}
@@ -1247,6 +1320,12 @@ async function startCloud(){const hash=new URLSearchParams(location.hash.replace
 /* ===== Inicio ===== */
 applyTheme();
 startCloud().finally(()=>$('#loader').classList.add('out'));
+/* Handle delayed recovery of email-confirmation session after redirect. */
+sb.auth.onAuthStateChange((event,session)=>{
+ if(event==='SIGNED_IN'&&session?.user&&!me&&!cloudLoading){
+  setTimeout(()=>{if(!me&&!cloudLoading)bootCloud(session.user).then(()=>{if(isSignupReturn()&&me)showVerifiedWelcome()}).catch(console.warn)},0)
+ }
+});
 </script>
 <!-- Instalación PWA adaptada a pantallas pequeñas -->
 <style>
