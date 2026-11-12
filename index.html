@@ -709,7 +709,7 @@ function bindQuickLogin(){const f=$('#quick-login-form');if(!f)return;f.onsubmit
 /* ===== Auth ===== */
 function mailNotice(email,purpose='signup'){
  const wrap=document.createElement('div');wrap.id='mail-notice';wrap.style.cssText='position:fixed;inset:0;z-index:150;background:#1a1517a8;display:grid;place-items:center;padding:20px';
- wrap.innerHTML='<div class="card" style="max-width:440px;width:100%;padding:30px;text-align:center;box-shadow:0 24px 70px #0003"><div style="font-size:48px;margin-bottom:10px">💌</div><h2>¡Revisa tu correo!</h2><p class="muted" style="margin:14px 0">Te enviamos un mensaje a <strong id="mail-address"></strong>. Revisa también la carpeta de <strong>spam o correo no deseado</strong>.</p><div style="display:grid;gap:9px;margin-top:18px"><a class="btn" href="https://mail.google.com/mail/u/0/#inbox" target="_blank" rel="noopener noreferrer" style="text-decoration:none">Abrir Gmail ↗</a><button class="btn ghost" id="notice-code">Ingresar código de 6 dígitos</button><button class="btn ghost" id="notice-close">Cerrar</button></div></div>';
+ wrap.innerHTML='<div class="card" style="max-width:440px;width:100%;padding:30px;text-align:center;box-shadow:0 24px 70px #0003"><div style="font-size:48px;margin-bottom:10px">💌</div><h2>¡Revisa tu correo!</h2><p class="muted" style="margin:14px 0">Te enviamos un mensaje a <strong id="mail-address"></strong>. Revisa también la carpeta de <strong>spam o correo no deseado</strong>.</p><div style="display:grid;gap:9px;margin-top:18px"><p class="muted" style="font-size:12px;margin:0">El mensaje se envía desde Women\'s Period. Puedes abrir Gmail, Outlook o tu proveedor de correo habitual.</p><button class="btn ghost" id="notice-code">Ingresar código de 6 dígitos</button><button class="btn ghost" id="notice-close">Cerrar</button></div></div>';
  document.body.appendChild(wrap);wrap.querySelector('#mail-address').textContent=email;
  wrap.querySelector('#notice-close').onclick=()=>wrap.remove();
  wrap.querySelector('#notice-code').onclick=()=>{wrap.remove();showEmailCode(email,purpose)};
@@ -721,7 +721,7 @@ function showEmailCode(email,purpose='signup'){
  a.querySelector('#otp-address').textContent=email;
  a.querySelector('#otp-back').onclick=()=>showAuth('in');
  a.querySelector('#otp-resend').onclick=async()=>{const b=a.querySelector('#otp-resend'),err=a.querySelector('#otp-error');b.disabled=true;try{
- let result;if(purpose==='signup')result=await sb.auth.resend({type:'signup',email,emailRedirectTo:'https://women-s-period.netlify.app/'});
+ let result;if(purpose==='signup')result=await sb.auth.resend({type:'signup',email,options:{emailRedirectTo:'https://women-s-period.netlify.app/'}});
  else if(purpose==='recovery')result=await sb.auth.resetPasswordForEmail(email,{redirectTo:'https://women-s-period.netlify.app/'});
  else result=await sb.auth.signInWithOtp({email,options:{shouldCreateUser:false,emailRedirectTo:'https://women-s-period.netlify.app/'}});
  if(result.error)throw result.error;mailNotice(email,purpose);
@@ -1057,7 +1057,7 @@ function vSet(){
  <div class="card"><h3>Legal</h3><p class="muted">Cómo funciona el servicio y cómo cuidamos tus datos.</p><div class="row"><button class="btn ghost sm" data-legal="terms">Términos y condiciones</button><button class="btn ghost sm" data-legal="privacy">Política de privacidad</button></div></div>
  <div class="card"><h3>Tu ciclo</h3><p class="muted">Duración del periodo que se usa hasta que tengas historial.</p>
  <label for="pl">Duración del periodo (días)</label><input id="pl" type="number" min="2" max="10" value="${me.plen}"><button class="btn sm" id="sc" style="margin-top:.8rem">Guardar</button></div>
- <div class="card"><h3>Cuenta</h3><p class="muted">Administra tu información y tu cuenta.</p><div class="row"><button class="btn ghost sm" id="lo">Cerrar sesión</button><button class="btn danger sm" id="dl">Eliminar cuenta</button></div></div></div>`);
+ <div class="card"><h3>Cuenta</h3><p class="muted">Administra tu información y tu cuenta.</p><form id="change-email-form"><label for="change-email">Cambiar correo electrónico</label><input id="change-email" type="email" autocomplete="email" placeholder="nuevo@correo.com" required><p class="muted" style="font-size:12px;margin:8px 0">Por seguridad, Supabase enviará un correo para confirmar el cambio. Según la configuración, también puede pedir confirmación en el correo anterior.</p><button class="btn ghost sm" type="submit">Enviar confirmación de cambio</button><p id="change-email-status" class="note" role="status"></p></form><div class="row"><button class="btn ghost sm" id="lo">Cerrar sesión</button><button class="btn danger sm" id="dl">Eliminar cuenta</button></div></div></div>`);
  $('#save-locale').onclick=()=>{me.country=$('#set-country').value;me.lang=$('#set-lang').value;guestLanguage=me.lang;LS.set('ciclo_language',me.lang);saveU();shell();toast('Preferencias guardadas')};
  const upd=()=>{saveU();applyTheme()};
  $('#quick-pin-form').onsubmit=async e=>{e.preventDefault();const a=$('#pin-new').value,b=$('#pin-repeat').value,status=$('#pin-status');if(a!==b){status.textContent='Los dos PIN no coinciden.';return}const btn=e.submitter;btn.disabled=true;try{await enableQuickPin(a);status.textContent='✓ Inicio rápido activado en este navegador.';$('#quick-pin-form').reset()}catch(err){status.textContent=err.message}finally{btn.disabled=false}};
@@ -1074,6 +1074,7 @@ function vSet(){
  $('#main').querySelectorAll('[data-z]').forEach(b=>b.onclick=()=>{t.size=+b.dataset.z;upd();vSet()});
  $('#rt').onclick=()=>{delete t.accent;delete t.bg;delete t.font;delete t.size;upd();vSet()};
  $('#sc').onclick=()=>{me.plen=Math.min(10,Math.max(2,+$('#pl').value||5));saveU();toast('Guardado')};
+ $('#change-email-form').onsubmit=async e=>{e.preventDefault();const btn=e.submitter,status=$('#change-email-status'),email=$('#change-email').value.trim().toLowerCase();if(!email)return;btn.disabled=true;status.textContent='Solicitando confirmación…';try{const {error}=await sb.auth.updateUser({email},{emailRedirectTo:'https://women-s-period.netlify.app/'});if(error)throw error;status.textContent='Solicitud enviada. Revisa el nuevo correo y, si Supabase lo solicita, también el anterior. Abre los enlaces de confirmación para terminar el cambio.';$('#change-email-form').reset()}catch(err){status.textContent=err.message||'No se pudo solicitar el cambio de correo.'}finally{btn.disabled=false}};
  $('#lo').onclick=logout;
  $('#dl').onclick=()=>toast('Para eliminar definitivamente tu cuenta y todos sus datos, solicita la eliminación al administrador.')
 }
