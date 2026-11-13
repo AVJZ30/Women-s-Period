@@ -953,14 +953,33 @@ function vWell(){
  </div><div class="card" style="margin-top:1rem"><h3>Información importante</h3><p class="muted">El seguimiento menstrual no determina días seguros para evitar embarazo. Ante sangrado muy abundante, dolor intenso o síntomas preocupantes, busca atención médica. Las anotaciones son educativas, no diagnóstico.</p></div>`);
  $('#main').querySelectorAll('[data-goal]').forEach(b=>b.onclick=()=>{me.goal=b.dataset.goal;saveU();vWell()});
  if($('#due-save'))$('#due-save').onclick=()=>{me.dueDate=$('#due-date').value;saveU();toast('Fecha guardada')};
- $('#reminder-form').onsubmit=e=>{e.preventDefault();const f=new FormData(e.currentTarget),p=getReminders();p.period=f.has('period');p.water=f.has('water');p.pill=f.has('pill');p.waterHours=Number(f.get('waterHours'))||3;p.pillTime=String(f.get('pillTime')||'20:00');reminderSave(p);toast('Recordatorios configurados')};
- $('#notify-enable').onclick=async()=>{if(!('Notification'in window)){toast('Notificaciones no disponibles');return}try{const a=await Notification.requestPermission();toast(a==='granted'?'Notificaciones habilitadas':'Permiso no concedido')}catch{toast('No disponible en este contexto')}};
+ $('#reminder-form').onsubmit=e=>{e.preventDefault();const f=new FormData(e.currentTarget),p=getReminders();p.period=f.has('period');p.water=f.has('water');p.pill=f.has('pill');p.waterHours=Number(f.get('waterHours'))||3;p.pillTime=String(f.get('pillTime')||'20:00');reminderSave(p);reminderChecked=0;checkLocalReminders();toast('Recordatorios configurados')};
+ $('#notify-enable').onclick=async()=>{if(!('Notification'in window)){toast('Notificaciones no disponibles');return}try{const a=await Notification.requestPermission();if(a==='granted'){await showPeriodNotification('¡Notificaciones activadas! Los avisos funcionan mientras la página permanece abierta.');toast('Notificaciones habilitadas 💗')}else toast('Debes permitir las notificaciones en el navegador.')}catch{toast('No disponible en este contexto')}};
  $('#export-data').onclick=()=>{const obj={app:'Womens Period',version:1,exportedAt:new Date().toISOString(),username:me.username,country:me.country,profile:{name:me.name,lang:me.lang,theme:me.theme,cycle:me.cycle,plen:me.plen,goal:me.goal,dueDate:me.dueDate,periods:me.periods,diary:diaryData()},reminders:getReminders()};const blob=new Blob([JSON.stringify(obj,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`womens-period-${today()}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1500);toast('Respaldo descargado')};
  $('#import-file').onchange=async e=>{const file=e.target.files?.[0];if(!file)return;try{if(file.size>4e6)throw Error('Archivo demasiado grande');const obj=JSON.parse(await file.text());if(obj.app!=='Womens Period'||obj.version!==1||!obj.profile||!Array.isArray(obj.profile.periods)||!obj.profile.diary||Array.isArray(obj.profile.diary))throw Error('Archivo inválido');if(!confirm('¿Restaurar el calendario y diario de este respaldo? Se reemplazarán tus registros actuales.'))return;me.periods=obj.profile.periods.filter(x=>/^\d{4}-\d{2}-\d{2}$/.test(x.s)&&Number.isInteger(x.len)&&x.len>=1&&x.len<=14).slice(0,500);me.diary=Object.fromEntries(Object.entries(obj.profile.diary).filter(([k,v])=>/^\d{4}-\d{2}-\d{2}$/.test(k)&&v&&typeof v==='object').slice(0,2000));me.plen=Math.max(2,Math.min(10,Number(obj.profile.plen)||5));me.cycle=Math.max(21,Math.min(45,Number(obj.profile.cycle)||28));me.goal=['cycle','conceive','pregnancy'].includes(obj.profile.goal)?obj.profile.goal:'cycle';me.dueDate=obj.profile.dueDate||'';saveU();toast('Respaldo restaurado');vWell()}catch(err){toast(err.message||'Error al restaurar')}};
 }
 let reminderChecked=0;
-function checkLocalReminders(){if(!me||document.hidden||Date.now()-reminderChecked<50000)return;reminderChecked=Date.now();const r=getReminders(),d=new Date(),now=iso(d),hh=pad(d.getHours())+':'+pad(d.getMinutes());const notify=(msg)=>{toast(msg);if('Notification'in window&&Notification.permission==='granted')new Notification("Women's Period",{body:msg})};if(r.water&&(!r.lastWater||Date.now()-new Date(r.lastWater).getTime()>r.waterHours*3600000)){r.lastWater=new Date().toISOString();notify('💧 Hora de beber agua')};if(r.pill&&hh===r.pillTime&&r.lastPill!==now){r.lastPill=now;notify('💊 Recordatorio de tu píldora')};if(r.period&&r.lastPeriod!==now){const next=model().C.find(c=>c.s>=now);if(next&&diff(next.s,now)===3){r.lastPeriod=now;notify('🩸 Tu próximo periodo podría empezar en 3 días')}}reminderSave(r)}
-setInterval(checkLocalReminders,60000);
+async function showPeriodNotification(message){
+ if(!('Notification' in window)||Notification.permission!=='granted'){toast(message);return false}
+ try{
+  if('serviceWorker' in navigator){
+   const reg=await navigator.serviceWorker.ready;
+   await reg.showNotification("Women's Period 💗",{body:message,icon:'/favicon/android-chrome-192x192.png',badge:'/favicon/favicon-32x32.png',tag:'wp-'+message.slice(0,20)});
+  }else new Notification("Women's Period 💗",{body:message,icon:'/favicon/android-chrome-192x192.png'});
+  return true;
+ }catch(error){
+  console.warn('Notificación:',error);
+  try{new Notification("Women's Period 💗",{body:message});return true}catch{toast(message);return false}
+ }
+}
+function checkLocalReminders(){
+ if(!me||Date.now()-reminderChecked<45000)return;
+ reminderChecked=Date.now();
+ const r=getReminders(),d=new Date(),now=iso(d),hh=pad(d.getHours())+':'+pad(d.getMinutes());
+ const notify=(msg)=>{if(!document.hidden)toast(msg);showPeriodNotification(msg)};
+if(r.water&&(!r.lastWater||Date.now()-new Date(r.lastWater).getTime()>r.waterHours*3600000)){r.lastWater=new Date().toISOString();notify('💧 Hora de beber agua')};if(r.pill&&hh===r.pillTime&&r.lastPill!==now){r.lastPill=now;notify('💊 Recordatorio de tu píldora')};if(r.period&&r.lastPeriod!==now){const next=model().C.find(c=>c.s>=now);if(next&&diff(next.s,now)===3){r.lastPeriod=now;notify('🩸 Tu próximo periodo podría empezar en 3 días')}}reminderSave(r)}
+setInterval(checkLocalReminders,30000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkLocalReminders()});
 
 function renderCalendarSmooth(html){
  const section=$('#main > section');
