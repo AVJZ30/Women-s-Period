@@ -1,5 +1,5 @@
 /* Women's Period PWA: solo almacena el documento público; nunca las API ni los datos privados. */
-const CACHE='wp-shell-v13';
+const CACHE='wp-shell-v14';
 const SHELL=['/','/favicon/app-icon.svg','/favicon/android-chrome-192x192.png','/favicon/android-chrome-512x512.png','/favicon/apple-touch-icon.png','/manifest.webmanifest'];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(async cache=>{await Promise.allSettled(SHELL.map(url=>cache.add(url)));await self.skipWaiting()}))});
 self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('wp-shell-')&&k!==CACHE).map(k=>caches.delete(k)))));self.clients.claim()});
