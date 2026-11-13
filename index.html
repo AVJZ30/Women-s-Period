@@ -648,6 +648,11 @@ h1,h2,h3,p,.muted,.card,.post{overflow-wrap:anywhere}
 .donation-field small{margin:0;flex:1;min-width:0;overflow-wrap:anywhere}
 .donation-copy-all{margin-top:14px;max-width:100%;white-space:normal}
 .calendar-prediction-tip{margin:14px 0 8px;padding:13px 16px;border:1px solid var(--line);border-radius:14px;background:var(--soft);color:var(--ink);font-size:.85rem;line-height:1.5;text-align:center}
+
+/* Estado del nombre de usuario durante el registro */
+.username-check{font-size:.8rem;line-height:1.5;color:var(--mute);margin:7px 0 12px;overflow-wrap:anywhere}
+.username-check.available{color:#238558;font-weight:700}
+.username-check.unavailable{color:#c0183f;font-weight:700}
 </style>
 <meta name="theme-color" content="#e4457f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -908,7 +913,7 @@ function showAuth(mode='in'){
  ${mode==='up'?'<div class="avrow"><span id="pv"></span><div><label class="btn ghost sm" for="ph" style="display:inline-block;margin:0;cursor:pointer">Subir foto de perfil</label><input id="ph" type="file" accept="image/*,.heic,.heif,.tiff,.tif,.bmp,.gif,.svg,.avif,.webp,.png,.jpg,.jpeg,.ico" class="hide"><div class="note" style="margin:.3rem 0 0">Opcional · acepta varios formatos, optimiza la imagen y la sube a tu cuenta</div></div></div><label for="nm">Nombre</label><input id="nm" required maxlength="40" autocomplete="given-name">':''}
  ${mode==='up'?`<label for="country">País</label><select id="country" required>${countryOptions()}</select>`:''}
  <label for="reglang">Idioma / Language</label><select id="reglang">${langOptions()}</select>
- ${mode==='up'?'<label for="un">Nombre de usuario</label><input id="un" required maxlength="20" autocapitalize="off" autocomplete="username">':''}<label for="email">Correo electrónico</label><input id="email" required type="email" maxlength="254" autocomplete="email">
+ ${mode==='up'?'<label for="un">Nombre de usuario único</label><input id="un" required minlength="3" maxlength="20" autocapitalize="off" spellcheck="false" autocomplete="username" aria-describedby="username-status"><div id="username-status" class="username-check" role="status" aria-live="polite">Elige un usuario de 3 a 20 caracteres. No puede repetirse.</div>':''}<label for="email">Correo electrónico</label><input id="email" required type="email" maxlength="254" autocomplete="email">
  <label for="pw">Contraseña</label><input id="pw" type="password" required autocomplete="${mode==='in'?'current-password':'new-password'}">
  <div class="err" id="er"></div><button class="btn" style="width:100%;margin-top:.5rem">${mode==='in'?'Entrar':'Crear mi cuenta'}</button>
  ${mode==='up'?'<label class="chk"><input type="checkbox" id="tc" required><span>Acepto los <a href="#" class="lk" data-legal="terms">Términos y condiciones</a> y la <a href="#" class="lk" data-legal="privacy">Política de privacidad</a>.</span></label><p class="note">Tu correo no será público. Tu nombre es privado por defecto; solo tu usuario es visible en la comunidad.</p>':'<p class="note">Inicia sesión con tu correo y contraseña. Si acabas de registrarte, confirma tu correo primero.</p>'}</form>
@@ -916,7 +921,30 @@ function showAuth(mode='in'){
  <p class="note" style="text-align:center"><a href="#" class="lk" data-legal="terms">Términos</a> · <a href="#" class="lk" data-legal="privacy">Privacidad</a></p>${mode==='up'?'<p class="note" style="text-align:center;font-size:11px;letter-spacing:.03em;margin-top:20px">by <strong>AVJ COMUNITY</strong> · pensando en las mujeres 💗</p>':''}${mode==='in'?quickHTML():''}</div></div>`;
  if(mode==='in'){$('#login-code').onclick=()=>showMailAccess('otp');$('#forgot-pass').onclick=()=>showMailAccess('recovery')}
  bindQuickLogin();a.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>showAuth(b.dataset.m));$('#reglang').onchange=e=>setLanguage(e.target.value);requestAnimationFrame(translateUI);
- if(mode==='up'){const country=$('#country');country?.addEventListener('change',()=>country.dataset.touched='1');detectSignupCountry()}
+ if(mode==='up'){
+  const country=$('#country');country?.addEventListener('change',()=>country.dataset.touched='1');detectSignupCountry();
+  const usernameInput=$('#un'),status=$('#username-status');
+  let serial=0,delay=null;
+  usernameInput.addEventListener('input',()=>{
+   usernameInput.value=usernameInput.value.toLowerCase().replace(/\s/g,'');
+   const name=usernameInput.value,version=++serial;
+   clearTimeout(delay);status.className='username-check';
+   if(!/^[a-z0-9_]{3,20}$/.test(name)){status.textContent='Usa entre 3 y 20 letras, números o guion bajo.';return}
+   status.textContent='Comprobando disponibilidad…';
+   delay=setTimeout(async()=>{
+    try{
+     const {data,error}=await sb.rpc('wp_username_available',{candidate:name});
+     if(version!==serial||!status.isConnected)return;
+     if(error)throw error;
+     status.textContent=data?'Disponible: puedes usar @'+name:'Ese nombre de usuario ya está ocupado. Prueba otro.';
+     status.className='username-check '+(data?'available':'unavailable')
+    }catch{
+     if(version!==serial||!status.isConnected)return;
+     status.textContent='No se pudo comprobar. Se revisará al registrarte.';
+    }
+   },350);
+  });
+ }
  const pv=()=>{const e=$('#pv');if(e)e.innerHTML=pendAv?`<img class="av" src="${pendAv}" alt="" style="width:64px;height:64px">`:'<label for="ph" class="av" style="width:64px;height:64px;font-size:26px;cursor:pointer" title="Elegir una foto">+</label>'};pv();
  if($('#ph'))$('#ph').onchange=async e=>{try{pendAv=await pickImg(e.target.files[0]);pv()}catch(err){toast(err.message||'Esa imagen no es válida')}finally{e.target.value=''}};
  $('#af').onsubmit=async e=>{
@@ -927,6 +955,9 @@ function showAuth(mode='in'){
    const username=$('#un').value.trim().toLowerCase();
    if(!/^[a-z0-9_]{3,20}$/.test(username))throw Error('Usuario inválido: 3–20 letras, números o guion bajo.');
    if(password.length<8)throw Error('La contraseña necesita al menos 8 caracteres.');
+   const {data:available,error:checkError}=await sb.rpc('wp_username_available',{candidate:username});
+   if(checkError)throw Error('No fue posible comprobar el usuario. Inténtalo nuevamente.');
+   if(!available){$('#username-status').textContent='Ese usuario ya está registrado. Elige otro.';$('#username-status').className='username-check unavailable';throw Error('El nombre de usuario @'+username+' no está disponible.')}
    const meta={username,display_name:$('#nm').value.trim(),country:$('#country').value,language:$('#reglang').value};
    const {data,error}=await sb.auth.signUp({email,password,options:{data:meta,emailRedirectTo:'https://women-s-period.netlify.app/'}});if(error)throw error;
    if(data.session){await initCloudAccount(data.user,meta);await bootCloud(data.user);}
