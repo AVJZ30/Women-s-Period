@@ -280,6 +280,8 @@ nav button.on svg{animation:navPop .42s cubic-bezier(.2,.8,.2,1)}
 .site-credit{padding:24px 12px 30px}
 @media(max-width:480px){.diary-summary-grid,.cycle-guide-list{grid-template-columns:1fr}}
 
+@media(max-width:760px){nav{justify-content:flex-start!important;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-webkit-overflow-scrolling:touch;gap:2px}nav::-webkit-scrollbar{display:none}nav button{flex:0 0 auto;min-width:64px;padding:.36rem .45rem;font-size:.63rem}nav button svg{width:19px;height:19px}}
+#donation-page{max-width:700px;margin:auto;padding:clamp(22px,4vw,38px)}
 /* Women's Period · fluidez y accesibilidad en teléfonos modestos */
 html,body,button,a,input,select,textarea,label,[role="button"]{-webkit-tap-highlight-color:transparent}
 button:focus:not(:focus-visible),a:focus:not(:focus-visible),input:focus:not(:focus-visible){outline:none;box-shadow:none}
@@ -686,7 +688,7 @@ async function pickImg(file){
 const saveU=()=>{if(!me)return;queuePrivateSave();queueProfileSave();broadcastCommunity()},saveP=()=>{broadcastCommunity()};
 function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('show'),2200)}
 async function hash(p,salt){const d=salt+p;if(window.crypto?.subtle){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(d));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}let h=5381;for(const c of d)h=(h*33)^c.charCodeAt(0);return String(h>>>0)}
-const IC={diary:'<svg viewBox="0 0 24 24"><path d="M5 3h14v18H5zM8 8h8M8 12h8M8 16h5"/></svg>',well:'<svg viewBox="0 0 24 24"><path d="M12 21s-9-5.5-9-12a5 5 0 0 1 9-3 5 5 0 0 1 9 3c0 6.5-9 12-9 12z"/></svg>',cal:'<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>',forum:'<svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></svg>',ai:'<svg viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/></svg>',set:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg>'};
+const IC={donate:'<svg viewBox="0 0 24 24"><path d="M20 12.5c-2.4 3.4-8 7.8-8 7.8S6.4 15.9 4 12.5C1 8 4 4 8 4c1.8 0 3.2.9 4 2 1-1.1 2.4-2 4-2 4.1 0 7 4 8.5z"/><path d="M12 9v6m-2-3h4"/></svg>',diary:'<svg viewBox="0 0 24 24"><path d="M5 3h14v18H5zM8 8h8M8 12h8M8 16h5"/></svg>',well:'<svg viewBox="0 0 24 24"><path d="M12 21s-9-5.5-9-12a5 5 0 0 1 9-3 5 5 0 0 1 9 3c0 6.5-9 12-9 12z"/></svg>',cal:'<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>',forum:'<svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></svg>',ai:'<svg viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/></svg>',set:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg>'};
 
 
 /* Países (ISO 3166-1) y preferencias de idioma en el dispositivo */
@@ -787,7 +789,7 @@ function mailNotice(email,purpose='signup'){
 function showEmailCode(email,purpose='signup'){
  $('#app').classList.add('hide');const a=$('#auth');a.classList.remove('hide');
  const title=purpose==='signup'?'Verificar mi correo':purpose==='recovery'?'Recuperar mi contraseña':'Entrar con código';
- a.innerHTML='<div class="authbox" style="padding-top:8vh"><div class="card"><h2>'+title+'</h2><p class="muted" style="margin:12px 0">Escribe el código de 6 dígitos enviado a <strong id="otp-address"></strong>. Revisa también spam.</p><form id="otp-form"><label for="otp-value">Código recibido</label><input id="otp-value" type="text" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" placeholder="000000" required><div id="otp-error" class="err"></div><button class="btn" style="width:100%;margin-top:14px">Verificar código</button></form><button id="otp-resend" class="btn ghost" style="width:100%;margin-top:10px">Reenviar código</button><button id="otp-back" class="btn ghost" style="width:100%;margin-top:10px">Volver a iniciar sesión</button></div></div>';
+ a.innerHTML='<div class="authbox" style="padding-top:8vh"><div class="card"><h2>'+title+'</h2><p class="muted" style="margin:12px 0">Escribe el código numérico que recibiste (de 6 u 8 dígitos) en <strong id="otp-address"></strong>. Revisa también spam.</p><form id="otp-form"><label for="otp-value">Código recibido</label><input id="otp-value" type="text" inputmode="numeric" pattern="[0-9]{6,8}" maxlength="8" autocomplete="one-time-code" placeholder="Código de 6 u 8 dígitos" required><div id="otp-error" class="err"></div><button class="btn" style="width:100%;margin-top:14px">Verificar código</button></form><button id="otp-resend" class="btn ghost" style="width:100%;margin-top:10px">Reenviar código</button><button id="otp-back" class="btn ghost" style="width:100%;margin-top:10px">Volver a iniciar sesión</button></div></div>';
  a.querySelector('#otp-address').textContent=email;
  a.querySelector('#otp-back').onclick=()=>showAuth('in');
  a.querySelector('#otp-resend').onclick=async()=>{const b=a.querySelector('#otp-resend'),err=a.querySelector('#otp-error');b.disabled=true;try{
@@ -796,7 +798,7 @@ function showEmailCode(email,purpose='signup'){
  else result=await sb.auth.signInWithOtp({email,options:{shouldCreateUser:false,emailRedirectTo:'https://women-s-period.netlify.app/'}});
  if(result.error)throw result.error;mailNotice(email,purpose);
  }catch(ex){err.textContent=ex.message||'No se pudo reenviar el código.'}finally{b.disabled=false}};
- a.querySelector('#otp-form').onsubmit=async ev=>{ev.preventDefault();const b=a.querySelector('#otp-form button'),err=a.querySelector('#otp-error'),token=a.querySelector('#otp-value').value.trim();b.disabled=true;err.textContent='';
+ a.querySelector('#otp-form').onsubmit=async ev=>{ev.preventDefault();const b=a.querySelector('#otp-form button'),err=a.querySelector('#otp-error'),token=a.querySelector('#otp-value').value.replace(/\s/g,'').trim();b.disabled=true;err.textContent='';if(!/^[0-9]{6,8}$/.test(token)){err.textContent='Introduce los 6 u 8 dígitos del correo.';b.disabled=false;return}
  try{const type=purpose==='signup'?'signup':purpose==='recovery'?'recovery':'email';const {data,error}=await sb.auth.verifyOtp({email,token,type});if(error)throw error;
  if(purpose==='recovery'){showNewPassword();return}
  if(!data.user)throw Error('No se pudo iniciar sesión.');await bootCloud(data.user);if(purpose==='signup')showVerifiedWelcome();
@@ -878,14 +880,14 @@ async function logout(){persistChat();await flushPrivateSave();await sb.auth.sig
 /* ===== Estructura ===== */
 function shell(){
  const topBar=$('#top-loading-bar');if(topBar){topBar.classList.remove('finishing');topBar.style.transform='scaleX(.4)';topBar.classList.add('active')}
- const items=[['cal','Calendario'],['diary','Diario'],['well','Bienestar'],['forum','Comunidad'],['ai','Asistente'],['set','Ajustes']];
+ const items=[['cal','Calendario'],['diary','Diario'],['well','Bienestar'],['forum','Comunidad'],['ai','Asistente'],['donate','Donaciones'],['set','Ajustes']];
  $('#nav').innerHTML=items.map(([k,t])=>`<button data-v="${k}" class="${view===k?'on':''}" aria-label="${t}">${IC[k]}<span>${t}</span></button>`).join('');
  $('#nav').querySelectorAll('button').forEach(b=>b.onclick=()=>{
    if(view!==b.dataset.v){view=b.dataset.v;counterAnimDone=false}
    shell();
  });
  $('#who').innerHTML=whoHTML()+`<button class="account-exit" id="sidebar-lock" type="button">🔒 Bloquear con PIN</button><button class="account-exit" id="sidebar-logout" type="button">↪ Cerrar sesión</button>`;$('#sidebar-logout').onclick=logout;$('#sidebar-lock').onclick=lockWithPin;
- ({cal:vCal,diary:vDiary,well:vWell,forum:vForum,ai:vAI,set:vSet})[view]();requestAnimationFrame(translateUI);window.scrollTo({top:0});if(topBar){requestAnimationFrame(()=>{topBar.classList.add('finishing');topBar.classList.remove('active');setTimeout(()=>{topBar.style.transform='scaleX(0)';topBar.classList.remove('finishing')},650)})}
+ ({cal:vCal,diary:vDiary,well:vWell,forum:vForum,ai:vAI,donate:vDonate,set:vSet})[view]();requestAnimationFrame(translateUI);window.scrollTo({top:0});if(topBar){requestAnimationFrame(()=>{topBar.classList.add('finishing');topBar.classList.remove('active');setTimeout(()=>{topBar.style.transform='scaleX(0)';topBar.classList.remove('finishing')},650)})}
 }
 const main=h=>{
  document.querySelector('#composer')?.remove();
@@ -1164,6 +1166,13 @@ function vAI(){
  $('#main').querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>send(b.dataset.s))
 }
 
+function vDonate(){
+ main('<div class="top"><div><h2>💗 Donaciones</h2><p class="muted">Tu apoyo es opcional y ayuda a mantener esta comunidad gratuita.</p></div></div><div id="donation-page" class="support-card card"><div class="support-icon">💗</div><h3>Apoya Women\'s Period</h3><p class="muted">Gracias por ayudarnos a mejorar el proyecto.</p><div class="donation-info" id="donate-ec"><strong>🇪🇨 Ecuador · Banco Guayaquil</strong><p>Cuenta de ahorros</p><div class="donation-copy"><code>0055390856</code><button class="btn ghost sm" type="button" data-copy="0055390856">Copiar</button></div><small>Titular: Plua Jimenez Luis Ricardo</small></div><div class="donation-info" id="donate-world"><strong>🌎 Internacional · PayPal</strong><p>Correo para recibir donaciones:</p><div class="donation-copy"><code>luispluajj@gmail.com</code><button class="btn ghost sm" type="button" data-copy="luispluajj@gmail.com">Copiar</button></div><a href="https://www.paypal.com/" target="_blank" rel="noopener noreferrer" class="btn ghost sm" style="display:inline-block;margin-top:12px">Abrir PayPal ↗</a></div><p class="support-credit">Creado gracias a AVJ COMUNITY 💗</p></div>');
+ $('#donate-ec').hidden=me.country!=='EC';
+ $('#donate-world').hidden=me.country==='EC';
+ $('#main').querySelectorAll('[data-copy]').forEach(b=>b.onclick=async()=>{try{await navigator.clipboard.writeText(b.dataset.copy);toast('Copiado 💗')}catch{toast('Mantén pulsado el dato para copiarlo')}});
+}
+
 /* ===== Ajustes ===== */
 const PRESETS=['#e4457f','#d6336c','#f06595','#9c36b5','#4263eb','#2f9e44','#161214'];
 function vSet(){
@@ -1186,8 +1195,6 @@ function vSet(){
  <div class="card"><h3>Tu ciclo</h3><p class="muted">Duración del periodo que se usa hasta que tengas historial.</p>
  <label for="pl">Duración del periodo (días)</label><input id="pl" type="number" min="2" max="10" value="${me.plen}"><button class="btn sm" id="sc" style="margin-top:.8rem">Guardar</button></div>
  <div class="card"><h3>Cuenta</h3><p class="muted">Administra tu información y tu cuenta.</p><form id="change-email-form"><label for="change-email">Cambiar correo electrónico</label><input id="change-email" type="email" autocomplete="email" placeholder="nuevo@correo.com" required><p class="muted" style="font-size:12px;margin:8px 0">Por seguridad, Supabase enviará un correo para confirmar el cambio. Según la configuración, también puede pedir confirmación en el correo anterior.</p><button class="btn ghost sm" type="submit">Enviar confirmación de cambio</button><p id="change-email-status" class="note" role="status"></p></form><div class="row"><button class="btn ghost sm" id="lo">Cerrar sesión</button><button class="btn danger sm" id="dl">Eliminar cuenta</button></div></div></div>`);
- const donate=document.createElement('div');donate.innerHTML="<div class=\"card support-card\" id=\"support\"><div class=\"support-icon\">💗</div><h3>Apoya Women's Period</h3><p class=\"muted\">Tu apoyo es opcional y ayuda a mantener y mejorar este espacio gratuito.</p><div class=\"donation-info\" id=\"donate-ec\"><strong>🇪🇨 Desde Ecuador · Banco Guayaquil</strong><p>Cuenta de ahorros</p><div class=\"donation-copy\"><code>0055390856</code><button type=\"button\" class=\"btn ghost sm\" data-copy=\"0055390856\">Copiar</button></div><small>Titular: Plua Jimenez Luis Ricardo</small></div><div class=\"donation-info\" id=\"donate-world\"><strong>🌎 Desde otros países · PayPal</strong><p>Envía tu apoyo al correo asociado a PayPal:</p><div class=\"donation-copy\"><code>luispluajj@gmail.com</code><button type=\"button\" class=\"btn ghost sm\" data-copy=\"luispluajj@gmail.com\">Copiar</button></div><a href=\"https://www.paypal.com/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"btn ghost sm\" style=\"display:inline-block;margin-top:12px\">Abrir PayPal ↗</a></div><p class=\"support-credit\">Gracias por apoyar el proyecto 💗</p></div>";$('#main .set')?.appendChild(donate.firstElementChild);$('#donate-ec').hidden=me.country!=='EC';$('#donate-world').hidden=me.country==='EC';
- $('#main').querySelectorAll('[data-copy]').forEach(b=>b.onclick=()=>{if(navigator.clipboard?.writeText){navigator.clipboard.writeText(b.dataset.copy).then(()=>toast('Copiado 💗')).catch(()=>toast('Selecciona el dato para copiarlo'))}else toast('Selecciona el dato para copiarlo')});
  $('#save-locale').onclick=()=>{me.country=$('#set-country').value;me.lang=$('#set-lang').value;guestLanguage=me.lang;LS.set('ciclo_language',me.lang);saveU();shell();toast('Preferencias guardadas')};
  const upd=()=>{saveU();applyTheme()};
  $('#quick-pin-form').onsubmit=async e=>{e.preventDefault();const a=$('#pin-new').value,b=$('#pin-repeat').value,status=$('#pin-status');if(a!==b){status.textContent='Los dos PIN no coinciden.';return}const btn=e.submitter;btn.disabled=true;try{await enableQuickPin(a);status.textContent='✓ Inicio rápido activado en este navegador.';$('#quick-pin-form').reset()}catch(err){status.textContent=err.message}finally{btn.disabled=false}};
