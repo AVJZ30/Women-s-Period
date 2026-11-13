@@ -662,6 +662,16 @@ h1,h2,h3,p,.muted,.card,.post{overflow-wrap:anywhere}
 #period-reminder-banner .reminder-copy p{margin:4px 0 0;font-size:.85rem;line-height:1.45;overflow-wrap:anywhere}
 #period-reminder-banner>button{font-size:25px;line-height:1;background:transparent;color:var(--mute);padding:0 3px}
 @media(max-width:760px){#period-reminder-banner{bottom:calc(94px + env(safe-area-inset-bottom));right:12px;left:12px;width:auto;padding:12px}}
+
+.install-inline{display:flex;align-items:center;gap:12px;background:var(--soft);border:1px solid var(--line);border-radius:16px;padding:12px 14px;margin:12px 0;max-width:100%;min-width:0;flex-wrap:wrap}
+.install-inline img{width:42px;height:42px;object-fit:contain;flex:0 0 42px}
+.install-inline>div{flex:1;min-width:160px}
+.install-inline strong{display:block;font-size:.9rem;line-height:1.4}
+.install-inline p{margin:3px 0 0;color:var(--mute);font-size:.8rem;line-height:1.4}
+.install-inline button{white-space:normal;min-height:40px}
+.install-auth{margin:20px 0 0}
+.install-settings button{margin-top:10px}
+@media(max-width:480px){.install-inline{gap:9px;padding:11px}.install-inline img{width:36px;height:36px;flex-basis:36px}.install-inline button{width:100%}}
 </style>
 <meta name="theme-color" content="#e4457f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -913,6 +923,7 @@ async function detectSignupCountry(){
  try{const response=await fetch('https://ipwho.is/',{signal:controller.signal,cache:'no-store'});if(!response.ok)return;const info=await response.json();const country=String(info?.country_code||'').toUpperCase();if(info?.success&&COUNTRIES.some(c=>c[0]===country)&&field.isConnected&&field.dataset.touched!=='1'){field.value=country;field.dataset.detected='ip'}}catch{}finally{clearTimeout(timer)}
 }
 
+function isInstalledPWA(){return window.matchMedia('(display-mode: standalone)').matches||navigator.standalone===true}
 function showAuth(mode='in'){
  $('#app').classList.add('hide');const a=$('#auth');a.classList.remove('hide');
  a.innerHTML=`<div class="hero"><div class="blob b1"></div><div class="blob b2"></div><h1>Women's Period</h1><p>Calendario, comunidad y una asistente de salud menstrual. Tu calendario se guarda de forma privada en la nube y las conversaciones con el asistente se guardan en tu cuenta privada.</p></div>
@@ -927,9 +938,9 @@ function showAuth(mode='in'){
  <div class="err" id="er"></div><button class="btn" style="width:100%;margin-top:.5rem">${mode==='in'?'Entrar':'Crear mi cuenta'}</button>
  ${mode==='up'?'<label class="chk"><input type="checkbox" id="tc" required><span>Acepto los <a href="#" class="lk" data-legal="terms">Términos y condiciones</a> y la <a href="#" class="lk" data-legal="privacy">Política de privacidad</a>.</span></label><p class="note">Tu correo no será público. Tu nombre es privado por defecto; solo tu usuario es visible en la comunidad.</p>':'<p class="note">Inicia sesión con tu correo y contraseña. Si acabas de registrarte, confirma tu correo primero.</p>'}</form>
  ${mode==='in'?'<div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:14px 0"><button id="login-code" class="btn ghost sm" type="button">Entrar con código</button><button id="forgot-pass" class="btn ghost sm" type="button">Olvidé mi contraseña</button></div>':''}
- <p class="note" style="text-align:center"><a href="#" class="lk" data-legal="terms">Términos</a> · <a href="#" class="lk" data-legal="privacy">Privacidad</a></p>${mode==='up'?'<p class="note" style="text-align:center;font-size:11px;letter-spacing:.03em;margin-top:20px">by <strong>AVJ COMUNITY</strong> · pensando en las mujeres 💗</p>':''}${mode==='in'?quickHTML():''}</div></div>`;
+ <p class="note" style="text-align:center"><a href="#" class="lk" data-legal="terms">Términos</a> · <a href="#" class="lk" data-legal="privacy">Privacidad</a></p>${mode==='up'?'<p class="note" style="text-align:center;font-size:11px;letter-spacing:.03em;margin-top:20px">by <strong>AVJ COMUNITY</strong> · pensando en las mujeres 💗</p>':''}${mode==='in'?quickHTML():''}${mode==='up'&&!isInstalledPWA()?'<div class="install-inline install-auth"><img src="/favicon/app-icon.svg" alt=""><div><strong>Women\'s Period en tu inicio</strong><p>Añádela a tu pantalla de inicio para abrirla como una aplicación.</p></div><button class="btn sm" type="button" data-install-pwa>Añadir a inicio</button></div>':''}</div></div>`;
  if(mode==='in'){$('#login-code').onclick=()=>showMailAccess('otp');$('#forgot-pass').onclick=()=>showMailAccess('recovery')}
- bindQuickLogin();a.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>showAuth(b.dataset.m));$('#reglang').onchange=e=>setLanguage(e.target.value);requestAnimationFrame(translateUI);
+ bindQuickLogin();a.querySelectorAll('[data-install-pwa]').forEach(b=>b.onclick=()=>window.wpInstallOpen?.());a.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>showAuth(b.dataset.m));$('#reglang').onchange=e=>setLanguage(e.target.value);requestAnimationFrame(translateUI);
  if(mode==='up'){
   const country=$('#country');country?.addEventListener('change',()=>country.dataset.touched='1');detectSignupCountry();
   const usernameInput=$('#un'),status=$('#username-status');
@@ -1191,6 +1202,7 @@ function vCal(){
  if(isStart)side+=`<button class="btn danger sm" data-a="del">Quitar este inicio</button>`;
  side+='</div>';
  renderCalendarSmooth(`<div class="top"><div><h2>Hola, ${esc(me.name.split(' ')[0])}</h2><p class="muted">Marca el primer día de cada periodo y el calendario calcula el resto.</p></div></div>
+ ${!isInstalledPWA()?'<div class="install-inline install-calendar"><img src="/favicon/app-icon.svg" alt=""><div><strong>Women\'s Period en tu inicio</strong><p>Abre tu calendario desde la pantalla de inicio.</p></div><button class="btn sm" type="button" data-install-pwa>Añadir a inicio</button></div>':''}
  <div class="stats">
  <div class="card stat"><small>Hoy</small><strong>${ti?'Día '+ti.n:'—'}</strong><small>${ti?ti.ph:'Registra tu periodo'}</small></div>
  <div class="card stat"><small>Próximo periodo</small><strong>${dn===null?'—':dn===0?'Hoy':'En '+dn+' d'}</strong><small>${nextP?fmt(nextP.s):'Sin datos'}</small></div>
@@ -1200,6 +1212,7 @@ function vCal(){
  <div class="grid">${['L','M','X','J','V','S','D'].map(x=>`<div class="dow">${x}</div>`).join('')}${cells}</div>
  <div class="legend"><span><i class="drop-legend"></i>Periodo</span><span><i style="background:var(--soft);box-shadow:inset 0 0 0 2px var(--accent)"></i>Estimado</span><span><i style="background:var(--soft2)"></i>Fértil</span><span><i style="background:var(--soft2);box-shadow:inset 0 0 0 2px var(--accent)"></i>Ovulación ✦</span><span><i style="background:var(--gray)"></i>Baja fertilidad</span></div></div>
  <div class="card sidecard">${side}<div class="cycle-guide"><div class="cycle-guide-title">🌷 Entiende tu ciclo <small>Guía rápida</small></div><div class="cycle-guide-list"><div><span class="cycle-guide-symbol blood">♥</span><span><b>Periodo</b><small>Menstruación registrada</small></span></div><div><span class="cycle-guide-symbol estimate">♡</span><span><b>Periodo estimado</b><small>Fecha aproximada</small></span></div><div><span class="cycle-guide-symbol fertile">●</span><span><b>Días fértiles</b><small>Ventana aproximada</small></span></div><div><span class="cycle-guide-symbol ovulation">✦</span><span><b>Ovulación</b><small>Día estimado</small></span></div></div><small class="cycle-guide-note">💡 Las predicciones no sirven como anticonceptivo.</small></div><p class="note">Tu próximo periodo se calcula cada mes, el mismo día del mes que el último inicio que registraste. La ovulación se estima ~14 días antes. Son estimaciones orientativas: no sirven como método anticonceptivo ni reemplazan una consulta ginecológica.</p></div></div><p class="calendar-prediction-tip">💗 Cuantos más meses de menstruación registres, más personalizada y potencialmente precisa será la predicción de tu próximo periodo.</p>`);
+ $('#main').querySelectorAll('[data-install-pwa]').forEach(b=>b.onclick=()=>window.wpInstallOpen?.());
  $('#main').querySelectorAll('[data-n]').forEach(b=>b.onclick=()=>{const delta=+b.dataset.n;cur=new Date(y,m+delta,1);vCal();void 0});
  $('#main').querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{skipCalAnim=true;sel=b.dataset.d;vCal()});
  $('#main').querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{
@@ -1369,6 +1382,7 @@ function vSet(){
  <div class="stats" style="margin:.2rem 0 .4rem"><div class="card stat"><small>Días desde el registro</small><strong>${diff(today(),me.created)}</strong></div><div class="card stat"><small>Periodos registrados</small><strong>${me.periods.length}</strong></div></div><label for="sn">Nombre</label><input id="sn" value="${esc(me.name)}" maxlength="40">
  <div class="line"><div><strong>Mostrar mi nombre en la comunidad</strong><div class="muted">Privado por defecto. Tu usuario (@${esc(me.username)}) siempre es visible.</div></div><button class="tg ${me.pub?'on':''}" id="tp" role="switch" aria-checked="${me.pub}" aria-label="Nombre público"></button></div>
  <button class="btn sm" id="sv">Guardar nombre</button></div>
+ ${!isInstalledPWA()?'<div class="card install-settings"><h3>Instalar Women\'s Period</h3><p class="muted">Añade la aplicación a tu pantalla de inicio para acceder más rápido.</p><button class="btn sm" type="button" data-install-pwa>Añadir a pantalla de inicio</button></div>':''}
  <div class="card"><h3>🔐 Inicio de sesión rápido</h3><p class="muted">Establece un PIN de 6 dígitos para bloquear y desbloquear esta sesión. Al cerrar el navegador o cerrar sesión necesitarás tu correo y contraseña.</p><form id="quick-pin-form"><label for="pin-new">Nuevo PIN (6 dígitos)</label><input id="pin-new" type="password" inputmode="numeric" autocomplete="new-password" maxlength="6" minlength="6" pattern="[0-9]{6}" placeholder="••••••" required><label for="pin-repeat">Repite el PIN</label><input id="pin-repeat" type="password" inputmode="numeric" autocomplete="new-password" maxlength="6" minlength="6" pattern="[0-9]{6}" placeholder="••••••" required><div class="row"><button class="btn sm" type="submit">Activar inicio rápido</button><button class="btn ghost sm" type="button" id="quick-pin-remove">Desactivar PIN</button></div><p class="note" id="pin-status" role="status"></p></form></div><div class="card"><h3>País e idioma</h3><label for="set-country">País</label><select id="set-country">${countryOptions(me.country||'')}</select><label for="set-lang">Idioma / Language</label><select id="set-lang">${langOptions()}</select><button class="btn sm" id="save-locale" style="margin-top:.7rem">Guardar</button></div>
  <div class="card"><h3>Apariencia</h3>
  <div class="line"><strong>Modo oscuro</strong><button class="tg ${mode==='dark'?'on':''}" id="tm" role="switch" aria-checked="${mode==='dark'}" aria-label="Modo oscuro"></button></div>
@@ -1382,6 +1396,7 @@ function vSet(){
  <div class="card"><h3>Tu ciclo</h3><p class="muted">Duración del periodo que se usa hasta que tengas historial.</p>
  <label for="pl">Duración del periodo (días)</label><input id="pl" type="number" min="2" max="10" value="${me.plen}"><button class="btn sm" id="sc" style="margin-top:.8rem">Guardar</button></div>
  <div class="card"><h3>Cuenta</h3><p class="muted">Administra tu información y tu cuenta.</p><form id="change-email-form"><label for="change-email">Cambiar correo electrónico</label><input id="change-email" type="email" autocomplete="email" placeholder="nuevo@correo.com" required><p class="muted" style="font-size:12px;margin:8px 0">Por seguridad, Supabase enviará un correo para confirmar el cambio. Según la configuración, también puede pedir confirmación en el correo anterior.</p><button class="btn ghost sm" type="submit">Enviar confirmación de cambio</button><p id="change-email-status" class="note" role="status"></p></form><div class="row"><button class="btn ghost sm" id="lo">Cerrar sesión</button><button class="btn danger sm" id="dl">Eliminar cuenta</button></div></div></div>`);
+ $('#main').querySelectorAll('[data-install-pwa]').forEach(b=>b.onclick=()=>window.wpInstallOpen?.());
  $('#save-locale').onclick=()=>{me.country=$('#set-country').value;me.lang=$('#set-lang').value;guestLanguage=me.lang;LS.set('ciclo_language',me.lang);saveU();shell();toast('Preferencias guardadas')};
  const upd=()=>{saveU();applyTheme()};
  $('#quick-pin-form').onsubmit=async e=>{e.preventDefault();const a=$('#pin-new').value,b=$('#pin-repeat').value,status=$('#pin-status');if(a!==b){status.textContent='Los dos PIN no coinciden.';return}const btn=e.submitter;btn.disabled=true;try{await enableQuickPin(a);status.textContent='✓ Inicio rápido activado en este navegador.';$('#quick-pin-form').reset()}catch(err){status.textContent=err.message}finally{btn.disabled=false}};
@@ -1631,38 +1646,47 @@ sb.auth.onAuthStateChange((event,session)=>{
 <script>
 (function(){
  if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(err=>console.warn('PWA:',err)));
- const standalone=window.matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
- if(standalone)return;
+ const installed=()=>window.matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
  const box=document.getElementById('wp-install'),action=document.getElementById('wp-install-action'),info=document.getElementById('wp-install-info');
  const ios=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
- const dismissed=localStorage.getItem('wp-install-dismissed')==='1';
- let deferred=null;
- function show(){if(!dismissed)box.hidden=false}
- function close(){box.hidden=true;localStorage.setItem('wp-install-dismissed','1')}
- document.getElementById('wp-install-close').addEventListener('click',close);
- function guide(){
-  info.textContent=ios
-    ? 'En Safari: toca Compartir y elige «Añadir a pantalla de inicio».'
-    : 'En Chrome o Brave abre el menú ⋮ y elige «Instalar aplicación». Si solo ofrece «Crear acceso directo», usa Chrome para intentar la instalación.';
-  action.textContent='Entendido';
-  action.onclick=close;
+ let dismissed=localStorage.getItem('wp-install-dismissed')==='1';
+ let deferred=null,guideMode=false;
+ const initialInfo='Abre la aplicación más rápido desde tu pantalla de inicio.';
+ function close(){box.hidden=true;dismissed=true;try{localStorage.setItem('wp-install-dismissed','1')}catch{}}
+ function open(force=false){
+  if(installed())return;
+  if(!force&&dismissed)return;
+  guideMode=false;
+  info.textContent=initialInfo;
+  action.textContent=deferred?'Instalar aplicación':'Añadir a pantalla de inicio';
+  box.hidden=false;
  }
+ function guide(){
+  guideMode=true;
+  info.textContent=ios
+   ? 'En Safari, toca Compartir (cuadrado con flecha) y elige «Añadir a pantalla de inicio». Si estás en otro navegador, abre esta página en Safari.'
+   : 'Abre el menú del navegador (⋮) y selecciona «Instalar aplicación» o «Añadir a pantalla de inicio».';
+  action.textContent='Entendido';
+ }
+ window.wpInstallOpen=()=>open(true);
+ document.getElementById('wp-install-close').addEventListener('click',close);
  window.addEventListener('beforeinstallprompt',event=>{
   event.preventDefault();deferred=event;
-  action.textContent='Instalar aplicación';
-  info.textContent='Ten tu calendario a un toque de distancia.';
-  show();
+  if(!box.hidden&&!guideMode){action.textContent='Instalar aplicación';info.textContent=initialInfo}
  });
- window.addEventListener('appinstalled',()=>{box.hidden=true;deferred=null});
+ window.addEventListener('appinstalled',()=>{box.hidden=true;deferred=null;document.querySelectorAll('[data-install-pwa]').forEach(button=>button.closest('.install-inline, .install-settings')?.remove())});
  action.addEventListener('click',async()=>{
-  if(deferred){const prompt=deferred;deferred=null;box.hidden=true;await prompt.prompt();return}
+  if(guideMode){close();return}
+  if(deferred){const prompt=deferred;deferred=null;box.hidden=true;try{await prompt.prompt()}catch(err){console.warn('Instalación:',err);open(true);guide()}return}
   guide();
  });
+ if(installed())return;
  if(ios){
   info.textContent='En Safari puedes añadirla como una app en tu iPhone.';
-  action.textContent='Ver cómo añadirla';show();
+  action.textContent='Ver cómo añadirla';
+  open();
  }else{
-  window.setTimeout(()=>{if(!deferred){info.textContent='También puedes añadirla desde el menú del navegador.';action.textContent='Ver cómo añadirla';show()}},2500);
+  window.setTimeout(()=>{if(!deferred)open()},2500);
  }
 })();
 </script>
