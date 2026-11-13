@@ -282,6 +282,28 @@ nav button.on svg{animation:navPop .42s cubic-bezier(.2,.8,.2,1)}
 
 @media(max-width:760px){nav{justify-content:flex-start!important;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-webkit-overflow-scrolling:touch;gap:2px}nav::-webkit-scrollbar{display:none}nav button{flex:0 0 auto;min-width:64px;padding:.36rem .45rem;font-size:.63rem}nav button svg{width:19px;height:19px}}
 #donation-page{max-width:700px;margin:auto;padding:clamp(22px,4vw,38px)}
+
+/* Diseño completo de escritorio: no recortar las tarjetas de Ajustes */
+@media (min-width:761px){
+  html,body{height:auto;min-height:100%;overflow-x:hidden}
+  #app{display:grid;grid-template-columns:clamp(205px,19vw,252px) minmax(0,1fr);width:100%;max-width:100%;min-height:100vh;align-items:start}
+  #app > main{box-sizing:border-box;min-width:0;width:100%;max-width:none;padding:clamp(18px,2.5vw,36px);overflow:visible}
+  #main,#main > section{min-width:0;max-width:100%;width:100%;overflow:visible}
+  #main .set{grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch;gap:clamp(12px,1.5vw,20px);min-width:0}
+  #main .set > .card{box-sizing:border-box;min-width:0;width:100%;max-width:100%;overflow-wrap:anywhere;overflow:visible}
+  #main .set .row,#main .set .line,#main .set .avrow{min-width:0;max-width:100%;flex-wrap:wrap}
+  #main .set input:not([type=checkbox]):not([type=color]),#main .set select,#main .set textarea{box-sizing:border-box;max-width:100%;min-width:0}
+  #main .set .seg,#main .set .sw{min-width:0;flex-wrap:wrap}
+  #main .set .btn,#main .set button{max-width:100%;white-space:normal;overflow-wrap:anywhere}
+  #main .set .stats{grid-template-columns:repeat(2,minmax(0,1fr));min-width:0}
+  aside{box-sizing:border-box;min-width:0;height:100dvh;max-height:100dvh;overflow-y:auto;overscroll-behavior:contain}
+  aside nav{flex-shrink:0}
+  aside .who{margin-top:auto}
+}
+@media (min-width:761px) and (max-width:1240px){
+  #main .set{grid-template-columns:minmax(0,1fr)}
+}
+
 /* Women's Period · fluidez y accesibilidad en teléfonos modestos */
 html,body,button,a,input,select,textarea,label,[role="button"]{-webkit-tap-highlight-color:transparent}
 button:focus:not(:focus-visible),a:focus:not(:focus-visible),input:focus:not(:focus-visible){outline:none;box-shadow:none}
@@ -1186,7 +1208,7 @@ function vAI(){
 }
 
 function vDonate(){
- main('<div class="top"><div><h2>💗 Donaciones</h2><p class="muted">Tu apoyo es opcional y ayuda a mantener esta comunidad gratuita.</p></div></div><div id="donation-page" class="support-card card"><div class="support-icon">💗</div><h3>Apoya Women\'s Period</h3><p class="muted">Gracias por ayudarnos a mejorar el proyecto.</p><div class="donation-info" id="donate-ec"><strong>🇪🇨 Ecuador · Banco Guayaquil</strong><p>Cuenta de ahorros</p><div class="donation-copy"><code>0055390856</code><button class="btn ghost sm" type="button" data-copy="0055390856">Copiar</button></div><small>Titular: Plua Jimenez Luis Ricardo</small></div><div class="donation-info" id="donate-world"><strong>🌎 Internacional · PayPal</strong><p>Correo para recibir donaciones:</p><div class="donation-copy"><code>luispluajj@gmail.com</code><button class="btn ghost sm" type="button" data-copy="luispluajj@gmail.com">Copiar</button></div><a href="https://www.paypal.com/" target="_blank" rel="noopener noreferrer" class="btn ghost sm" style="display:inline-block;margin-top:12px">Abrir PayPal ↗</a></div><p class="support-credit">Creado gracias a AVJ COMUNITY 💗</p></div>');
+ main('<div class="top"><div><h2>💗 Donaciones</h2><p class="muted">Tu apoyo es opcional y ayuda a mantener esta comunidad gratuita.</p></div></div><div id="donation-page" class="support-card card"><div class="support-icon">💗</div><h3>Apoya Women\'s Period</h3><p class="muted">Gracias por ayudarnos a mejorar el proyecto.</p><div class="donation-info" id="donate-ec"><strong>🇪🇨 Ecuador · Banco Guayaquil</strong><p>Cuenta de ahorros</p><div class="donation-copy"><code>0055390856</code><button class="btn ghost sm" type="button" data-copy="0055390856">Copiar</button></div><small>Titular: Plua Jimenez Luis Ricardo</small></div><div class="donation-info" id="donate-world"><strong>🌎 Internacional · PayPal</strong><p>Correo para recibir donaciones:</p><div class="donation-copy"><code>luispluajj@gmail.com</code><button class="btn ghost sm" type="button" data-copy="luispluajj@gmail.com">Copiar</button></div><a href="https://www.paypal.com/" target="_blank" rel="noopener noreferrer" class="btn ghost sm" style="display:inline-block;margin-top:12px">Abrir PayPal ↗</a></div></div>');
  $('#donate-ec').hidden=me.country!=='EC';
  $('#donate-world').hidden=me.country==='EC';
  $('#main').querySelectorAll('[data-copy]').forEach(b=>b.onclick=async()=>{try{await navigator.clipboard.writeText(b.dataset.copy);toast('Copiado 💗')}catch{toast('Mantén pulsado el dato para copiarlo')}});
