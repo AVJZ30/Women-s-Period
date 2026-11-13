@@ -621,6 +621,27 @@ h1,h2,h3,p,.muted,.card,.post{overflow-wrap:anywhere}
 @media(min-width:761px) and (max-width:1240px){
  #main .set{grid-template-columns:minmax(0,1fr)}
 }
+
+/* Día seleccionado: contraste claro y persistente en cualquier fase del ciclo */
+.calwrap .grid button.d.sel{
+ outline:3px solid var(--accent)!important;
+ outline-offset:-2px!important;
+ box-shadow:0 0 0 3px var(--card),0 0 0 5px var(--accent)!important;
+ border-radius:12px!important;
+ z-index:2;
+ position:relative;
+}
+.calwrap .grid button.d.sel .daynum{
+ font-weight:900!important;
+ text-decoration:underline;
+ text-decoration-thickness:2px;
+ text-underline-offset:3px;
+}
+.calwrap .grid button.d.period.sel::before{z-index:-1}
+.calwrap .grid button.d.sel.today{outline-style:solid!important}
+.avj-credit-link{color:var(--accent);text-decoration:underline;text-underline-offset:3px;font-weight:800}
+.avj-credit-link:hover{opacity:.8}
+.avj-credit-link:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:3px}
 </style>
 <meta name="theme-color" content="#e4457f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -928,7 +949,7 @@ function shell(){
 const main=h=>{
  document.querySelector('#composer')?.remove();
  document.querySelector('#new-post-fab')?.remove();
- $('#main').innerHTML=`<section>${h}</section><footer class="site-credit">Creado gracias a <strong>AVJ COMUNITY</strong> 💗</footer>`;
+ $('#main').innerHTML=`<section>${h}</section><footer class="site-credit">Creado gracias a <a href="https://avjcomunity.com/" target="_blank" rel="noopener noreferrer" class="avj-credit-link" aria-label="Visitar AVJ COMUNITY"><strong>AVJ COMUNITY</strong></a> 💗</footer>`;
  requestAnimationFrame(()=>{observeReveal();translateUI()});
  if(!counterAnimDone){counterAnimDone=true;requestAnimationFrame(animateCounters)}
 };
@@ -1159,7 +1180,6 @@ function vForum(){
  main(`<div class="top"><div><h2>Comunidad</h2><p class="muted">Comparte consejos, responde y agradece los tips que te ayudan con un corazón. Actualizaciones entre dispositivos.</p></div></div>
  <div class="chips">${['Todos',...CATS].map(c=>`<button class="chip ${c===cat?'on':''}" data-c="${c}">${c}</button>`).join('')}</div>
  <div id="forum-feed">${forumCards(list)}</div>
- <p class="note">Comunidad sincronizada mediante Supabase entre dispositivos.</p>
  <div id="composer" class="composer-wrap" aria-hidden="true"><div class="composer-backdrop" id="composer-backdrop"></div>
  <div class="composer-panel" role="dialog" aria-modal="true" aria-labelledby="composer-title">
  <div class="composer-head"><h3 id="composer-title">Comparte un consejo 💗</h3><button type="button" class="composer-close" id="composer-close" aria-label="Cerrar">×</button></div>
@@ -1222,7 +1242,7 @@ function vAI(){
 }
 
 function vDonate(){
- main('<div class="top"><div><h2>💗 Donaciones</h2><p class="muted">Tu apoyo es opcional y ayuda a mantener esta comunidad gratuita.</p></div></div><div id="donation-page" class="support-card card"><div class="support-icon">💗</div><h3>Apoya Women\'s Period</h3><p class="muted">Gracias por ayudarnos a mejorar el proyecto.</p><div class="donation-info" id="donate-ec"><strong>🇪🇨 Ecuador · Banco Guayaquil</strong><p>Cuenta de ahorros</p><div class="donation-copy"><code>0055390856</code><button class="btn ghost sm" type="button" data-copy="0055390856">Copiar</button></div><small>Titular: Plua Jimenez Luis Ricardo</small></div><div class="donation-info" id="donate-world"><strong>🌎 Internacional · PayPal</strong><p>Correo para recibir donaciones:</p><div class="donation-copy"><code>luispluajj@gmail.com</code><button class="btn ghost sm" type="button" data-copy="luispluajj@gmail.com">Copiar</button></div><a href="https://www.paypal.com/" target="_blank" rel="noopener noreferrer" class="btn ghost sm" style="display:inline-block;margin-top:12px">Abrir PayPal ↗</a></div></div>');
+ main('<div class="top"><div><h2>💗 Donaciones</h2><p class="muted">Tu apoyo es opcional y ayuda a mantener esta comunidad gratuita.</p></div></div><div id="donation-page" class="support-card card"><div class="support-icon">💗</div><h3>Apoya Women\'s Period</h3><p class="muted">Gracias por ayudarnos a mejorar el proyecto.</p><div class="donation-info" id="donate-ec"><strong>🇪🇨 Ecuador · Banco Guayaquil</strong><p>Cuenta de ahorros</p><div class="donation-copy"><code>0055390856</code><button class="btn ghost sm" type="button" data-copy="0055390856">Copiar</button></div><small>Titular: Plua Jimenez Luis Ricardo · CI: 0958894834</small></div><div class="donation-info" id="donate-world"><strong>🌎 Internacional · PayPal</strong><p>Correo para recibir donaciones:</p><div class="donation-copy"><code>luispluajj@gmail.com</code><button class="btn ghost sm" type="button" data-copy="luispluajj@gmail.com">Copiar</button></div><a href="https://www.paypal.com/" target="_blank" rel="noopener noreferrer" class="btn ghost sm" style="display:inline-block;margin-top:12px">Abrir PayPal ↗</a></div></div>');
  $('#donate-ec').hidden=me.country!=='EC';
  $('#donate-world').hidden=me.country==='EC';
  $('#main').querySelectorAll('[data-copy]').forEach(b=>b.onclick=async()=>{try{await navigator.clipboard.writeText(b.dataset.copy);toast('Copiado 💗')}catch{toast('Mantén pulsado el dato para copiarlo')}});
